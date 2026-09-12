@@ -295,7 +295,12 @@ namespace WolverineRemapper.Services
                 var steps = config.Mode == ActionMode.Chord
                     ? BuildChordPulseSteps(config)
                     : BuildSteps(config);
-                var run = new MacroRun(_virtualPad, steps, config.Repeat, config.RepeatCount, config.RepeatGapMs);
+                // Hold+Tap: the hold-set press and the step delay run once,
+                // then only the tap pulse repeats (so the gap stays the gap).
+                var preamble = config.Mode == ActionMode.HoldTap
+                    ? BuildHoldTapPreamble(config)
+                    : null;
+                var run = new MacroRun(_virtualPad, steps, config.Repeat, config.RepeatCount, config.RepeatGapMs, preamble);
                 _macroRuns[vkCode] = run;
                 run.Start();
             }
@@ -340,12 +345,22 @@ namespace WolverineRemapper.Services
         {
             if (config.Mode == ActionMode.HoldTap)
             {
+                // The hold-set press + delay live in the preamble (see
+                // BuildHoldTapPreamble); this is only the repeatable part.
                 var steps = new List<ResolvedStep>();
-                foreach (var b in config.HoldButtons)
-                    steps.Add(new ResolvedStep(MacroStepType.Press, b, 0));
-                steps.Add(new ResolvedStep(MacroStepType.Wait, VirtualButtonId.A, Math.Max(20, config.HoldTapDelayMs)));
                 foreach (var b in config.TapButtons)
                     steps.Add(new ResolvedStep(MacroStepType.Press, b, 0));
+                if (config.Repeat != RepeatMode.Once)
+                {
+                    // Repeated: the tap-set must release between iterations
+                    // or the game only ever sees one press edge. Same pulse
+                    // width convention as a repeated chord.
+                    int pulse = Math.Max(20, config.RepeatGapMs);
+                    steps.Add(new ResolvedStep(MacroStepType.Wait, VirtualButtonId.A, pulse));
+                    foreach (var b in config.TapButtons)
+                        steps.Add(new ResolvedStep(MacroStepType.Release, b, 0));
+                }
+                // Once: the tap-set stays held until the M-button is released.
                 return steps;
             }
 
@@ -353,6 +368,20 @@ namespace WolverineRemapper.Services
             foreach (var s in config.Steps)
                 resolved.Add(new ResolvedStep(s.Type, s.Button, s.DurationMs, s.Stick, s.StickX, s.StickY));
             return resolved;
+        }
+
+        /// <summary>
+        /// Hold+Tap one-shot prefix: press the hold-set, then wait the step
+        /// delay. Runs a single time before the (possibly repeated) tap pulse.
+        /// The hold-set stays down until the M-button is released.
+        /// </summary>
+        private static List<ResolvedStep> BuildHoldTapPreamble(MButtonConfig config)
+        {
+            var steps = new List<ResolvedStep>();
+            foreach (var b in config.HoldButtons)
+                steps.Add(new ResolvedStep(MacroStepType.Press, b, 0));
+            steps.Add(new ResolvedStep(MacroStepType.Wait, VirtualButtonId.A, Math.Max(20, config.HoldTapDelayMs)));
+            return steps;
         }
 
         #region Passthrough
