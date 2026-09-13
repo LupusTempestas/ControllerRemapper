@@ -224,7 +224,7 @@
   "guide_p3_title": "Paso 2 — Razer Synapse (V3 Pro 8K)",
   "guide_p3_body": "1.  Abre **Razer Synapse** y selecciona tu **Wolverine V3 Pro 8K**.\n2.  Abre la pestaña **Personalizar** y haz clic en una palanca, por ejemplo **M1**.\n3.  Elige **Función de teclado** — no un botón del mando.\n4.  Escoge una tecla que nunca uses jugando. Recomendamos un valor por defecto por palanca:\n     **M1 = Bloq Despl (Scroll Lock)**,  **M2 = Pausa**,  **M3 = Insert**,  **M4 = Inicio (Home)**,  **M5 = Re Pág**,  **M6 = Av Pág**.\n5.  Repite para cada palanca y asegúrate de que el perfil queda **guardado en el mando** para que funcione aunque Synapse no esté en primer plano.\n\n¿Prefieres otras teclas? Sin problema: en esta aplicación pulsa **REASIGNAR TECLA** en el botón M y pulsa la tecla elegida. La aplicación usa la tecla que reciba.",
   "guide_p4_title": "Paso 3 — Solo Wolverine V2",
-  "guide_p4_body": "Sáltate esta página si tienes una V3 Pro 8K.\n\n1.  En **Razer Controller Setup for Xbox**, asigna cada palanca a un botón del mando del que puedas prescindir, por ejemplo **View**, **Menu**, **clic LS** o **clic RS**.\n2.  En esta aplicación, selecciona el botón M y elige el mismo botón en **BOTÓN SACRIFICADO**. Ese botón pasa a ser el disparador y deja de funcionar como tal en los juegos.\n3.  Activa **Passthrough** en la barra de perfil. La aplicación refleja entonces todo tu mando en el mando virtual, sin los botones sacrificados.\n4.  Instala **HidHide** (pestaña Ajustes → CONTROLADORES) y oculta el Wolverine físico para que el juego solo vea el **mando virtual**.",
+  "guide_p4_body": "Sáltate esta página si tienes una V3 Pro 8K.\n\n1.  En **Razer Controller Setup for Xbox**, asigna cada palanca a un botón del mando del que puedas prescindir, por ejemplo **View**, **Menu**, **clic LS** o **clic RS**.\n2.  En esta aplicación, selecciona el botón M y elige el mismo botón en **BOTÓN SACRIFICADO**. Ese botón pasa a ser el disparador y deja de funcionar como tal en los juegos.\n3.  Activa **Passthrough** en la barra de perfil. La aplicación refleja entonces todo tu mando en el mando virtual, sin los botones sacrificados.\n4.  Oculta el Wolverine físico para que el juego solo vea el **mando virtual**: en la pestaña Ajustes → CONTROLADORES pulsa **OCULTAR MI MANDO A LOS JUEGOS** (HidHide debe estar instalado, el instalador lo ofrece).",
   "guide_p5_title": "Paso 4 — Controlador y motor",
   "guide_p5_body": "El mando virtual lo crea el controlador **ViGEmBus**. El instalador lo configura y la pestaña **Ajustes** muestra si está instalado.\n\nPulsa **INICIAR MOTOR** arriba a la derecha. La insignia cambia a **MOTOR ACTIVO**, aparece el mando virtual y tus botones M quedan interceptados.\n\nMientras el motor está **detenido**, los botones M escriben teclas reales en Windows y en los juegos — eso es lo que cambia un juego al modo teclado. Consejo: en **Ajustes** puedes iniciar el motor automáticamente y arrancar la aplicación con Windows.\n\nCerrar la ventana **no** sale de la aplicación: sigue funcionando en la **bandeja** abajo a la derecha. Clic derecho en el icono para detener el motor, cambiar de perfil o salir.",
   "guide_p6_title": "Paso 5 — Configura un botón",
@@ -246,5 +246,17 @@
   "tray_overlay": "Superposición",
   "tray_overlay_show": "Mostrar superposición",
   "tray_overlay_lock": "Bloquear posición (los clics la atraviesan)",
-  "tray_overlay_reset": "Restablecer posición"
+  "tray_overlay_reset": "Restablecer posición",
+"hidhide_cfg_label": "Mando oculto a los juegos",
+  "hidhide_cfg_desc": "Un clic autoriza esta aplicación en HidHide y oculta tu mando Razer al resto de programas, de modo que los juegos solo ven el mando virtual. Windows pide permisos de administrador una vez.",
+  "hidhide_cfg_checking": "comprobando…",
+  "hidhide_cfg_no_cli": "HidHideCLI.exe no encontrado",
+  "hidhide_cfg_no_pad": "no se detecta ningún mando Razer",
+  "hidhide_cfg_hidden": "oculto, aplicación autorizada",
+  "hidhide_cfg_cloak_off": "oculto pero HidHide está desactivado",
+  "hidhide_cfg_visible": "visible para los juegos",
+  "btn_hide_pad": "OCULTAR MI MANDO A LOS JUEGOS",
+  "btn_unhide_pad": "MOSTRAR",
+  "btn_hide_pad_now": "OCULTAR AHORA",
+  "hint_hidhide_v2": "Tu mando aún no está oculto a los juegos, así que verían tanto el mando físico como el virtual. Ocúltalo ahora (aviso de administrador) o más tarde en Ajustes > Controladores."
 }

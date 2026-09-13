@@ -832,6 +832,19 @@
                                             <TextBlock Text="{Binding [passthrough_is_off_the_sacrificed], Source={x:Static svc:L10n.I}}"
                                                        FontSize="11" FontWeight="Bold" Foreground="#F59E0B" TextWrapping="Wrap" Margin="0,6,0,0"
                                                        Visibility="{Binding DataContext.ShowPadModeWarning, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource BoolToVis}}"/>
+                                            <Grid Margin="0,6,0,0"
+                                                  Visibility="{Binding DataContext.ShowHidHideHint, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource BoolToVis}}">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                </Grid.ColumnDefinitions>
+                                                <TextBlock Text="{Binding [hint_hidhide_v2], Source={x:Static svc:L10n.I}}"
+                                                           FontSize="11" FontWeight="Bold" Foreground="#F59E0B" TextWrapping="Wrap" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                                                <Button Grid.Column="1" Content="{Binding [btn_hide_pad_now], Source={x:Static svc:L10n.I}}"
+                                                        Command="{Binding DataContext.HidePadCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                        IsEnabled="{Binding DataContext.CanConfigureHidHide, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                        Style="{StaticResource GhostButtonStyle}" VerticalAlignment="Center"/>
+                                            </Grid>
                                         </StackPanel>
                                     </StackPanel>
                                 </Border>
@@ -1267,6 +1280,7 @@
                                         <Grid.RowDefinitions>
                                             <RowDefinition Height="Auto"/>
                                             <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
                                         </Grid.RowDefinitions>
                                         <TextBlock Grid.Row="0" Grid.Column="0" Text="ViGEmBus" FontWeight="Bold" FontSize="12" VerticalAlignment="Center"/>
                                         <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding ViGEmStatusText}" FontSize="12" Foreground="#38BDF8" VerticalAlignment="Center"/>
@@ -1276,6 +1290,14 @@
                                         <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding HidHideStatusText}" FontSize="12" Foreground="#38BDF8" VerticalAlignment="Center" Margin="0,8,0,0"/>
                                         <TextBlock Grid.Row="1" Grid.Column="2" Text="{Binding [hidhide_desc], Source={x:Static svc:L10n.I}}" FontSize="11" Foreground="#94A3B8" TextWrapping="Wrap" VerticalAlignment="Center" Margin="0,8,12,0"/>
                                         <Button Grid.Row="1" Grid.Column="3" Content="{Binding [btn_download_page], Source={x:Static svc:L10n.I}}" Command="{Binding OpenHidHidePageCommand}" Style="{StaticResource GhostButtonStyle}" Margin="0,8,0,0"/>
+                                        <TextBlock Grid.Row="2" Grid.Column="0" Text="{Binding [hidhide_cfg_label], Source={x:Static svc:L10n.I}}" FontWeight="Bold" FontSize="12" TextWrapping="Wrap" VerticalAlignment="Center" Margin="0,8,0,0"/>
+                                        <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding HidHideConfigText}" FontSize="12" Foreground="#38BDF8" TextWrapping="Wrap" VerticalAlignment="Center" Margin="0,8,0,0"/>
+                                        <TextBlock Grid.Row="2" Grid.Column="2" Text="{Binding [hidhide_cfg_desc], Source={x:Static svc:L10n.I}}" FontSize="11" Foreground="#94A3B8" TextWrapping="Wrap" VerticalAlignment="Center" Margin="0,8,12,0"/>
+                                        <StackPanel Grid.Row="2" Grid.Column="3" Orientation="Horizontal" Margin="0,8,0,0" VerticalAlignment="Center">
+                                            <Button Content="{Binding [btn_hide_pad], Source={x:Static svc:L10n.I}}" Command="{Binding HidePadCommand}" IsEnabled="{Binding CanConfigureHidHide}" Style="{StaticResource GhostButtonStyle}"/>
+                                            <Button Content="{Binding [btn_unhide_pad], Source={x:Static svc:L10n.I}}" Command="{Binding UnhidePadCommand}" IsEnabled="{Binding CanConfigureHidHide}" Style="{StaticResource GhostButtonStyle}" Margin="6,0,0,0"
+                                                    Visibility="{Binding HidHideConfigured, Converter={StaticResource BoolToVis}}"/>
+                                        </StackPanel>
                                     </Grid>
                                 </StackPanel>
                             </Border>

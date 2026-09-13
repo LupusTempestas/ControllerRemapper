@@ -224,7 +224,7 @@
   "guide_p3_title": "Étape 2 — Razer Synapse (V3 Pro 8K)",
   "guide_p3_body": "1.  Ouvrez **Razer Synapse** et sélectionnez votre **Wolverine V3 Pro 8K**.\n2.  Ouvrez l'onglet **Personnaliser** et cliquez sur une palette, par exemple **M1**.\n3.  Choisissez **Fonction clavier** — pas un bouton de manette.\n4.  Choisissez une touche que vous n'utilisez jamais en jeu. Nous recommandons une valeur par défaut par palette :\n     **M1 = Arrêt défil (Scroll Lock)**,  **M2 = Pause**,  **M3 = Inser**,  **M4 = Début (Home)**,  **M5 = Page haut**,  **M6 = Page bas**.\n5.  Répétez pour chaque palette, puis vérifiez que le profil est **enregistré dans la manette** pour qu'il fonctionne même quand Synapse n'est pas au premier plan.\n\nVous préférez d'autres touches ? Aucun souci : dans cette application, cliquez sur **RÉASSIGNER LA TOUCHE** sur le bouton M et appuyez sur la touche choisie. L'application utilise simplement la touche qui arrive.",
   "guide_p4_title": "Étape 3 — Wolverine V2 uniquement",
-  "guide_p4_body": "Passez cette page si vous avez une V3 Pro 8K.\n\n1.  Dans **Razer Controller Setup for Xbox**, assignez chaque palette à un bouton de manette dont vous pouvez vous passer, par exemple **View**, **Menu**, **clic LS** ou **clic RS**.\n2.  Dans cette application, sélectionnez le bouton M et choisissez le même bouton sous **BOUTON SACRIFIÉ**. Ce bouton devient le déclencheur et ne fonctionne plus comme lui-même en jeu.\n3.  Activez **Passthrough** dans la barre de profil. L'application reflète alors toute votre manette dans la manette virtuelle, sans les boutons sacrifiés.\n4.  Installez **HidHide** (onglet Paramètres → PILOTES) et masquez la Wolverine physique, pour que le jeu ne voie que la **manette virtuelle**.",
+  "guide_p4_body": "Passez cette page si vous avez une V3 Pro 8K.\n\n1.  Dans **Razer Controller Setup for Xbox**, assignez chaque palette à un bouton de manette dont vous pouvez vous passer, par exemple **View**, **Menu**, **clic LS** ou **clic RS**.\n2.  Dans cette application, sélectionnez le bouton M et choisissez le même bouton sous **BOUTON SACRIFIÉ**. Ce bouton devient le déclencheur et ne fonctionne plus comme lui-même en jeu.\n3.  Activez **Passthrough** dans la barre de profil. L'application reflète alors toute votre manette dans la manette virtuelle, sans les boutons sacrifiés.\n4.  Masquez la Wolverine physique pour que le jeu ne voie que la **manette virtuelle** : dans l’onglet Paramètres → PILOTES, cliquez **MASQUER MA MANETTE AUX JEUX** (HidHide doit être installé, l’installateur le propose).",
   "guide_p5_title": "Étape 4 — Pilote et moteur",
   "guide_p5_body": "La manette virtuelle est créée par le pilote **ViGEmBus**. L'installateur s'en charge, et l'onglet **Paramètres** indique s'il est installé.\n\nAppuyez sur **DÉMARRER LE MOTEUR** en haut à droite. Le badge passe à **MOTEUR ACTIF**, la manette virtuelle apparaît et vos boutons M sont désormais interceptés.\n\nTant que le moteur est **arrêté**, les boutons M tapent de vraies touches dans Windows et les jeux — c'est ce qui fait basculer un jeu en mode clavier. Astuce : dans **Paramètres**, vous pouvez démarrer le moteur automatiquement et lancer l'application avec Windows.\n\nFermer la fenêtre ne quitte **pas** : l'application continue dans la **zone de notification** en bas à droite. Clic droit sur l'icône pour arrêter le moteur, changer de profil ou quitter.",
   "guide_p6_title": "Étape 5 — Configurez un bouton",
@@ -246,5 +246,17 @@
   "tray_overlay": "Overlay",
   "tray_overlay_show": "Afficher l'overlay",
   "tray_overlay_lock": "Verrouiller la position (clics traversants)",
-  "tray_overlay_reset": "Réinitialiser la position"
+  "tray_overlay_reset": "Réinitialiser la position",
+"hidhide_cfg_label": "Manette masquée aux jeux",
+  "hidhide_cfg_desc": "Un clic autorise cette application dans HidHide et masque votre manette Razer à tous les autres programmes : les jeux ne voient que la manette virtuelle. Windows demande les droits administrateur une fois.",
+  "hidhide_cfg_checking": "vérification…",
+  "hidhide_cfg_no_cli": "HidHideCLI.exe introuvable",
+  "hidhide_cfg_no_pad": "aucune manette Razer détectée",
+  "hidhide_cfg_hidden": "masquée, application autorisée",
+  "hidhide_cfg_cloak_off": "masquée mais HidHide est désactivé",
+  "hidhide_cfg_visible": "visible par les jeux",
+  "btn_hide_pad": "MASQUER MA MANETTE AUX JEUX",
+  "btn_unhide_pad": "RÉAFFICHER",
+  "btn_hide_pad_now": "MASQUER MAINTENANT",
+  "hint_hidhide_v2": "Votre manette n'est pas encore masquée aux jeux : ils verraient à la fois la manette physique et la virtuelle. Masquez-la maintenant (invite administrateur) ou plus tard dans Paramètres > Pilotes."
 }

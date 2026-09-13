@@ -30,6 +30,8 @@ namespace WolverineRemapper.Models
         public bool CheckUpdatesAtStartup { get; set; } = true;
         /// <summary>First-run guide has been shown (or dismissed).</summary>
         public bool TutorialSeen { get; set; } = false;
+        /// <summary>Controller mode for new profiles (set by the installer question; changeable in the app).</summary>
+        public ControllerModel PreferredControllerModel { get; set; } = ControllerModel.WolverineV3Pro8K;
         /// <summary>See-through live controller overlay.</summary>
         public bool OverlayVisible { get; set; } = false;
         public bool OverlayLocked { get; set; } = false;

@@ -224,7 +224,7 @@
   "guide_p3_title": "Stap 2 — Razer Synapse (V3 Pro 8K)",
   "guide_p3_body": "1.  Open **Razer Synapse** en selecteer je **Wolverine V3 Pro 8K**.\n2.  Open het tabblad **Aanpassen** en klik op een paddle, bijvoorbeeld **M1**.\n3.  Kies **Toetsenbordfunctie** — geen controllerknop.\n4.  Kies een toets die je tijdens het spelen nooit gebruikt. We raden per paddle een standaard aan:\n     **M1 = Scroll Lock**,  **M2 = Pause**,  **M3 = Insert**,  **M4 = Home**,  **M5 = Page Up**,  **M6 = Page Down**.\n5.  Herhaal dit voor elke paddle en zorg dat het profiel **in de controller is opgeslagen**, zodat het ook werkt als Synapse niet op de voorgrond staat.\n\nLiever andere toetsen? Geen probleem: klik in deze app op **TOETS OPNIEUW TOEWIJZEN** bij de M-knop en druk op de gekozen toets. De app gebruikt gewoon de toets die binnenkomt.",
   "guide_p4_title": "Stap 3 — Alleen Wolverine V2",
-  "guide_p4_body": "Sla deze pagina over als je een V3 Pro 8K hebt.\n\n1.  Koppel in **Razer Controller Setup for Xbox** elke paddle aan een controllerknop die je kunt missen, bijvoorbeeld **View**, **Menu**, **LS-klik** of **RS-klik**.\n2.  Selecteer in deze app de M-knop en kies dezelfde knop onder **OPGEOFFERDE KNOP**. Die knop is nu de trigger en werkt in games niet meer als zichzelf.\n3.  Zet **Passthrough** aan in de profielbalk. De app spiegelt dan je hele controller in de virtuele controller, zonder de opgeofferde knoppen.\n4.  Installeer **HidHide** (tabblad Instellingen → STUURPROGRAMMA'S) en verberg de fysieke Wolverine, zodat de game alleen de **virtuele controller** ziet.",
+  "guide_p4_body": "Sla deze pagina over als je een V3 Pro 8K hebt.\n\n1.  Koppel in **Razer Controller Setup for Xbox** elke paddle aan een controllerknop die je kunt missen, bijvoorbeeld **View**, **Menu**, **LS-klik** of **RS-klik**.\n2.  Selecteer in deze app de M-knop en kies dezelfde knop onder **OPGEOFFERDE KNOP**. Die knop is nu de trigger en werkt in games niet meer als zichzelf.\n3.  Zet **Passthrough** aan in de profielbalk. De app spiegelt dan je hele controller in de virtuele controller, zonder de opgeofferde knoppen.\n4.  Verberg de fysieke Wolverine zodat de game alleen de **virtuele controller** ziet: klik in het tabblad Instellingen → STUURPROGRAMMA'S op **MIJN PAD VERBERGEN VOOR GAMES** (HidHide moet geïnstalleerd zijn, de installer biedt het aan).",
   "guide_p5_title": "Stap 4 — Stuurprogramma en engine",
   "guide_p5_body": "De virtuele controller wordt gemaakt door het **ViGEmBus**-stuurprogramma. Het installatieprogramma regelt dit en het tabblad **Instellingen** toont of het geïnstalleerd is.\n\nDruk rechtsboven op **ENGINE STARTEN**. De badge wordt **ENGINE ACTIEF**, de virtuele controller verschijnt en je M-knoppen worden vanaf nu onderschept.\n\nZolang de engine **gestopt** is, typen de M-knoppen echte toetsen in Windows en games — dat is wat een game naar de toetsenbordmodus schakelt. Tip: in **Instellingen** kun je de engine automatisch starten en de app met Windows laten starten.\n\nHet venster sluiten sluit de app **niet** af: hij blijft draaien in het **systeemvak** rechtsonder. Klik met rechts op het pictogram om de engine te stoppen, van profiel te wisselen of af te sluiten.",
   "guide_p6_title": "Stap 5 — Een knop instellen",
@@ -246,5 +246,17 @@
   "tray_overlay": "Overlay",
   "tray_overlay_show": "Overlay tonen",
   "tray_overlay_lock": "Positie vergrendelen (klik gaat erdoorheen)",
-  "tray_overlay_reset": "Positie resetten"
+  "tray_overlay_reset": "Positie resetten",
+"hidhide_cfg_label": "Pad verborgen voor games",
+  "hidhide_cfg_desc": "Eén klik zet deze app op de HidHide-witte lijst en verbergt je Razer-pad voor alle andere programma's, zodat games alleen de virtuele pad zien. Windows vraagt één keer om beheerdersrechten.",
+  "hidhide_cfg_checking": "controleren…",
+  "hidhide_cfg_no_cli": "HidHideCLI.exe niet gevonden",
+  "hidhide_cfg_no_pad": "geen Razer-controller gevonden",
+  "hidhide_cfg_hidden": "verborgen, app toegestaan",
+  "hidhide_cfg_cloak_off": "verborgen, maar HidHide staat uit",
+  "hidhide_cfg_visible": "zichtbaar voor games",
+  "btn_hide_pad": "MIJN PAD VERBERGEN VOOR GAMES",
+  "btn_unhide_pad": "WEER TONEN",
+  "btn_hide_pad_now": "NU VERBERGEN",
+  "hint_hidhide_v2": "Je controller is nog niet verborgen voor games, dus die zouden zowel de fysieke als de virtuele pad zien. Verberg hem nu (beheerdersprompt) of later via Instellingen > Stuurprogramma's."
 }

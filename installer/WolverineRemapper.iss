@@ -93,6 +93,37 @@ dutch.HidHideTask=HidHide-stuurprogramma installeren (alleen voor de Wolverine V
 dutch.InstallingViGEm=ViGEmBus-stuurprogramma wordt geïnstalleerd...
 dutch.InstallingHidHide=HidHide-stuurprogramma wordt geïnstalleerd...
 
+english.CtrlTitle=Which controller do you have?
+english.CtrlSub=The choice sets up the app and picks the drivers you need.
+english.CtrlPrompt=You can change this later in the app. "Not sure" installs everything.
+english.CtrlV3=Razer Wolverine V3 Pro 8K (PC edition, Synapse 4)
+english.CtrlV2=Razer Wolverine V2 / V2 Chroma / V2 Pro (needs HidHide)
+english.CtrlUnsure=Not sure, or both
+french.CtrlTitle=Quelle manette avez-vous ?
+french.CtrlSub=Ce choix configure l'application et sélectionne les pilotes nécessaires.
+french.CtrlPrompt=Modifiable plus tard dans l'application. « Je ne sais pas » installe tout.
+french.CtrlV3=Razer Wolverine V3 Pro 8K (édition PC, Synapse 4)
+french.CtrlV2=Razer Wolverine V2 / V2 Chroma / V2 Pro (nécessite HidHide)
+french.CtrlUnsure=Je ne sais pas, ou les deux
+german.CtrlTitle=Welchen Controller hast du?
+german.CtrlSub=Die Wahl richtet die App ein und wählt die nötigen Treiber.
+german.CtrlPrompt=Später in der App änderbar. „Nicht sicher" installiert alles.
+german.CtrlV3=Razer Wolverine V3 Pro 8K (PC-Edition, Synapse 4)
+german.CtrlV2=Razer Wolverine V2 / V2 Chroma / V2 Pro (braucht HidHide)
+german.CtrlUnsure=Nicht sicher, oder beide
+spanish.CtrlTitle=¿Qué mando tienes?
+spanish.CtrlSub=La elección configura la aplicación y elige los controladores necesarios.
+spanish.CtrlPrompt=Se puede cambiar después en la aplicación. «No estoy seguro» lo instala todo.
+spanish.CtrlV3=Razer Wolverine V3 Pro 8K (edición PC, Synapse 4)
+spanish.CtrlV2=Razer Wolverine V2 / V2 Chroma / V2 Pro (necesita HidHide)
+spanish.CtrlUnsure=No estoy seguro, o ambos
+dutch.CtrlTitle=Welke controller heb je?
+dutch.CtrlSub=De keuze stelt de app in en kiest de benodigde stuurprogramma's.
+dutch.CtrlPrompt=Later te wijzigen in de app. "Weet ik niet" installeert alles.
+dutch.CtrlV3=Razer Wolverine V3 Pro 8K (pc-editie, Synapse 4)
+dutch.CtrlV2=Razer Wolverine V2 / V2 Chroma / V2 Pro (heeft HidHide nodig)
+dutch.CtrlUnsure=Weet ik niet, of allebei
+
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"
 Name: "startup";     Description: "{cm:StartupTask}";       GroupDescription: "{cm:StartupGroup}"
@@ -117,8 +148,9 @@ Filename: "{tmp}\HidHide_Setup.exe";  Parameters: "/quiet /norestart"; StatusMsg
 ; writes it itself as the ORIGINAL user (runasoriginaluser) — the same code path
 ; the Settings tab and the tray toggle use.
 Filename: "{app}\{#AppExe}"; Parameters: "--enable-startup"; Tasks: startup; Flags: runasoriginaluser waituntilterminated
-; The language picked on the installer's first screen becomes the app's UI language.
-Filename: "{app}\{#AppExe}"; Parameters: "--set-language={language}"; Flags: runasoriginaluser waituntilterminated
+; The language picked on the installer's first screen becomes the app's UI language,
+; and the controller answer becomes the default controller mode of new profiles.
+Filename: "{app}\{#AppExe}"; Parameters: "--set-language={language} --set-controller={code:ControllerCode}"; Flags: runasoriginaluser waituntilterminated
 Filename: "{app}\{#AppExe}"; Description: "{cm:LaunchProgram,{#AppName}}"; Flags: nowait postinstall skipifsilent
 
 [UninstallRun]
@@ -128,6 +160,9 @@ Filename: "{app}\{#AppExe}"; Parameters: "--disable-startup"; RunOnceId: "Disabl
 Type: filesandordirs; Name: "{app}"
 
 [Code]
+var
+  ControllerPage: TInputOptionWizardPage;
+
 function ViGEmInstalled: Boolean;
 begin
   Result := RegKeyExists(HKLM, 'SYSTEM\CurrentControlSet\Services\ViGEmBus');
@@ -136,4 +171,37 @@ end;
 function HidHideInstalled: Boolean;
 begin
   Result := RegKeyExists(HKLM, 'SYSTEM\CurrentControlSet\Services\HidHide');
+end;
+
+{ "Which controller do you have?" page, right after Welcome. }
+procedure InitializeWizard;
+begin
+  ControllerPage := CreateInputOptionPage(wpWelcome,
+    CustomMessage('CtrlTitle'), CustomMessage('CtrlSub'), CustomMessage('CtrlPrompt'), True, False);
+  ControllerPage.Add(CustomMessage('CtrlV3'));
+  ControllerPage.Add(CustomMessage('CtrlV2'));
+  ControllerPage.Add(CustomMessage('CtrlUnsure'));
+  ControllerPage.SelectedValueIndex := 0;
+end;
+
+{ V2 and "not sure" need HidHide; a V3 Pro 8K does not. }
+function NeedsHidHide: Boolean;
+begin
+  Result := ControllerPage.SelectedValueIndex <> 0;
+end;
+
+{ Passed to the app so new profiles start in the right controller mode. }
+function ControllerCode(Param: String): String;
+begin
+  if ControllerPage.SelectedValueIndex = 1 then Result := 'v2' else Result := 'v3';
+end;
+
+procedure CurPageChanged(CurPageID: Integer);
+var
+  i: Integer;
+begin
+  if CurPageID = wpSelectTasks then
+    for i := 0 to WizardForm.TasksList.Items.Count - 1 do
+      if Pos('HidHide', WizardForm.TasksList.ItemCaption[i]) > 0 then
+        WizardForm.TasksList.Checked[i] := NeedsHidHide;
 end;

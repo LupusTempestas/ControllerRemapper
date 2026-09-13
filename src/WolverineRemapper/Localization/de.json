@@ -224,7 +224,7 @@
   "guide_p3_title": "Schritt 2 — Razer Synapse (V3 Pro 8K)",
   "guide_p3_body": "1.  Öffne **Razer Synapse** und wähle deinen **Wolverine V3 Pro 8K**.\n2.  Öffne den Tab **Anpassen** und klicke auf ein Paddle, zum Beispiel **M1**.\n3.  Wähle **Tastaturfunktion** — keine Controllertaste.\n4.  Nimm eine Taste, die du beim Spielen nie benutzt. Wir empfehlen pro Paddle eine Standardtaste:\n     **M1 = Rollen (Scroll Lock)**,  **M2 = Pause**,  **M3 = Einfg**,  **M4 = Pos1 (Home)**,  **M5 = Bild auf**,  **M6 = Bild ab**.\n5.  Wiederhole das für jedes Paddle und stelle sicher, dass das Profil **im Controller gespeichert** ist, damit es auch funktioniert, wenn Synapse nicht im Vordergrund ist.\n\nLieber andere Tasten? Kein Problem: klicke in dieser App bei der M-Taste auf **TASTE NEU BELEGEN** und drücke die gewählte Taste. Die App nimmt einfach die Taste, die ankommt.",
   "guide_p4_title": "Schritt 3 — nur Wolverine V2",
-  "guide_p4_body": "Überspringe diese Seite, wenn du einen V3 Pro 8K hast.\n\n1.  Lege in **Razer Controller Setup for Xbox** jedes Paddle auf eine Controllertaste, die du entbehren kannst, zum Beispiel **View**, **Menu**, **LS-Klick** oder **RS-Klick**.\n2.  Wähle in dieser App die M-Taste und dieselbe Taste unter **GEOPFERTE TASTE**. Diese Taste ist jetzt der Auslöser und funktioniert im Spiel nicht mehr als sie selbst.\n3.  Schalte **Passthrough** in der Profilleiste ein. Die App spiegelt dann deinen ganzen Controller in den virtuellen, ohne die geopferten Tasten.\n4.  Installiere **HidHide** (Tab Einstellungen → TREIBER) und verstecke den physischen Wolverine, damit das Spiel nur den **virtuellen Controller** sieht.",
+  "guide_p4_body": "Überspringe diese Seite, wenn du einen V3 Pro 8K hast.\n\n1.  Lege in **Razer Controller Setup for Xbox** jedes Paddle auf eine Controllertaste, die du entbehren kannst, zum Beispiel **View**, **Menu**, **LS-Klick** oder **RS-Klick**.\n2.  Wähle in dieser App die M-Taste und dieselbe Taste unter **GEOPFERTE TASTE**. Diese Taste ist jetzt der Auslöser und funktioniert im Spiel nicht mehr als sie selbst.\n3.  Schalte **Passthrough** in der Profilleiste ein. Die App spiegelt dann deinen ganzen Controller in den virtuellen, ohne die geopferten Tasten.\n4.  Verstecke den physischen Wolverine, damit das Spiel nur den **virtuellen Controller** sieht: im Tab Einstellungen → TREIBER auf **MEIN PAD VOR SPIELEN VERSTECKEN** klicken (HidHide muss installiert sein, der Installer bietet es an).",
   "guide_p5_title": "Schritt 4 — Treiber und Engine",
   "guide_p5_body": "Der virtuelle Controller wird vom **ViGEmBus**-Treiber erzeugt. Der Installer richtet ihn ein, und der Tab **Einstellungen** zeigt, ob er installiert ist.\n\nDrücke oben rechts auf **ENGINE STARTEN**. Das Badge wechselt zu **ENGINE AKTIV**, der virtuelle Controller erscheint und deine M-Tasten werden ab jetzt abgefangen.\n\nSolange die Engine **gestoppt** ist, tippen die M-Tasten echte Tasten in Windows und Spiele — genau das schaltet ein Spiel in den Tastaturmodus. Tipp: in den **Einstellungen** kannst du die Engine automatisch starten und die App mit Windows starten lassen.\n\nDas Fenster zu schließen beendet die App **nicht**: sie läuft im **Infobereich** unten rechts weiter. Rechtsklick auf das Symbol, um die Engine zu stoppen, das Profil zu wechseln oder zu beenden.",
   "guide_p6_title": "Schritt 5 — Eine Taste konfigurieren",
@@ -246,5 +246,17 @@
   "tray_overlay": "Overlay",
   "tray_overlay_show": "Overlay anzeigen",
   "tray_overlay_lock": "Position sperren (durchklickbar)",
-  "tray_overlay_reset": "Position zurücksetzen"
+  "tray_overlay_reset": "Position zurücksetzen",
+"hidhide_cfg_label": "Pad vor Spielen versteckt",
+  "hidhide_cfg_desc": "Ein Klick trägt diese App in HidHide ein und versteckt dein Razer-Pad vor allen anderen Programmen, sodass Spiele nur das virtuelle Pad sehen. Windows fragt einmal nach Administratorrechten.",
+  "hidhide_cfg_checking": "wird geprüft…",
+  "hidhide_cfg_no_cli": "HidHideCLI.exe nicht gefunden",
+  "hidhide_cfg_no_pad": "kein Razer-Controller erkannt",
+  "hidhide_cfg_hidden": "versteckt, App erlaubt",
+  "hidhide_cfg_cloak_off": "versteckt, aber HidHide ist ausgeschaltet",
+  "hidhide_cfg_visible": "für Spiele sichtbar",
+  "btn_hide_pad": "MEIN PAD VOR SPIELEN VERSTECKEN",
+  "btn_unhide_pad": "WIEDER ANZEIGEN",
+  "btn_hide_pad_now": "JETZT VERSTECKEN",
+  "hint_hidhide_v2": "Dein Controller ist noch nicht vor Spielen versteckt, sie würden das physische und das virtuelle Pad sehen. Verstecke ihn jetzt (Admin-Abfrage) oder später unter Einstellungen > Treiber."
 }

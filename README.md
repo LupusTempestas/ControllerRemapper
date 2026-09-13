@@ -21,9 +21,11 @@ Pick your controller in the dropdown at the top left:
 
 Two flavours on the [latest release](https://github.com/LupusTempestas/ControllerRemapper/releases/latest):
 
-- **`WolverineRemapper-Setup-x.y.z.exe`** — the installer. Offers a desktop
-  shortcut, *Start with Windows*, and installs the **ViGEmBus** driver for you
-  (plus **HidHide** if you tick it, for Wolverine V2). Adds an uninstaller.
+- **`WolverineRemapper-Setup-x.y.z.exe`** — the installer. Asks which controller
+  you have (V3 Pro 8K, V2 family, or not sure), offers a desktop shortcut and
+  *Start with Windows*, and installs the **ViGEmBus** driver for you (plus
+  **HidHide** for the V2 family; "not sure" installs both). New profiles start in
+  the mode you picked. Adds an uninstaller.
 - **`WolverineRemapper-x.y.z-portable.exe`** — a single self-contained file, no
   install. You must install [ViGEmBus](https://github.com/nefarius/ViGEmBus/releases)
   yourself once.
@@ -128,9 +130,14 @@ that the paddle mirrors. That button is no longer usable in-game.
 2. In **Razer Controller Setup for Xbox**, map each paddle to the button you chose.
 3. Turn **Passthrough** on. The app mirrors the physical pad into the virtual pad
    with the sacrificed buttons removed, so the game only ever sees the combo.
-4. Install [HidHide](https://github.com/nefarius/HidHide/releases), hide the
-   physical Wolverine, and whitelist `WolverineRemapper.exe`. Without it the game
-   still receives the raw paddle press from the physical pad.
+4. Hide the physical Wolverine from games: open **Settings → Drivers** and click
+   **HIDE MY PAD FROM GAMES**. One admin prompt later, HidHide whitelists
+   `WolverineRemapper.exe` and hides every Razer HID device, so only the virtual
+   pad is visible. **UNHIDE** reverts it. (HidHide itself comes with the installer
+   when you pick the V2 family; the portable build needs it from
+   [nefarius/HidHide](https://github.com/nefarius/HidHide/releases).) Without it
+   the game still receives the raw paddle press from the physical pad.
+   The M-button panel shows a **HIDE IT NOW** shortcut while the pad is visible.
 5. Press **START ENGINE** and play. The virtual pad is the only controller the
    game sees, carrying your sticks, buttons and combos.
 

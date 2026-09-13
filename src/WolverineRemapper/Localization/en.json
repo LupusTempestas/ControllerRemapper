@@ -224,7 +224,7 @@
   "guide_p3_title": "Step 2 — Razer Synapse (V3 Pro 8K)",
   "guide_p3_body": "1.  Open **Razer Synapse** and select your **Wolverine V3 Pro 8K**.\n2.  Open the **Customize** tab and click a paddle, for example **M1**.\n3.  Choose **Keyboard Function** — not a controller button.\n4.  Pick a key you never use while playing. We recommend one default per paddle:\n     **M1 = Scroll Lock**,  **M2 = Pause**,  **M3 = Insert**,  **M4 = Home**,  **M5 = Page Up**,  **M6 = Page Down**.\n5.  Repeat for every paddle, then make sure the profile is **saved to the controller** so it keeps working when Synapse is not in front.\n\nPrefer other keys? No problem: in this app click **REBIND KEY** on the M-button and press the key you chose. The app simply uses whatever key arrives.",
   "guide_p4_title": "Step 3 — Wolverine V2 only",
-  "guide_p4_body": "Skip this page if you have a V3 Pro 8K.\n\n1.  In **Razer Controller Setup for Xbox**, map each paddle to a pad button you can spare, for example **View**, **Menu**, **LS click** or **RS click**.\n2.  In this app, select the M-button and pick the same button under **SACRIFICED BUTTON**. That button is now the trigger and no longer works as itself in games.\n3.  Turn **Passthrough** on in the profile bar. The app then mirrors your whole pad into the virtual controller, with the sacrificed buttons removed.\n4.  Install **HidHide** (Settings tab → DRIVERS) and hide the physical Wolverine, so the game only sees the **virtual controller**.",
+  "guide_p4_body": "Skip this page if you have a V3 Pro 8K.\n\n1.  In **Razer Controller Setup for Xbox**, map each paddle to a pad button you can spare, for example **View**, **Menu**, **LS click** or **RS click**.\n2.  In this app, select the M-button and pick the same button under **SACRIFICED BUTTON**. That button is now the trigger and no longer works as itself in games.\n3.  Turn **Passthrough** on in the profile bar. The app then mirrors your whole pad into the virtual controller, with the sacrificed buttons removed.\n4.  Hide the physical Wolverine so the game only sees the **virtual controller**: in the Settings tab → DRIVERS click **HIDE MY PAD FROM GAMES** (HidHide must be installed, the installer offers it).",
   "guide_p5_title": "Step 4 — Driver and engine",
   "guide_p5_body": "The virtual controller is created by the **ViGEmBus** driver. The installer sets it up, and the **Settings** tab shows whether it is installed.\n\nPress **START ENGINE** at the top right. The badge turns **ENGINE ONLINE**, the virtual controller appears, and your M-buttons are now intercepted.\n\nWhile the engine is **stopped**, the M-buttons type real keys into Windows and games — that is what flips a game to keyboard mode. Tip: in **Settings** you can start the engine automatically and start the app with Windows.\n\nClosing the window does **not** quit: the app keeps running in the **tray** at the bottom right. Right-click the tray icon to stop the engine, switch profile, or quit.",
   "guide_p6_title": "Step 5 — Configure a button",
@@ -246,5 +246,17 @@
   "tray_overlay": "Overlay",
   "tray_overlay_show": "Show overlay",
   "tray_overlay_lock": "Lock position (click-through)",
-  "tray_overlay_reset": "Reset position"
+  "tray_overlay_reset": "Reset position",
+"hidhide_cfg_label": "Pad hidden from games",
+  "hidhide_cfg_desc": "One click whitelists this app in HidHide and hides your Razer pad from every other program, so games only see the virtual pad. Windows asks for admin rights once.",
+  "hidhide_cfg_checking": "checking…",
+  "hidhide_cfg_no_cli": "HidHideCLI.exe not found",
+  "hidhide_cfg_no_pad": "no Razer controller detected",
+  "hidhide_cfg_hidden": "hidden, app allowed",
+  "hidhide_cfg_cloak_off": "hidden but HidHide is switched off",
+  "hidhide_cfg_visible": "visible to games",
+  "btn_hide_pad": "HIDE MY PAD FROM GAMES",
+  "btn_unhide_pad": "UNHIDE",
+  "btn_hide_pad_now": "HIDE IT NOW",
+  "hint_hidhide_v2": "Your controller is not hidden from games yet, so they would see both the physical and the virtual pad. Hide it now (admin prompt) or do it later from Settings > Drivers."
 }

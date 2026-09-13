@@ -46,6 +46,8 @@ namespace WolverineRemapper.ViewModels
             OpenViGEmPageCommand = new RelayCommand(_ => OpenUrl(DriverCheck.ViGEmBusUrl));
             OpenHidHidePageCommand = new RelayCommand(_ => OpenUrl(DriverCheck.HidHideUrl));
             RefreshDriversCommand = new RelayCommand(_ => RefreshDriverStatus());
+            HidePadCommand = new RelayCommand(_ => _ = ConfigureHidHideAsync(hide: true));
+            UnhidePadCommand = new RelayCommand(_ => _ = ConfigureHidHideAsync(hide: false));
             SelectMButtonCommand = new RelayCommand(SelectMButton);
             RebindCommand = new RelayCommand(BeginRebind);
             CancelCaptureCommand = new RelayCommand(_ => _engine.CancelCapture());
@@ -92,6 +94,7 @@ namespace WolverineRemapper.ViewModels
             _pollTimer.Start();
 
             if (_settings.CheckUpdatesAtStartup) _ = CheckForUpdatesAsync(silent: true);
+            _ = RefreshHidHideAsync();
         }
 
         #region Collections
@@ -273,7 +276,73 @@ namespace WolverineRemapper.ViewModels
         {
             OnPropertyChanged(nameof(ViGEmStatusText));
             OnPropertyChanged(nameof(HidHideStatusText));
+            _ = RefreshHidHideAsync();
         }
+
+        #region HidHide configuration (V2: hide the physical pad from games)
+
+        private HidHideStatus? _hidHide;
+        private bool _hidHideBusy;
+
+        /// <summary>HidHide CLI queries spawn processes, so they run off the UI thread.</summary>
+        private async System.Threading.Tasks.Task RefreshHidHideAsync()
+        {
+            try { _hidHide = await System.Threading.Tasks.Task.Run(HidHideService.Query); }
+            catch (Exception ex) { AddLog($"[!] HidHide query failed: {ex.Message}"); }
+            NotifyHidHide();
+        }
+
+        private void NotifyHidHide()
+        {
+            OnPropertyChanged(nameof(HidHideConfigText));
+            OnPropertyChanged(nameof(HidHideConfigured));
+            OnPropertyChanged(nameof(CanConfigureHidHide));
+            OnPropertyChanged(nameof(ShowHidHideHint));
+        }
+
+        public bool HidHideConfigured => _hidHide?.Configured == true;
+        public bool CanConfigureHidHide => !_hidHideBusy && _hidHide is { Installed: true, CliFound: true };
+        /// <summary>V2 pad-button mode without the pad hidden: games would see both pads.</summary>
+        public bool ShowHidHideHint => IsPadTriggerMode && _hidHide != null && !_hidHide.Configured;
+
+        public string HidHideConfigText
+        {
+            get
+            {
+                var h = _hidHide;
+                if (h == null) return L10n.I.T("hidhide_cfg_checking");
+                if (!h.Installed) return "✕ " + L10n.I.T("driver_missing");
+                if (!h.CliFound) return "✕ " + L10n.I.T("hidhide_cfg_no_cli");
+                if (h.Error != null) return "✕ " + h.Error;
+                if (h.PadPaths.Count == 0) return "– " + L10n.I.T("hidhide_cfg_no_pad");
+                if (h.Configured) return "✓ " + L10n.I.T("hidhide_cfg_hidden");
+                if (h.HiddenPadPaths.Count > 0 && !h.CloakOn) return "✕ " + L10n.I.T("hidhide_cfg_cloak_off");
+                return "✕ " + L10n.I.T("hidhide_cfg_visible");
+            }
+        }
+
+        private async System.Threading.Tasks.Task ConfigureHidHideAsync(bool hide)
+        {
+            if (_hidHideBusy) return;
+            _hidHideBusy = true;
+            OnPropertyChanged(nameof(CanConfigureHidHide));
+            try
+            {
+                AddLog(hide ? "[*] HidHide: whitelisting this app and hiding the Razer pad (admin prompt)…"
+                            : "[*] HidHide: unhiding the Razer pad (admin prompt)…");
+                string? err = hide ? await HidHideService.HidePadAsync() : await HidHideService.UnhidePadAsync();
+                if (err != null) AddLog($"[!] HidHide: {err}");
+                else AddLog(hide ? "[+] HidHide: pad hidden from games. Restart the game if it is already running."
+                                 : "[+] HidHide: pad visible to games again.");
+            }
+            finally
+            {
+                _hidHideBusy = false;
+                await RefreshHidHideAsync();
+            }
+        }
+
+        #endregion
 
         private static void OpenUrl(string url)
         {
@@ -363,6 +432,7 @@ namespace WolverineRemapper.ViewModels
                 OnPropertyChanged();
                 OnPropertyChanged(nameof(IsPadTriggerMode));
                 OnPropertyChanged(nameof(ShowPadModeWarning));
+                OnPropertyChanged(nameof(ShowHidHideHint));
 
                 if (_suppressDirty) return; // profile load: configs already carry their source
 
@@ -402,6 +472,7 @@ namespace WolverineRemapper.ViewModels
             OnPropertyChanged(nameof(SelectedControllerModel));
             OnPropertyChanged(nameof(IsPadTriggerMode));
             OnPropertyChanged(nameof(ShowPadModeWarning));
+            OnPropertyChanged(nameof(ShowHidHideHint));
         }
 
         /// <summary>
@@ -1203,7 +1274,9 @@ namespace WolverineRemapper.ViewModels
             MButtons.Add(new MButtonConfig { MButtonName = "M5", VkCode = 0x21, KeyDisplayName = "PageUp", LT = true, X = true });
             MButtons.Add(new MButtonConfig { MButtonName = "M6", VkCode = 0x22, KeyDisplayName = "PageDown", LB = true, RB = true, Y = true });
 
-            SetControllerModelSilent(ControllerModel.WolverineV3Pro8K);
+            // New/default profiles start in the mode chosen at install time.
+            SetControllerModelSilent(_settings.PreferredControllerModel);
+            ApplyControllerModelToButtons(assignDefaultSacrifices: true);
             SelectedMButton = MButtons.FirstOrDefault();
             _engine.SetMappings(MButtons);
             }
@@ -1591,6 +1664,8 @@ namespace WolverineRemapper.ViewModels
         public ICommand OpenViGEmPageCommand { get; }
         public ICommand OpenHidHidePageCommand { get; }
         public ICommand RefreshDriversCommand { get; }
+        public ICommand HidePadCommand { get; }
+        public ICommand UnhidePadCommand { get; }
         public ICommand SelectMButtonCommand { get; }
         public ICommand RebindCommand { get; }
         public ICommand CancelCaptureCommand { get; }
