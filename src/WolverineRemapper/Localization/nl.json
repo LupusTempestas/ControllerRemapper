@@ -258,5 +258,12 @@
   "btn_hide_pad": "MIJN PAD VERBERGEN VOOR GAMES",
   "btn_unhide_pad": "WEER TONEN",
   "btn_hide_pad_now": "NU VERBERGEN",
-  "hint_hidhide_v2": "Je controller is nog niet verborgen voor games, dus die zouden zowel de fysieke als de virtuele pad zien. Verberg hem nu (beheerdersprompt) of later via Instellingen > Stuurprogramma's."
+  "hint_hidhide_v2": "Je controller is nog niet verborgen voor games, dus die zouden zowel de fysieke als de virtuele pad zien. Verberg hem nu (beheerdersprompt) of later via Instellingen > Stuurprogramma's.",
+"device_v2_detected": "Er is een Wolverine V2 aangesloten, maar dit profiel staat in V3 Pro 8K-modus (toetsenbordtriggers). De V2 kan geen toetsen sturen, zet het profiel dus op V2-modus (opgeofferde padknoppen).",
+  "device_v3_detected": "Er is een Wolverine V3 Pro 8K aangesloten, maar dit profiel staat in V2-modus (opgeofferde padknoppen). De V3 kan combo's via toetsenbordtoetsen triggeren en houdt alle knoppen. Profiel op V3-modus zetten?",
+  "device_hidhide_missing": "Dit profiel staat in V2-modus, maar HidHide is niet geïnstalleerd, dus games zouden de fysieke pad nog steeds zien. Nu installeren? Dit downloadt de officiële installer, vraagt beheerdersrechten en vereist mogelijk een herstart.",
+  "btn_switch_v2": "NAAR V2-MODUS",
+  "btn_switch_v3": "NAAR V3-MODUS",
+  "btn_install_hidhide": "HIDHIDE INSTALLEREN",
+  "btn_dismiss": "NEGEREN"
 }

@@ -23,6 +23,41 @@ namespace WolverineRemapper
             Loaded += OnWindowLoaded;
         }
 
+        #region Device arrival (WM_DEVICECHANGE) → controller-mode / HidHide suggestions
+
+        private const int WM_DEVICECHANGE = 0x0219;
+        private const int DBT_DEVNODES_CHANGED = 0x0007;
+        private System.Windows.Threading.DispatcherTimer? _deviceDebounce;
+
+        protected override void OnSourceInitialized(EventArgs e)
+        {
+            base.OnSourceInitialized(e);
+            if (System.Windows.Interop.HwndSource.FromHwnd(new System.Windows.Interop.WindowInteropHelper(this).Handle) is { } src)
+                src.AddHook(WndProc);
+        }
+
+        private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
+        {
+            // Plug/unplug storms arrive as several notifications; scan once they settle.
+            if (msg == WM_DEVICECHANGE && wParam.ToInt32() == DBT_DEVNODES_CHANGED)
+            {
+                _deviceDebounce ??= new System.Windows.Threading.DispatcherTimer { Interval = TimeSpan.FromMilliseconds(1500) };
+                _deviceDebounce.Stop();
+                _deviceDebounce.Tick -= OnDevicesSettled;
+                _deviceDebounce.Tick += OnDevicesSettled;
+                _deviceDebounce.Start();
+            }
+            return IntPtr.Zero;
+        }
+
+        private void OnDevicesSettled(object? sender, EventArgs e)
+        {
+            _deviceDebounce?.Stop();
+            if (DataContext is MainViewModel vm) vm.OnDevicesChanged();
+        }
+
+        #endregion
+
         private void OnWindowLoaded(object sender, RoutedEventArgs e)
         {
             if (DataContext is not MainViewModel vm) return;
@@ -53,6 +88,9 @@ namespace WolverineRemapper
                 // First launch: walk the user through Synapse / driver setup.
                 Dispatcher.BeginInvoke(new Action(vm.ShowGuide), System.Windows.Threading.DispatcherPriority.Background);
             }
+
+            // Whatever is already plugged in counts as "arrived" too.
+            Dispatcher.BeginInvoke(new Action(vm.OnDevicesChanged), System.Windows.Threading.DispatcherPriority.Background);
         }
 
         /// <summary>Create / show / hide the see-through overlay to match the setting.</summary>

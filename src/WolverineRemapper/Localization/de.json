@@ -258,5 +258,12 @@
   "btn_hide_pad": "MEIN PAD VOR SPIELEN VERSTECKEN",
   "btn_unhide_pad": "WIEDER ANZEIGEN",
   "btn_hide_pad_now": "JETZT VERSTECKEN",
-  "hint_hidhide_v2": "Dein Controller ist noch nicht vor Spielen versteckt, sie würden das physische und das virtuelle Pad sehen. Verstecke ihn jetzt (Admin-Abfrage) oder später unter Einstellungen > Treiber."
+  "hint_hidhide_v2": "Dein Controller ist noch nicht vor Spielen versteckt, sie würden das physische und das virtuelle Pad sehen. Verstecke ihn jetzt (Admin-Abfrage) oder später unter Einstellungen > Treiber.",
+"device_v2_detected": "Ein Wolverine V2 ist angeschlossen, aber dieses Profil ist im V3-Pro-8K-Modus (Tastatur-Auslöser). Der V2 kann keine Tasten senden, also stelle das Profil auf den V2-Modus um (geopferte Pad-Tasten).",
+  "device_v3_detected": "Ein Wolverine V3 Pro 8K ist angeschlossen, aber dieses Profil ist im V2-Modus (geopferte Pad-Tasten). Der V3 kann Kombos über Tastaturtasten auslösen und behält alle Tasten. Profil auf den V3-Modus umstellen?",
+  "device_hidhide_missing": "Dieses Profil ist im V2-Modus, aber HidHide ist nicht installiert, Spiele würden das physische Pad weiterhin sehen. Jetzt installieren? Das lädt den offiziellen Installer, fragt nach Adminrechten und braucht eventuell einen Neustart.",
+  "btn_switch_v2": "AUF V2-MODUS WECHSELN",
+  "btn_switch_v3": "AUF V3-MODUS WECHSELN",
+  "btn_install_hidhide": "HIDHIDE INSTALLIEREN",
+  "btn_dismiss": "AUSBLENDEN"
 }

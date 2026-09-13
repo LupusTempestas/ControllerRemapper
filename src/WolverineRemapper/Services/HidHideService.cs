@@ -40,7 +40,49 @@ namespace WolverineRemapper.Services
 
         public const string RazerVendorId = "VID_1532";
 
+        /// <summary>Pinned HidHide release (same one the installer bundles).</summary>
+        public const string InstallerUrl = "https://github.com/nefarius/HidHide/releases/download/v1.5.230.0/HidHide_1.5.230_x64.exe";
+
         public static string? FindCli() => CliCandidates.FirstOrDefault(File.Exists);
+
+        /// <summary>
+        /// Download the pinned HidHide installer to %TEMP% and run it (the
+        /// installer asks for elevation itself). Returns null on success, or a
+        /// short reason. HidHide usually wants a reboot before its driver loads.
+        /// </summary>
+        public static async Task<string?> DownloadAndInstallAsync(Action<string> log)
+        {
+            string target = Path.Combine(Path.GetTempPath(), "HidHide_Setup.exe");
+            try
+            {
+                log("[*] HidHide: downloading " + InstallerUrl);
+                using (var http = new System.Net.Http.HttpClient { Timeout = TimeSpan.FromMinutes(3) })
+                {
+                    http.DefaultRequestHeaders.UserAgent.ParseAdd("WolverineRemapper");
+                    using var resp = await http.GetAsync(InstallerUrl, System.Net.Http.HttpCompletionOption.ResponseHeadersRead);
+                    resp.EnsureSuccessStatusCode();
+                    await using var src = await resp.Content.ReadAsStreamAsync();
+                    await using var dst = File.Create(target);
+                    await src.CopyToAsync(dst);
+                }
+                log($"[*] HidHide: running the installer ({new FileInfo(target).Length / 1024} KB), Windows will ask for admin rights…");
+                var psi = new ProcessStartInfo(target) { UseShellExecute = true };
+                using var p = Process.Start(psi);
+                if (p == null) return "could not start the installer";
+                await p.WaitForExitAsync();
+                return p.ExitCode switch
+                {
+                    0 => null,
+                    3010 => null, // ERROR_SUCCESS_REBOOT_REQUIRED
+                    1602 => "installation cancelled",
+                    _ => $"installer exit code {p.ExitCode}"
+                };
+            }
+            catch (Exception ex)
+            {
+                return ex.Message;
+            }
+        }
 
         public static HidHideStatus Query()
         {

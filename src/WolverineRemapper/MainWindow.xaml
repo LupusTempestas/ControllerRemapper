@@ -619,12 +619,32 @@
                         </StackPanel>
                     </Grid>
 
+                    <StackPanel Grid.Row="2">
                     <!-- Engine-off warning: the #1 support issue is testing in-game with the hook not running -->
-                    <Border Grid.Row="2" Background="#450A0A" BorderBrush="#7F1D1D" BorderThickness="1" CornerRadius="8" Padding="10,7" Margin="0,12,0,0"
+                    <Border Background="#450A0A" BorderBrush="#7F1D1D" BorderThickness="1" CornerRadius="8" Padding="10,7" Margin="0,12,0,0"
                             Visibility="{Binding IsRemapperActive, Converter={StaticResource InvBoolToVis}}">
                         <TextBlock Foreground="#FECACA" FontSize="12" FontWeight="SemiBold" TextWrapping="Wrap"
                                    Text="{Binding [engine_stopped_your_m_buttons], Source={x:Static svc:L10n.I}}"/>
                     </Border>
+                    <!-- Device notice: a Razer pad arrived that does not match the mode, or HidHide is missing in V2 mode -->
+                    <Border Background="#2A1E05" BorderBrush="#92400E" BorderThickness="1" CornerRadius="8" Padding="10,7" Margin="0,12,0,0"
+                            Visibility="{Binding ShowDeviceNotice, Converter={StaticResource BoolToVis}}">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Foreground="#FDE68A" FontSize="12" FontWeight="SemiBold" TextWrapping="Wrap" VerticalAlignment="Center"
+                                       Text="{Binding DeviceNoticeText}" Margin="0,0,12,0"/>
+                            <Button Grid.Column="1" Content="{Binding DeviceNoticeActionText}" Command="{Binding DeviceNoticeCommand}"
+                                    IsEnabled="{Binding DeviceNoticeActionEnabled}"
+                                    Style="{StaticResource ActionButtonStyle}" VerticalAlignment="Center"/>
+                            <Button Grid.Column="2" Content="{Binding [btn_dismiss], Source={x:Static svc:L10n.I}}" Command="{Binding DismissDeviceNoticeCommand}"
+                                    Style="{StaticResource GhostButtonStyle}" VerticalAlignment="Center" Margin="6,0,0,0"/>
+                        </Grid>
+                    </Border>
+                    </StackPanel>
                 </Grid>
             </Border>
 

@@ -258,5 +258,12 @@
   "btn_hide_pad": "OCULTAR MI MANDO A LOS JUEGOS",
   "btn_unhide_pad": "MOSTRAR",
   "btn_hide_pad_now": "OCULTAR AHORA",
-  "hint_hidhide_v2": "Tu mando aún no está oculto a los juegos, así que verían tanto el mando físico como el virtual. Ocúltalo ahora (aviso de administrador) o más tarde en Ajustes > Controladores."
+  "hint_hidhide_v2": "Tu mando aún no está oculto a los juegos, así que verían tanto el mando físico como el virtual. Ocúltalo ahora (aviso de administrador) o más tarde en Ajustes > Controladores.",
+"device_v2_detected": "Hay un Wolverine V2 conectado, pero este perfil está en modo V3 Pro 8K (disparadores por teclas). El V2 no puede enviar teclas, así que cambia el perfil al modo V2 (botones sacrificados).",
+  "device_v3_detected": "Hay un Wolverine V3 Pro 8K conectado, pero este perfil está en modo V2 (botones sacrificados). El V3 puede disparar combos con teclas y conservar todos sus botones. ¿Cambiar el perfil al modo V3?",
+  "device_hidhide_missing": "Este perfil está en modo V2 pero HidHide no está instalado, así que los juegos seguirían viendo el mando físico. ¿Instalarlo ahora? Descarga el instalador oficial, pide permisos de administrador y puede requerir reiniciar.",
+  "btn_switch_v2": "CAMBIAR A MODO V2",
+  "btn_switch_v3": "CAMBIAR A MODO V3",
+  "btn_install_hidhide": "INSTALAR HIDHIDE",
+  "btn_dismiss": "DESCARTAR"
 }

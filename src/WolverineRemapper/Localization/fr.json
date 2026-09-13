@@ -258,5 +258,12 @@
   "btn_hide_pad": "MASQUER MA MANETTE AUX JEUX",
   "btn_unhide_pad": "RÉAFFICHER",
   "btn_hide_pad_now": "MASQUER MAINTENANT",
-  "hint_hidhide_v2": "Votre manette n'est pas encore masquée aux jeux : ils verraient à la fois la manette physique et la virtuelle. Masquez-la maintenant (invite administrateur) ou plus tard dans Paramètres > Pilotes."
+  "hint_hidhide_v2": "Votre manette n'est pas encore masquée aux jeux : ils verraient à la fois la manette physique et la virtuelle. Masquez-la maintenant (invite administrateur) ou plus tard dans Paramètres > Pilotes.",
+"device_v2_detected": "Une Wolverine V2 est connectée, mais ce profil est en mode V3 Pro 8K (déclencheurs par touches clavier). La V2 ne peut pas envoyer de touches : passez le profil en mode V2 (boutons sacrifiés).",
+  "device_v3_detected": "Une Wolverine V3 Pro 8K est connectée, mais ce profil est en mode V2 (boutons sacrifiés). La V3 peut déclencher les combos par touches clavier et garder tous ses boutons. Passer le profil en mode V3 ?",
+  "device_hidhide_missing": "Ce profil est en mode V2 mais HidHide n'est pas installé : les jeux verraient encore la manette physique. L'installer maintenant ? Cela télécharge l'installateur officiel, demande les droits administrateur et peut nécessiter un redémarrage.",
+  "btn_switch_v2": "PASSER EN MODE V2",
+  "btn_switch_v3": "PASSER EN MODE V3",
+  "btn_install_hidhide": "INSTALLER HIDHIDE",
+  "btn_dismiss": "IGNORER"
 }

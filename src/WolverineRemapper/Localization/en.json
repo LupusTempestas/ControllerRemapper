@@ -258,5 +258,12 @@
   "btn_hide_pad": "HIDE MY PAD FROM GAMES",
   "btn_unhide_pad": "UNHIDE",
   "btn_hide_pad_now": "HIDE IT NOW",
-  "hint_hidhide_v2": "Your controller is not hidden from games yet, so they would see both the physical and the virtual pad. Hide it now (admin prompt) or do it later from Settings > Drivers."
+  "hint_hidhide_v2": "Your controller is not hidden from games yet, so they would see both the physical and the virtual pad. Hide it now (admin prompt) or do it later from Settings > Drivers.",
+"device_v2_detected": "A Wolverine V2 is connected, but this profile is in V3 Pro 8K mode (keyboard-key triggers). The V2 cannot send keys, so switch the profile to V2 mode (sacrificed pad buttons).",
+  "device_v3_detected": "A Wolverine V3 Pro 8K is connected, but this profile is in V2 mode (sacrificed pad buttons). The V3 can trigger combos with keyboard keys and keep every button. Switch the profile to V3 mode?",
+  "device_hidhide_missing": "This profile is in V2 mode but HidHide is not installed, so games would still see the physical pad. Install it now? This downloads the official installer, asks for admin rights and may need a reboot.",
+  "btn_switch_v2": "SWITCH TO V2 MODE",
+  "btn_switch_v3": "SWITCH TO V3 MODE",
+  "btn_install_hidhide": "INSTALL HIDHIDE",
+  "btn_dismiss": "DISMISS"
 }

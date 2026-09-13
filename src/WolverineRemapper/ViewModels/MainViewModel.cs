@@ -46,6 +46,8 @@ namespace WolverineRemapper.ViewModels
             OpenViGEmPageCommand = new RelayCommand(_ => OpenUrl(DriverCheck.ViGEmBusUrl));
             OpenHidHidePageCommand = new RelayCommand(_ => OpenUrl(DriverCheck.HidHideUrl));
             RefreshDriversCommand = new RelayCommand(_ => RefreshDriverStatus());
+            DeviceNoticeCommand = new RelayCommand(_ => _ = RunDeviceNoticeActionAsync());
+            DismissDeviceNoticeCommand = new RelayCommand(_ => DismissDeviceNotice());
             HidePadCommand = new RelayCommand(_ => _ = ConfigureHidHideAsync(hide: true));
             UnhidePadCommand = new RelayCommand(_ => _ = ConfigureHidHideAsync(hide: false));
             SelectMButtonCommand = new RelayCommand(SelectMButton);
@@ -279,6 +281,124 @@ namespace WolverineRemapper.ViewModels
             _ = RefreshHidHideAsync();
         }
 
+        #region Device notices (a Razer pad arrives: suggest the mode, or the missing HidHide)
+
+        private enum DeviceNoticeKind { None, SwitchToV2, SwitchToV3, InstallHidHide }
+        private DeviceNoticeKind _deviceNotice;
+        private readonly HashSet<DeviceNoticeKind> _dismissedNotices = new();
+        private RazerDeviceScan? _lastScan;
+        private bool _hidHideInstallBusy;
+
+        public bool ShowDeviceNotice => _deviceNotice != DeviceNoticeKind.None;
+        public bool DeviceNoticeActionEnabled => !_hidHideInstallBusy;
+        public string DeviceNoticeText => _deviceNotice switch
+        {
+            DeviceNoticeKind.SwitchToV2 => L10n.I.T("device_v2_detected"),
+            DeviceNoticeKind.SwitchToV3 => L10n.I.T("device_v3_detected"),
+            DeviceNoticeKind.InstallHidHide => L10n.I.T("device_hidhide_missing"),
+            _ => ""
+        };
+        public string DeviceNoticeActionText => _deviceNotice switch
+        {
+            DeviceNoticeKind.SwitchToV2 => L10n.I.T("btn_switch_v2"),
+            DeviceNoticeKind.SwitchToV3 => L10n.I.T("btn_switch_v3"),
+            DeviceNoticeKind.InstallHidHide => L10n.I.T("btn_install_hidhide"),
+            _ => ""
+        };
+
+        /// <summary>Called by the window on WM_DEVICECHANGE (debounced) and once after load.</summary>
+        public async void OnDevicesChanged()
+        {
+            try
+            {
+                var scan = await System.Threading.Tasks.Task.Run(RazerDevices.Scan);
+                bool changed = _lastScan == null || scan.HasV2 != _lastScan.HasV2 || scan.HasV3 != _lastScan.HasV3;
+                _lastScan = scan;
+                if (changed && scan.Any)
+                {
+                    // A new family showed up: previous dismissals no longer apply.
+                    _dismissedNotices.Clear();
+                    AddLog($"[Pad] Razer controller detected: {(scan.HasV3 ? "Wolverine V3 Pro 8K " : "")}{(scan.HasV2 ? "Wolverine V2 family " : "")}(PID {string.Join(", ", scan.Pids)}).");
+                }
+                EvaluateDeviceNotice();
+            }
+            catch (Exception ex)
+            {
+                AddLog($"[!] Device scan failed: {ex.Message}");
+            }
+        }
+
+        private void EvaluateDeviceNotice()
+        {
+            // Candidates in priority order; a dismissed one lets the next through.
+            var scan = _lastScan;
+            var model = SelectedControllerModel.Model;
+            var candidates = new List<DeviceNoticeKind>();
+            if (scan?.SingleFamily is { } family && family != model)
+                candidates.Add(family == ControllerModel.WolverineV2 ? DeviceNoticeKind.SwitchToV2 : DeviceNoticeKind.SwitchToV3);
+            if (model == ControllerModel.WolverineV2 && !DriverCheck.HidHideInstalled)
+                candidates.Add(DeviceNoticeKind.InstallHidHide);
+
+            var kind = candidates.FirstOrDefault(k => !_dismissedNotices.Contains(k));
+            if (kind == _deviceNotice) return;
+            _deviceNotice = kind;
+            NotifyDeviceNotice();
+        }
+
+        private void NotifyDeviceNotice()
+        {
+            OnPropertyChanged(nameof(ShowDeviceNotice));
+            OnPropertyChanged(nameof(DeviceNoticeText));
+            OnPropertyChanged(nameof(DeviceNoticeActionText));
+            OnPropertyChanged(nameof(DeviceNoticeActionEnabled));
+        }
+
+        private void DismissDeviceNotice()
+        {
+            if (_deviceNotice == DeviceNoticeKind.None) return;
+            _dismissedNotices.Add(_deviceNotice);
+            _deviceNotice = DeviceNoticeKind.None;
+            NotifyDeviceNotice();
+            EvaluateDeviceNotice(); // e.g. dismissed the mode suggestion -> maybe HidHide is missing
+        }
+
+        private async System.Threading.Tasks.Task RunDeviceNoticeActionAsync()
+        {
+            switch (_deviceNotice)
+            {
+                case DeviceNoticeKind.SwitchToV2:
+                    SelectedControllerModel = ControllerModels.First(c => c.Model == ControllerModel.WolverineV2);
+                    break;
+                case DeviceNoticeKind.SwitchToV3:
+                    SelectedControllerModel = ControllerModels.First(c => c.Model == ControllerModel.WolverineV3Pro8K);
+                    break;
+                case DeviceNoticeKind.InstallHidHide:
+                    if (_hidHideInstallBusy) return;
+                    _hidHideInstallBusy = true;
+                    NotifyDeviceNotice();
+                    try
+                    {
+                        string? err = await HidHideService.DownloadAndInstallAsync(AddLog);
+                        if (err != null) AddLog($"[!] HidHide install: {err}");
+                        else AddLog("[+] HidHide installed. If Windows asked for a reboot, do it, then click HIDE MY PAD FROM GAMES in Settings > Drivers.");
+                    }
+                    finally
+                    {
+                        _hidHideInstallBusy = false;
+                        RefreshDriverStatus();
+                        _deviceNotice = DeviceNoticeKind.None;
+                        NotifyDeviceNotice();
+                        EvaluateDeviceNotice();
+                    }
+                    return;
+            }
+            _deviceNotice = DeviceNoticeKind.None;
+            NotifyDeviceNotice();
+            EvaluateDeviceNotice();
+        }
+
+        #endregion
+
         #region HidHide configuration (V2: hide the physical pad from games)
 
         private HidHideStatus? _hidHide;
@@ -439,6 +559,7 @@ namespace WolverineRemapper.ViewModels
                 ApplyControllerModelToButtons(assignDefaultSacrifices: true);
                 _engine.SetMappings(MButtons);
                 MarkDirty();
+                EvaluateDeviceNotice();
 
                 if (IsPadTriggerMode)
                 {
@@ -1665,6 +1786,8 @@ namespace WolverineRemapper.ViewModels
         public ICommand OpenHidHidePageCommand { get; }
         public ICommand RefreshDriversCommand { get; }
         public ICommand HidePadCommand { get; }
+        public ICommand DeviceNoticeCommand { get; }
+        public ICommand DismissDeviceNoticeCommand { get; }
         public ICommand UnhidePadCommand { get; }
         public ICommand SelectMButtonCommand { get; }
         public ICommand RebindCommand { get; }
