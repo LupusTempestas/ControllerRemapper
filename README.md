@@ -19,10 +19,18 @@ Pick your controller in the dropdown at the top left:
 
 ## Download
 
-Grab `WolverineRemapper.exe` from the
-[latest release](https://github.com/LupusTempestas/ControllerRemapper/releases/latest).
-It is a single self-contained file: no .NET install needed. You only need the
-[ViGEmBus driver](https://github.com/nefarius/ViGEmBus/releases) installed once.
+Two flavours on the [latest release](https://github.com/LupusTempestas/ControllerRemapper/releases/latest):
+
+- **`WolverineRemapper-Setup-x.y.z.exe`** — the installer. Offers a desktop
+  shortcut, *Start with Windows*, and installs the **ViGEmBus** driver for you
+  (plus **HidHide** if you tick it, for Wolverine V2). Adds an uninstaller.
+- **`WolverineRemapper-x.y.z-portable.exe`** — a single self-contained file, no
+  install. You must install [ViGEmBus](https://github.com/nefarius/ViGEmBus/releases)
+  yourself once.
+
+Neither needs a .NET runtime. The **Settings** tab inside the app has the same
+switches (start with Windows, start the engine on launch, close to tray, update
+check) plus a driver status check.
 
 > **Windows SmartScreen** will show "Windows protected your PC" the first time,
 > because the exe is not code-signed. Click *More info → Run anyway*. Some
@@ -43,6 +51,13 @@ It is a single self-contained file: no .NET install needed. You only need the
 - **Live controller diagram**, **analog trigger bars**, and a
   **stick / deadzone analyzer** with adjustable inner/outer deadzone.
 - **Named profiles** per game, stored in `%AppData%\WolverineRemapper\`.
+- **Runs in the tray** — closing the window keeps the engine running. The tray
+  icon's menu opens the window, starts/stops the engine, switches profiles,
+  restarts or quits the app.
+- **Five languages** — English, French, German, Spanish, Dutch. Auto-detected
+  from Windows, switchable live from the 🌐 dropdown in the header. Catalogues
+  are plain JSON in `src/WolverineRemapper/Localization/`, so adding a language
+  is one file.
 
 ## Requirements
 
@@ -71,8 +86,16 @@ releases ship):
 dotnet publish src/WolverineRemapper/WolverineRemapper.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -o dist
 ```
 
-Launch with `--autostart` to start the engine immediately (handy for a desktop
-shortcut).
+Launch with `--autostart` to start the engine immediately, and `--minimized`
+to stay in the tray (this is what the *Start with Windows* entry uses).
+
+### Installer and releases
+
+`installer/WolverineRemapper.iss` is the Inno Setup script; `installer/build.ps1`
+publishes, downloads the driver installers and compiles it locally (needs
+`winget install JRSoftware.InnoSetup`). Pushing a tag like `v1.2.0` runs
+[`.github/workflows/release.yml`](.github/workflows/release.yml), which builds
+both the installer and the portable exe on GitHub and attaches them to a release.
 
 ## Quick start (V3 Pro 8K)
 

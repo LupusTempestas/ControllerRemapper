@@ -5,8 +5,9 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WolverineRemapper"
         xmlns:vm="clr-namespace:WolverineRemapper.ViewModels"
+        xmlns:svc="clr-namespace:WolverineRemapper.Services"
         mc:Ignorable="d"
-        Title="Razer Wolverine — Remapper &amp; Zero-Lag Input Suite"
+        Title="{Binding [razer_wolverine_remapper_zero_lag], Source={x:Static svc:L10n.I}}"
         Icon="Assets/app.ico"
         Height="860" Width="1260"
         MinHeight="780" MinWidth="1120"
@@ -33,6 +34,7 @@
         <local:BoolToVisibilityConverter x:Key="BoolToVis"/>
         <local:BoolToVisibilityConverter x:Key="InvBoolToVis" Invert="True"/>
         <local:ButtonNameConverter x:Key="ButtonName"/>
+        <local:LocFormatConverter x:Key="LocFmt"/>
 
         <!-- ══ Palette ══ -->
         <SolidColorBrush x:Key="CardBg" Color="#1E293B"/>
@@ -484,8 +486,8 @@
                             <ComboBox Style="{StaticResource HeaderCombo}"
                                       ItemsSource="{Binding ControllerModels}" DisplayMemberPath="Name"
                                       SelectedItem="{Binding SelectedControllerModel, Mode=TwoWay}"
-                                      ToolTip="Which controller you are configuring. V3 Pro 8K paddles send keyboard keys via Synapse; the V2 family can only mirror pad buttons, so each M-button sacrifices one real button as its trigger."/>
-                            <TextBlock Text="  //  ZERO-LAG REMAPPER SUITE" FontSize="14" FontWeight="SemiBold" Foreground="#94A3B8" VerticalAlignment="Center"/>
+                                      ToolTip="{Binding [which_controller_you_are_configuring], Source={x:Static svc:L10n.I}}"/>
+                            <TextBlock Text="{Binding [zero_lag_remapper_suite], Source={x:Static svc:L10n.I}}" FontSize="14" FontWeight="SemiBold" Foreground="#94A3B8" VerticalAlignment="Center"/>
                         </StackPanel>
 
                         <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
@@ -513,35 +515,35 @@
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
 
-                        <TextBlock Text="PROFILE" FontSize="11" FontWeight="Bold" Foreground="#94A3B8" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                        <TextBlock Text="{Binding [profile], Source={x:Static svc:L10n.I}}" FontSize="11" FontWeight="Bold" Foreground="#94A3B8" VerticalAlignment="Center" Margin="0,0,8,0"/>
                         <ComboBox Grid.Column="1" Style="{StaticResource DarkCombo}" MinWidth="150" MaxWidth="280"
                                   ItemsSource="{Binding ProfileNames}" SelectedItem="{Binding SelectedProfile, Mode=TwoWay}"
-                                  ToolTip="Pick a saved profile — it loads immediately"/>
+                                  ToolTip="{Binding [pick_a_saved_profile_it], Source={x:Static svc:L10n.I}}"/>
                         <TextBox Grid.Column="2" Style="{StaticResource DarkTextBox}" MinWidth="150" MaxWidth="280" Margin="8,0,0,0"
                                  Text="{Binding ProfileNameInput, UpdateSourceTrigger=PropertyChanged}"
-                                 ToolTip="Profile name — type here, then SAVE"/>
-                        <Button Grid.Column="3" Content="SAVE" Command="{Binding SaveProfileCommand}" Style="{StaticResource GhostButtonStyle}" Margin="8,0,0,0"/>
-                        <Button Grid.Column="4" Content="LOAD" Command="{Binding LoadProfileCommand}" Style="{StaticResource GhostButtonStyle}" Margin="6,0,0,0"/>
-                        <Button Grid.Column="5" Content="DELETE" Command="{Binding DeleteProfileCommand}" Style="{StaticResource GhostButtonStyle}" Margin="6,0,0,0"/>
-                        <Button Grid.Column="6" Content="NEW" Command="{Binding NewProfileCommand}" Style="{StaticResource GhostButtonStyle}" Margin="6,0,0,0"/>
-                        <Button Grid.Column="7" Content="DUPLICATE" Command="{Binding DuplicateProfileCommand}" Style="{StaticResource GhostButtonStyle}" Margin="6,0,0,0"
-                                ToolTip="Save a copy of this profile as 'Name (2)' and switch to it"/>
+                                 ToolTip="{Binding [profile_name_type_here_then], Source={x:Static svc:L10n.I}}"/>
+                        <Button Grid.Column="3" Content="{Binding [save], Source={x:Static svc:L10n.I}}" Command="{Binding SaveProfileCommand}" Style="{StaticResource GhostButtonStyle}" Margin="8,0,0,0"/>
+                        <Button Grid.Column="4" Content="{Binding [load], Source={x:Static svc:L10n.I}}" Command="{Binding LoadProfileCommand}" Style="{StaticResource GhostButtonStyle}" Margin="6,0,0,0"/>
+                        <Button Grid.Column="5" Content="{Binding [delete], Source={x:Static svc:L10n.I}}" Command="{Binding DeleteProfileCommand}" Style="{StaticResource GhostButtonStyle}" Margin="6,0,0,0"/>
+                        <Button Grid.Column="6" Content="{Binding [new], Source={x:Static svc:L10n.I}}" Command="{Binding NewProfileCommand}" Style="{StaticResource GhostButtonStyle}" Margin="6,0,0,0"/>
+                        <Button Grid.Column="7" Content="{Binding [duplicate], Source={x:Static svc:L10n.I}}" Command="{Binding DuplicateProfileCommand}" Style="{StaticResource GhostButtonStyle}" Margin="6,0,0,0"
+                                ToolTip="{Binding [save_a_copy_of_this], Source={x:Static svc:L10n.I}}"/>
 
                         <Grid Grid.Column="8" VerticalAlignment="Center" Margin="10,0,0,0">
-                            <TextBlock Text="● unsaved" FontSize="11" FontWeight="Bold" Foreground="#F59E0B"
-                                       ToolTip="You have unsaved mapping changes — click SAVE to keep them for next launch"
+                            <TextBlock Text="{Binding [unsaved], Source={x:Static svc:L10n.I}}" FontSize="11" FontWeight="Bold" Foreground="#F59E0B"
+                                       ToolTip="{Binding [you_have_unsaved_mapping_changes], Source={x:Static svc:L10n.I}}"
                                        Visibility="{Binding HasUnsavedChanges, Converter={StaticResource BoolToVis}}"/>
-                            <TextBlock Text="✓ saved" FontSize="11" FontWeight="Bold" Foreground="#10B981"
+                            <TextBlock Text="{Binding [saved], Source={x:Static svc:L10n.I}}" FontSize="11" FontWeight="Bold" Foreground="#10B981"
                                        Visibility="{Binding ShowSavedFlash, Converter={StaticResource BoolToVis}}"/>
                         </Grid>
 
                         <StackPanel Grid.Column="9" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,14,0">
                             <TextBlock Text="PAD" FontSize="11" FontWeight="Bold" Foreground="#94A3B8" VerticalAlignment="Center" Margin="0,0,6,0"
-                                       ToolTip="Which XInput slot to monitor. Auto follows the slot with live input activity — use a fixed slot only if Auto picks the wrong device."/>
+                                       ToolTip="{Binding [which_xinput_slot_to_monitor], Source={x:Static svc:L10n.I}}"/>
                             <ComboBox Style="{StaticResource DarkCombo}" Width="78" Margin="0,0,14,0"
                                       ItemsSource="{Binding MonitorSlotChoices}" SelectedItem="{Binding MonitorSlotChoice, Mode=TwoWay}"/>
-                            <CheckBox Content="Passthrough" IsChecked="{Binding PassthroughEnabled}" FontSize="12" VerticalAlignment="Center"
-                                      ToolTip="Mirror the physical pad into the virtual pad (buttons, sticks, triggers AND chords). Recommended when your game only listens to one controller."/>
+                            <CheckBox Content="{Binding [passthrough], Source={x:Static svc:L10n.I}}" IsChecked="{Binding PassthroughEnabled}" FontSize="12" VerticalAlignment="Center"
+                                      ToolTip="{Binding [mirror_the_physical_pad_into], Source={x:Static svc:L10n.I}}"/>
                         </StackPanel>
 
                         <StackPanel Grid.Column="10" Orientation="Horizontal" VerticalAlignment="Center"
@@ -556,7 +558,7 @@
                     <Border Grid.Row="2" Background="#450A0A" BorderBrush="#7F1D1D" BorderThickness="1" CornerRadius="8" Padding="10,7" Margin="0,12,0,0"
                             Visibility="{Binding IsRemapperActive, Converter={StaticResource InvBoolToVis}}">
                         <TextBlock Foreground="#FECACA" FontSize="12" FontWeight="SemiBold" TextWrapping="Wrap"
-                                   Text="⚠  Engine stopped — your M-buttons are typing real keys into Windows and games right now (this flips games to keyboard UI). Press START ENGINE before playing."/>
+                                   Text="{Binding [engine_stopped_your_m_buttons], Source={x:Static svc:L10n.I}}"/>
                     </Border>
                 </Grid>
             </Border>
@@ -565,7 +567,7 @@
             <TabControl Grid.Row="1" Background="Transparent" BorderThickness="0">
 
                 <!-- ── TAB 1: VISUAL REMAPPER ── -->
-                <TabItem Header="🎮  VISUAL REMAPPER">
+                <TabItem Header="{Binding [visual_remapper], Source={x:Static svc:L10n.I}}">
                     <Grid Margin="0,12,0,0">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="1.4*"/>
@@ -575,11 +577,11 @@
                         <!-- Interactive live controller diagram -->
                         <Border Grid.Column="0" Style="{StaticResource Card}" Padding="12" Margin="0,0,12,0">
                             <DockPanel>
-                                <TextBlock DockPanel.Dock="Top" Text="LIVE CONTROLLER — every control lights up as you press it · click any green M-badge to configure"
+                                <TextBlock DockPanel.Dock="Top" Text="{Binding [live_controller_every_control_lights], Source={x:Static svc:L10n.I}}"
                                            Style="{StaticResource SectionLabel}" Margin="8,4,0,0"/>
                                 <Border DockPanel.Dock="Top" Background="#7F1D1D" CornerRadius="8" Padding="10,6" Margin="8,6,8,0"
                                         Visibility="{Binding ControllerConnected, Converter={StaticResource InvBoolToVis}}">
-                                    <TextBlock Text="⚠ No physical controller detected — connect your Wolverine (USB or dongle) to see live input."
+                                    <TextBlock Text="{Binding [no_physical_controller_detected_connect], Source={x:Static svc:L10n.I}}"
                                                Foreground="#FECACA" FontSize="12" FontWeight="SemiBold" TextWrapping="Wrap"/>
                                 </Border>
                                 <Grid DockPanel.Dock="Bottom" Margin="12,8,12,4">
@@ -683,10 +685,10 @@
                                         <!-- View / Menu -->
                                         <Border Canvas.Left="272" Canvas.Top="160" Width="24" Height="24" CornerRadius="12"
                                                 Background="{Binding IsViewPressed, Converter={StaticResource PressedBrush}}"
-                                                ToolTip="View"/>
+                                                ToolTip="{Binding [view], Source={x:Static svc:L10n.I}}"/>
                                         <Border Canvas.Left="324" Canvas.Top="160" Width="24" Height="24" CornerRadius="12"
                                                 Background="{Binding IsMenuPressed, Converter={StaticResource PressedBrush}}"
-                                                ToolTip="Menu"/>
+                                                ToolTip="{Binding [menu], Source={x:Static svc:L10n.I}}"/>
 
                                         <!-- Back paddles -->
                                         <Button Canvas.Left="196" Canvas.Top="330" Style="{StaticResource MBadgeStyle}" DataContext="{Binding M3}"/>
@@ -731,14 +733,14 @@
                                                 <ColumnDefinition Width="Auto"/>
                                             </Grid.ColumnDefinitions>
                                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                                <TextBlock Text="{Binding MButtonName, StringFormat='CONFIGURING {0}'}" FontSize="17" FontWeight="Bold" Foreground="#06B6D4"/>
+                                                <TextBlock  FontSize="17" FontWeight="Bold" Foreground="#06B6D4"><TextBlock.Text><MultiBinding Converter="{StaticResource LocFmt}"><Binding Path="[fmt_configuring]" Source="{x:Static svc:L10n.I}"/><Binding Path="MButtonName"/></MultiBinding></TextBlock.Text></TextBlock>
                                                 <Border Background="#1E293B" CornerRadius="4" Padding="8,2" Margin="10,0,0,0" VerticalAlignment="Center">
                                                     <TextBlock Text="{Binding TriggerDisplayName}" FontSize="12" FontWeight="Bold" Foreground="#38BDF8"/>
                                                 </Border>
                                             </StackPanel>
 
                                             <!-- V3: capture a keyboard key -->
-                                            <Button Grid.Column="1" Content="⌨ REBIND KEY"
+                                            <Button Grid.Column="1" Content="{Binding [rebind_key], Source={x:Static svc:L10n.I}}"
                                                     Visibility="{Binding IsKeyboardTrigger, Converter={StaticResource BoolToVis}}"
                                                     Command="{Binding DataContext.RebindCommand, RelativeSource={RelativeSource AncestorType=Window}}"
                                                     CommandParameter="{Binding}"
@@ -747,22 +749,22 @@
                                             <!-- V2: pick the pad button this paddle sacrifices -->
                                             <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center"
                                                         Visibility="{Binding IsPadTrigger, Converter={StaticResource BoolToVis}}">
-                                                <TextBlock Text="SACRIFICED BUTTON" FontSize="11" FontWeight="Bold" Foreground="#94A3B8" VerticalAlignment="Center" Margin="0,0,8,0"
-                                                           ToolTip="The real pad button the paddle is mapped to in Razer's software. It becomes this M-button's trigger and is no longer usable in-game."/>
+                                                <TextBlock Text="{Binding [sacrificed_button], Source={x:Static svc:L10n.I}}" FontSize="11" FontWeight="Bold" Foreground="#94A3B8" VerticalAlignment="Center" Margin="0,0,8,0"
+                                                           ToolTip="{Binding [the_real_pad_button_the], Source={x:Static svc:L10n.I}}"/>
                                                 <ComboBox Style="{StaticResource DarkCombo}" Width="130"
                                                           ItemsSource="{Binding DataContext.PadTriggerChoices, RelativeSource={RelativeSource AncestorType=Window}}"
                                                           DisplayMemberPath="Label" SelectedValuePath="Id"
                                                           SelectedValue="{Binding PadTriggerButton, Mode=TwoWay}"/>
                                             </StackPanel>
                                         </Grid>
-                                        <CheckBox Content="Swallow key from Windows &amp; games (stops UI-mode flip)"
+                                        <CheckBox Content="{Binding [swallow_key_from_windows_games], Source={x:Static svc:L10n.I}}"
                                                   IsChecked="{Binding SuppressKey}" FontSize="12" Margin="0,10,0,0"
                                                   Visibility="{Binding IsKeyboardTrigger, Converter={StaticResource BoolToVis}}"
-                                                  ToolTip="While the engine runs, this key is invisible to Windows and every app — the game never sees a keyboard press, so it stays in controller UI."/>
+                                                  ToolTip="{Binding [while_the_engine_runs_this], Source={x:Static svc:L10n.I}}"/>
                                         <StackPanel Visibility="{Binding IsPadTrigger, Converter={StaticResource BoolToVis}}" Margin="0,10,0,0">
                                             <TextBlock Text="{Binding DataContext.PadTriggerHint, RelativeSource={RelativeSource AncestorType=Window}}"
                                                        FontSize="11" Foreground="#94A3B8" TextWrapping="Wrap"/>
-                                            <TextBlock Text="⚠ Passthrough is OFF — the sacrificed button still reaches the game. Turn Passthrough ON in the profile bar."
+                                            <TextBlock Text="{Binding [passthrough_is_off_the_sacrificed], Source={x:Static svc:L10n.I}}"
                                                        FontSize="11" FontWeight="Bold" Foreground="#F59E0B" TextWrapping="Wrap" Margin="0,6,0,0"
                                                        Visibility="{Binding DataContext.ShowPadModeWarning, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource BoolToVis}}"/>
                                         </StackPanel>
@@ -772,55 +774,59 @@
                                 <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
                                     <StackPanel>
                                         <!-- Trigger type selector -->
-                                        <TextBlock Text="TRIGGER — HOW THE M-BUTTON ACTIVATES" Style="{StaticResource SectionLabel}"/>
+                                        <TextBlock Text="{Binding [trigger_how_the_m_button], Source={x:Static svc:L10n.I}}" Style="{StaticResource SectionLabel}"/>
                                         <WrapPanel Margin="0,0,0,4">
-                                            <RadioButton Content="HOLD" IsChecked="{Binding IsHoldTrigger}" Style="{StaticResource PillToggleStyle}"
-                                                         ToolTip="Action is active while you hold the M-button. Let go and it ends. (Default.)"/>
-                                            <RadioButton Content="TOGGLE" IsChecked="{Binding IsToggleTrigger}" Style="{StaticResource PillToggleStyle}"
-                                                         ToolTip="Press once to latch the action ON (hands-free), press again to turn it OFF. Great for sprint-lock, aim-lock, or toggled auto-fire."/>
-                                            <RadioButton Content="DOUBLE-TAP" IsChecked="{Binding IsDoubleTapTrigger}" Style="{StaticResource PillToggleStyle}"
-                                                         ToolTip="Two quick presses toggle the action on/off; a single press does nothing. Fires instantly on the second tap — no added lag."/>
+                                            <RadioButton Content="{Binding [hold], Source={x:Static svc:L10n.I}}" IsChecked="{Binding IsHoldTrigger}" Style="{StaticResource PillToggleStyle}"
+                                                         ToolTip="{Binding [action_is_active_while_you], Source={x:Static svc:L10n.I}}"/>
+                                            <RadioButton Content="{Binding [toggle], Source={x:Static svc:L10n.I}}" IsChecked="{Binding IsToggleTrigger}" Style="{StaticResource PillToggleStyle}"
+                                                         ToolTip="{Binding [press_once_to_latch_the], Source={x:Static svc:L10n.I}}"/>
+                                            <RadioButton Content="{Binding [double_tap], Source={x:Static svc:L10n.I}}" IsChecked="{Binding IsDoubleTapTrigger}" Style="{StaticResource PillToggleStyle}"
+                                                         ToolTip="{Binding [two_quick_presses_toggle_the], Source={x:Static svc:L10n.I}}"/>
                                         </WrapPanel>
                                         <StackPanel Visibility="{Binding IsDoubleTapTrigger, Converter={StaticResource BoolToVis}}" Margin="0,0,0,4">
-                                            <TextBlock Text="{Binding DoubleTapWindowMs, StringFormat='MAX GAP BETWEEN TAPS — {0} ms'}" Style="{StaticResource SectionLabel}"/>
+                                            <TextBlock  Style="{StaticResource SectionLabel}"><TextBlock.Text><MultiBinding Converter="{StaticResource LocFmt}"><Binding Path="[fmt_max_gap_between_taps_ms]" Source="{x:Static svc:L10n.I}"/><Binding Path="DoubleTapWindowMs"/></MultiBinding></TextBlock.Text></TextBlock>
                                             <Slider Minimum="150" Maximum="600" Value="{Binding DoubleTapWindowMs}" Foreground="#06B6D4" TickFrequency="10" IsSnapToTickEnabled="True"/>
                                         </StackPanel>
                                         <Border Height="1" Background="#334155" Margin="0,8,0,12"/>
 
                                         <!-- Repeat selector (applies to every action type) -->
-                                        <TextBlock Text="REPEAT — HOW MANY TIMES" Style="{StaticResource SectionLabel}"/>
+                                        <TextBlock Text="{Binding [repeat_how_many_times], Source={x:Static svc:L10n.I}}" Style="{StaticResource SectionLabel}"/>
                                         <WrapPanel Margin="0,0,0,4">
-                                            <RadioButton Content="ONCE" IsChecked="{Binding IsRepeatOnce}" Style="{StaticResource PillToggleStyle}"
-                                                         ToolTip="Run the action a single time (or, for a chord, simply hold it)."/>
-                                            <RadioButton Content="MULTIPLE TIMES" IsChecked="{Binding IsRepeatCount}" Style="{StaticResource PillToggleStyle}"
-                                                         ToolTip="Fire the action a set number of times, then stop — even on a quick press. Pick the count below."/>
-                                            <RadioButton Content="WHILE HELD" IsChecked="{Binding IsRepeatWhileHeld}" Style="{StaticResource PillToggleStyle}"
-                                                         ToolTip="Repeat continuously until you release (or toggle off). This is turbo / auto-fire."/>
+                                            <RadioButton Content="{Binding [once], Source={x:Static svc:L10n.I}}" IsChecked="{Binding IsRepeatOnce}" Style="{StaticResource PillToggleStyle}"
+                                                         ToolTip="{Binding [run_the_action_a_single], Source={x:Static svc:L10n.I}}"/>
+                                            <RadioButton Content="{Binding [multiple_times], Source={x:Static svc:L10n.I}}" IsChecked="{Binding IsRepeatCount}" Style="{StaticResource PillToggleStyle}"
+                                                         ToolTip="{Binding [fire_the_action_a_set], Source={x:Static svc:L10n.I}}"/>
+                                            <RadioButton Content="{Binding [while_held], Source={x:Static svc:L10n.I}}" IsChecked="{Binding IsRepeatWhileHeld}" Style="{StaticResource PillToggleStyle}"
+                                                         ToolTip="{Binding [repeat_continuously_until_you_release], Source={x:Static svc:L10n.I}}"/>
                                         </WrapPanel>
                                         <StackPanel Visibility="{Binding IsRepeatCount, Converter={StaticResource BoolToVis}}" Margin="0,0,0,4">
-                                            <TextBlock Text="{Binding RepeatCount, StringFormat='HOW MANY TIMES — {0}'}" Style="{StaticResource SectionLabel}"/>
-                                            <Slider Minimum="2" Maximum="20" Value="{Binding RepeatCount}" Foreground="#06B6D4" TickFrequency="1" IsSnapToTickEnabled="True"/>
+                                            <TextBlock  Style="{StaticResource SectionLabel}"><TextBlock.Text><MultiBinding Converter="{StaticResource LocFmt}"><Binding Path="[fmt_how_many_times]" Source="{x:Static svc:L10n.I}"/><Binding Path="RepeatCount"/></MultiBinding></TextBlock.Text></TextBlock>
+                                            <Slider Minimum="2" Maximum="20" Value="{Binding RepeatCount}" Foreground="#06B6D4" TickFrequency="1" IsSnapToTickEnabled="True"
+                                                    IsEnabled="{Binding RepeatLimitApplies}"/>
+                                            <CheckBox Content="{Binding [ignore_limit], Source={x:Static svc:L10n.I}}"
+                                                      IsChecked="{Binding IgnoreRepeatLimit}" FontSize="12" Margin="0,6,0,0"
+                                                      ToolTip="{Binding [ignore_limit_tip], Source={x:Static svc:L10n.I}}"/>
                                         </StackPanel>
                                         <StackPanel Visibility="{Binding IsRepeatOnce, Converter={StaticResource InvBoolToVis}}" Margin="0,0,0,4">
-                                            <TextBlock Text="{Binding RepeatGapMs, StringFormat='SPEED — {0} ms between repeats'}" Style="{StaticResource SectionLabel}"/>
+                                            <TextBlock  Style="{StaticResource SectionLabel}"><TextBlock.Text><MultiBinding Converter="{StaticResource LocFmt}"><Binding Path="[fmt_speed_ms_between_repeats]" Source="{x:Static svc:L10n.I}"/><Binding Path="RepeatGapMs"/></MultiBinding></TextBlock.Text></TextBlock>
                                             <Slider Minimum="20" Maximum="300" Value="{Binding RepeatGapMs}" Foreground="#06B6D4" TickFrequency="5" IsSnapToTickEnabled="True"/>
                                         </StackPanel>
                                         <Border Height="1" Background="#334155" Margin="0,8,0,12"/>
 
                                         <!-- Action mode selector -->
-                                        <TextBlock Text="ACTION TYPE — WHAT IT SENDS" Style="{StaticResource SectionLabel}"/>
+                                        <TextBlock Text="{Binding [action_type_what_it_sends], Source={x:Static svc:L10n.I}}" Style="{StaticResource SectionLabel}"/>
                                         <WrapPanel Margin="0,0,0,12">
-                                            <RadioButton Content="CHORD (all at once)" IsChecked="{Binding IsChordMode}" Style="{StaticResource PillToggleStyle}"
-                                                         ToolTip="All selected buttons press together on key-down and release together on key-up."/>
-                                            <RadioButton Content="HOLD + PRESS" IsChecked="{Binding IsHoldTapMode}" Style="{StaticResource PillToggleStyle}"
-                                                         ToolTip="Hold the first set, wait, then press the second set while still holding. Everything releases when you let go."/>
-                                            <RadioButton Content="MACRO (sequence)" IsChecked="{Binding IsSequenceMode}" Style="{StaticResource PillToggleStyle}"
-                                                         ToolTip="Build your own ordered sequence of press / release / tap / wait steps."/>
+                                            <RadioButton Content="{Binding [chord_all_at_once], Source={x:Static svc:L10n.I}}" IsChecked="{Binding IsChordMode}" Style="{StaticResource PillToggleStyle}"
+                                                         ToolTip="{Binding [all_selected_buttons_press_together], Source={x:Static svc:L10n.I}}"/>
+                                            <RadioButton Content="{Binding [hold_press], Source={x:Static svc:L10n.I}}" IsChecked="{Binding IsHoldTapMode}" Style="{StaticResource PillToggleStyle}"
+                                                         ToolTip="{Binding [hold_the_first_set_wait], Source={x:Static svc:L10n.I}}"/>
+                                            <RadioButton Content="{Binding [macro_sequence], Source={x:Static svc:L10n.I}}" IsChecked="{Binding IsSequenceMode}" Style="{StaticResource PillToggleStyle}"
+                                                         ToolTip="{Binding [build_your_own_ordered_sequence], Source={x:Static svc:L10n.I}}"/>
                                         </WrapPanel>
 
                                         <!-- ══ CHORD MODE ══ -->
                                         <StackPanel Visibility="{Binding IsChordMode, Converter={StaticResource BoolToVis}}">
-                                            <TextBlock Text="FACE BUTTONS" Style="{StaticResource SectionLabel}"/>
+                                            <TextBlock Text="{Binding [face_buttons], Source={x:Static svc:L10n.I}}" Style="{StaticResource SectionLabel}"/>
                                             <WrapPanel Margin="0,0,0,10">
                                                 <ToggleButton Content="A" IsChecked="{Binding A}" Style="{StaticResource PillToggleStyle}" Width="68"/>
                                                 <ToggleButton Content="B" IsChecked="{Binding B}" Style="{StaticResource PillToggleStyle}" Width="68"/>
@@ -828,7 +834,7 @@
                                                 <ToggleButton Content="Y" IsChecked="{Binding Y}" Style="{StaticResource PillToggleStyle}" Width="68"/>
                                             </WrapPanel>
 
-                                            <TextBlock Text="SHOULDERS &amp; TRIGGERS" Style="{StaticResource SectionLabel}"/>
+                                            <TextBlock Text="{Binding [shoulders_triggers], Source={x:Static svc:L10n.I}}" Style="{StaticResource SectionLabel}"/>
                                             <WrapPanel Margin="0,0,0,10">
                                                 <ToggleButton Content="LB" IsChecked="{Binding LB}" Style="{StaticResource PillToggleStyle}" Width="68"/>
                                                 <ToggleButton Content="RB" IsChecked="{Binding RB}" Style="{StaticResource PillToggleStyle}" Width="68"/>
@@ -836,26 +842,26 @@
                                                 <ToggleButton Content="RT" IsChecked="{Binding RT}" Style="{StaticResource PillToggleStyle}" Width="68"/>
                                             </WrapPanel>
 
-                                            <TextBlock Text="D-PAD" Style="{StaticResource SectionLabel}"/>
+                                            <TextBlock Text="{Binding [d_pad], Source={x:Static svc:L10n.I}}" Style="{StaticResource SectionLabel}"/>
                                             <WrapPanel Margin="0,0,0,10">
-                                                <ToggleButton Content="▲ Up" IsChecked="{Binding DPadUp}" Style="{StaticResource PillToggleStyle}" Width="86"/>
-                                                <ToggleButton Content="▼ Down" IsChecked="{Binding DPadDown}" Style="{StaticResource PillToggleStyle}" Width="86"/>
-                                                <ToggleButton Content="◀ Left" IsChecked="{Binding DPadLeft}" Style="{StaticResource PillToggleStyle}" Width="86"/>
-                                                <ToggleButton Content="▶ Right" IsChecked="{Binding DPadRight}" Style="{StaticResource PillToggleStyle}" Width="86"/>
+                                                <ToggleButton Content="{Binding [up], Source={x:Static svc:L10n.I}}" IsChecked="{Binding DPadUp}" Style="{StaticResource PillToggleStyle}" Width="86"/>
+                                                <ToggleButton Content="{Binding [down], Source={x:Static svc:L10n.I}}" IsChecked="{Binding DPadDown}" Style="{StaticResource PillToggleStyle}" Width="86"/>
+                                                <ToggleButton Content="{Binding [left], Source={x:Static svc:L10n.I}}" IsChecked="{Binding DPadLeft}" Style="{StaticResource PillToggleStyle}" Width="86"/>
+                                                <ToggleButton Content="{Binding [right], Source={x:Static svc:L10n.I}}" IsChecked="{Binding DPadRight}" Style="{StaticResource PillToggleStyle}" Width="86"/>
                                             </WrapPanel>
 
-                                            <TextBlock Text="STICKS &amp; SYSTEM" Style="{StaticResource SectionLabel}"/>
+                                            <TextBlock Text="{Binding [sticks_system], Source={x:Static svc:L10n.I}}" Style="{StaticResource SectionLabel}"/>
                                             <WrapPanel Margin="0,0,0,10">
-                                                <ToggleButton Content="LS Click" IsChecked="{Binding LSClick}" Style="{StaticResource PillToggleStyle}" Width="86"/>
-                                                <ToggleButton Content="RS Click" IsChecked="{Binding RSClick}" Style="{StaticResource PillToggleStyle}" Width="86"/>
-                                                <ToggleButton Content="View" IsChecked="{Binding View}" Style="{StaticResource PillToggleStyle}" Width="86"/>
-                                                <ToggleButton Content="Menu" IsChecked="{Binding Menu}" Style="{StaticResource PillToggleStyle}" Width="86"/>
+                                                <ToggleButton Content="{Binding [ls_click], Source={x:Static svc:L10n.I}}" IsChecked="{Binding LSClick}" Style="{StaticResource PillToggleStyle}" Width="86"/>
+                                                <ToggleButton Content="{Binding [rs_click], Source={x:Static svc:L10n.I}}" IsChecked="{Binding RSClick}" Style="{StaticResource PillToggleStyle}" Width="86"/>
+                                                <ToggleButton Content="{Binding [view], Source={x:Static svc:L10n.I}}" IsChecked="{Binding View}" Style="{StaticResource PillToggleStyle}" Width="86"/>
+                                                <ToggleButton Content="{Binding [menu], Source={x:Static svc:L10n.I}}" IsChecked="{Binding Menu}" Style="{StaticResource PillToggleStyle}" Width="86"/>
                                             </WrapPanel>
                                         </StackPanel>
 
                                         <!-- ══ HOLD + PRESS MODE ══ -->
                                         <StackPanel Visibility="{Binding IsHoldTapMode, Converter={StaticResource BoolToVis}}">
-                                            <TextBlock Text="STEP 1 — HOLD THESE FIRST" Style="{StaticResource SectionLabel}"/>
+                                            <TextBlock Text="{Binding [step_1_hold_these_first], Source={x:Static svc:L10n.I}}" Style="{StaticResource SectionLabel}"/>
                                             <ItemsControl ItemsSource="{Binding HoldPicks}" Margin="0,0,0,10">
                                                 <ItemsControl.ItemsPanel>
                                                     <ItemsPanelTemplate><WrapPanel/></ItemsPanelTemplate>
@@ -867,7 +873,7 @@
                                                 </ItemsControl.ItemTemplate>
                                             </ItemsControl>
 
-                                            <TextBlock Text="STEP 2 — THEN PRESS (WHILE STILL HOLDING)" Style="{StaticResource SectionLabel}"/>
+                                            <TextBlock Text="{Binding [step_2_then_press_while], Source={x:Static svc:L10n.I}}" Style="{StaticResource SectionLabel}"/>
                                             <ItemsControl ItemsSource="{Binding TapPicks}" Margin="0,0,0,10">
                                                 <ItemsControl.ItemsPanel>
                                                     <ItemsPanelTemplate><WrapPanel/></ItemsPanelTemplate>
@@ -879,34 +885,34 @@
                                                 </ItemsControl.ItemTemplate>
                                             </ItemsControl>
 
-                                            <TextBlock Text="{Binding HoldTapDelayMs, StringFormat='DELAY BETWEEN STEPS — {0} ms'}" Style="{StaticResource SectionLabel}"/>
+                                            <TextBlock  Style="{StaticResource SectionLabel}"><TextBlock.Text><MultiBinding Converter="{StaticResource LocFmt}"><Binding Path="[fmt_delay_between_steps_ms]" Source="{x:Static svc:L10n.I}"/><Binding Path="HoldTapDelayMs"/></MultiBinding></TextBlock.Text></TextBlock>
                                             <Slider Minimum="20" Maximum="500" Value="{Binding HoldTapDelayMs}" Foreground="#06B6D4"
                                                     TickFrequency="10" IsSnapToTickEnabled="True" Margin="0,0,0,8"/>
-                                            <TextBlock Text="Everything releases when you let go of the M-button." FontSize="11" Foreground="#94A3B8"/>
+                                            <TextBlock Text="{Binding [everything_releases_when_you_let], Source={x:Static svc:L10n.I}}" FontSize="11" Foreground="#94A3B8"/>
                                         </StackPanel>
 
                                         <!-- ══ MACRO MODE ══ -->
                                         <StackPanel Visibility="{Binding IsSequenceMode, Converter={StaticResource BoolToVis}}">
-                                            <TextBlock Text="ADD A STEP" Style="{StaticResource SectionLabel}"/>
+                                            <TextBlock Text="{Binding [add_a_step], Source={x:Static svc:L10n.I}}" Style="{StaticResource SectionLabel}"/>
                                             <WrapPanel Margin="0,0,0,10">
-                                                <Button Content="+ PRESS" Style="{StaticResource GhostButtonStyle}" Margin="0,0,6,0"
+                                                <Button Content="{Binding [press], Source={x:Static svc:L10n.I}}" Style="{StaticResource GhostButtonStyle}" Margin="0,0,6,0"
                                                         Command="{Binding DataContext.AddStepCommand, RelativeSource={RelativeSource AncestorType=Window}}" CommandParameter="Press"
-                                                        ToolTip="Press a button and keep holding it"/>
-                                                <Button Content="+ RELEASE" Style="{StaticResource GhostButtonStyle}" Margin="0,0,6,0"
+                                                        ToolTip="{Binding [press_a_button_and_keep], Source={x:Static svc:L10n.I}}"/>
+                                                <Button Content="{Binding [release], Source={x:Static svc:L10n.I}}" Style="{StaticResource GhostButtonStyle}" Margin="0,0,6,0"
                                                         Command="{Binding DataContext.AddStepCommand, RelativeSource={RelativeSource AncestorType=Window}}" CommandParameter="Release"
-                                                        ToolTip="Release a button pressed earlier in the sequence"/>
-                                                <Button Content="+ TAP" Style="{StaticResource GhostButtonStyle}" Margin="0,0,6,0"
+                                                        ToolTip="{Binding [release_a_button_pressed_earlier], Source={x:Static svc:L10n.I}}"/>
+                                                <Button Content="{Binding [tap], Source={x:Static svc:L10n.I}}" Style="{StaticResource GhostButtonStyle}" Margin="0,0,6,0"
                                                         Command="{Binding DataContext.AddStepCommand, RelativeSource={RelativeSource AncestorType=Window}}" CommandParameter="Tap"
-                                                        ToolTip="Press, hold briefly, release — one quick click"/>
-                                                <Button Content="+ WAIT" Style="{StaticResource GhostButtonStyle}" Margin="0,0,6,0"
+                                                        ToolTip="{Binding [press_hold_briefly_release_one], Source={x:Static svc:L10n.I}}"/>
+                                                <Button Content="{Binding [wait], Source={x:Static svc:L10n.I}}" Style="{StaticResource GhostButtonStyle}" Margin="0,0,6,0"
                                                         Command="{Binding DataContext.AddStepCommand, RelativeSource={RelativeSource AncestorType=Window}}" CommandParameter="Wait"
-                                                        ToolTip="Pause between steps"/>
-                                                <Button Content="+ PUSH STICK" Style="{StaticResource GhostButtonStyle}" Margin="0,0,6,0"
+                                                        ToolTip="{Binding [pause_between_steps], Source={x:Static svc:L10n.I}}"/>
+                                                <Button Content="{Binding [push_stick], Source={x:Static svc:L10n.I}}" Style="{StaticResource GhostButtonStyle}" Margin="0,0,6,0"
                                                         Command="{Binding DataContext.AddStepCommand, RelativeSource={RelativeSource AncestorType=Window}}" CommandParameter="PushStick"
-                                                        ToolTip="Hold a thumbstick at a recorded position (ring menus, movement) until Center Stick or key release"/>
-                                                <Button Content="+ CENTER STICK" Style="{StaticResource GhostButtonStyle}"
+                                                        ToolTip="{Binding [hold_a_thumbstick_at_a], Source={x:Static svc:L10n.I}}"/>
+                                                <Button Content="{Binding [center_stick], Source={x:Static svc:L10n.I}}" Style="{StaticResource GhostButtonStyle}"
                                                         Command="{Binding DataContext.AddStepCommand, RelativeSource={RelativeSource AncestorType=Window}}" CommandParameter="CenterStick"
-                                                        ToolTip="Recenter a thumbstick pushed earlier in the sequence"/>
+                                                        ToolTip="{Binding [recenter_a_thumbstick_pushed_earlier], Source={x:Static svc:L10n.I}}"/>
                                             </WrapPanel>
 
                                             <ItemsControl ItemsSource="{Binding Steps}">
@@ -956,9 +962,9 @@
                                                                 <!-- Stick position sub-row (PushStick only) -->
                                                                 <StackPanel Orientation="Horizontal" Margin="0,6,0,0"
                                                                             Visibility="{Binding UsesStickPosition, Converter={StaticResource BoolToVis}}">
-                                                                    <Button Content="⦿ CAPTURE POSITION" Style="{StaticResource GhostButtonStyle}" Margin="0,0,10,0"
+                                                                    <Button Content="{Binding [capture_position], Source={x:Static svc:L10n.I}}" Style="{StaticResource GhostButtonStyle}" Margin="0,0,10,0"
                                                                             Command="{Binding DataContext.CaptureStickCommand, RelativeSource={RelativeSource AncestorType=Window}}" CommandParameter="{Binding}"
-                                                                            ToolTip="Click, then push the physical stick toward the target for 2 seconds — the strongest deflection is saved"/>
+                                                                            ToolTip="{Binding [click_then_push_the_physical], Source={x:Static svc:L10n.I}}"/>
                                                                     <TextBlock Text="X" FontSize="11" Foreground="#94A3B8" VerticalAlignment="Center" Margin="0,0,4,0"/>
                                                                     <TextBox Style="{StaticResource DarkTextBox}" Width="52" Margin="0,0,8,0"
                                                                              Text="{Binding StickX, StringFormat=F3, UpdateSourceTrigger=LostFocus}"/>
@@ -973,7 +979,7 @@
                                                 </ItemsControl.ItemTemplate>
                                             </ItemsControl>
 
-                                            <TextBlock Text="A started macro always runs to completion — even a quick tap plays the whole combo. Buttons still held when it ends stay held until you release the M-button."
+                                            <TextBlock Text="{Binding [a_started_macro_always_runs], Source={x:Static svc:L10n.I}}"
                                                        FontSize="11" Foreground="#94A3B8" TextWrapping="Wrap" Margin="0,4,0,0"/>
                                         </StackPanel>
                                     </StackPanel>
@@ -981,7 +987,7 @@
 
                                 <Border Grid.Row="2" Background="#0F172A" CornerRadius="8" Padding="10" Margin="0,10,0,0">
                                     <StackPanel Orientation="Horizontal">
-                                        <TextBlock Text="OUTPUT:" FontSize="11" FontWeight="Bold" Foreground="#94A3B8" VerticalAlignment="Center"/>
+                                        <TextBlock Text="{Binding [output], Source={x:Static svc:L10n.I}}" FontSize="11" FontWeight="Bold" Foreground="#94A3B8" VerticalAlignment="Center"/>
                                         <TextBlock Text="{Binding ChordSummary}" FontSize="14" FontWeight="Bold" Foreground="#10B981" Margin="8,0,0,0" TextWrapping="Wrap"/>
                                     </StackPanel>
                                 </Border>
@@ -991,7 +997,7 @@
                 </TabItem>
 
                 <!-- ── TAB 3: STICK ANALYZER ── -->
-                <TabItem Header="🎯  STICK &amp; DEADZONE ANALYZER">
+                <TabItem Header="{Binding [stick_deadzone_analyzer], Source={x:Static svc:L10n.I}}">
                     <Grid Margin="0,12,0,0">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="*"/>
@@ -1005,7 +1011,7 @@
                         <!-- Left stick radar -->
                         <Border Grid.Row="0" Grid.Column="0" Style="{StaticResource Card}" Padding="16" Margin="0,0,8,0">
                             <DockPanel>
-                                <TextBlock DockPanel.Dock="Top" Text="LEFT THUMBSTICK" FontSize="13" FontWeight="Bold" Foreground="#06B6D4" HorizontalAlignment="Center" Margin="0,0,0,10"/>
+                                <TextBlock DockPanel.Dock="Top" Text="{Binding [left_thumbstick], Source={x:Static svc:L10n.I}}" FontSize="13" FontWeight="Bold" Foreground="#06B6D4" HorizontalAlignment="Center" Margin="0,0,0,10"/>
                                 <Grid DockPanel.Dock="Bottom" Margin="0,12,0,0" Width="280" HorizontalAlignment="Center">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="*"/>
@@ -1016,8 +1022,8 @@
                                         <TextBlock Text="{Binding LeftStickYNorm, StringFormat='Y  {0:F3}'}" FontSize="12" Foreground="#F8FAFC" FontFamily="Consolas"/>
                                     </StackPanel>
                                     <StackPanel Grid.Column="1">
-                                        <TextBlock Text="{Binding LeftStickMagnitude, StringFormat='Deflection  {0:F1}%'}" FontSize="12" FontWeight="Bold" Foreground="#10B981"/>
-                                        <TextBlock Text="{Binding LeftStickDriftPercent, StringFormat='Drift at rest  {0:F2}%'}" FontSize="12" FontWeight="Bold" Foreground="#F43F5E"/>
+                                        <TextBlock  FontSize="12" FontWeight="Bold" Foreground="#10B981"><TextBlock.Text><MultiBinding Converter="{StaticResource LocFmt}"><Binding Path="[fmt_deflection]" Source="{x:Static svc:L10n.I}"/><Binding Path="LeftStickMagnitude"/></MultiBinding></TextBlock.Text></TextBlock>
+                                        <TextBlock  FontSize="12" FontWeight="Bold" Foreground="#F43F5E"><TextBlock.Text><MultiBinding Converter="{StaticResource LocFmt}"><Binding Path="[fmt_drift_at_rest]" Source="{x:Static svc:L10n.I}"/><Binding Path="LeftStickDriftPercent"/></MultiBinding></TextBlock.Text></TextBlock>
                                     </StackPanel>
                                 </Grid>
                                 <Viewbox Stretch="Uniform">
@@ -1047,7 +1053,7 @@
                         <!-- Right stick radar -->
                         <Border Grid.Row="0" Grid.Column="1" Style="{StaticResource Card}" Padding="16" Margin="8,0,0,0">
                             <DockPanel>
-                                <TextBlock DockPanel.Dock="Top" Text="RIGHT THUMBSTICK" FontSize="13" FontWeight="Bold" Foreground="#06B6D4" HorizontalAlignment="Center" Margin="0,0,0,10"/>
+                                <TextBlock DockPanel.Dock="Top" Text="{Binding [right_thumbstick], Source={x:Static svc:L10n.I}}" FontSize="13" FontWeight="Bold" Foreground="#06B6D4" HorizontalAlignment="Center" Margin="0,0,0,10"/>
                                 <Grid DockPanel.Dock="Bottom" Margin="0,12,0,0" Width="280" HorizontalAlignment="Center">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="*"/>
@@ -1058,8 +1064,8 @@
                                         <TextBlock Text="{Binding RightStickYNorm, StringFormat='Y  {0:F3}'}" FontSize="12" Foreground="#F8FAFC" FontFamily="Consolas"/>
                                     </StackPanel>
                                     <StackPanel Grid.Column="1">
-                                        <TextBlock Text="{Binding RightStickMagnitude, StringFormat='Deflection  {0:F1}%'}" FontSize="12" FontWeight="Bold" Foreground="#10B981"/>
-                                        <TextBlock Text="{Binding RightStickDriftPercent, StringFormat='Drift at rest  {0:F2}%'}" FontSize="12" FontWeight="Bold" Foreground="#F43F5E"/>
+                                        <TextBlock  FontSize="12" FontWeight="Bold" Foreground="#10B981"><TextBlock.Text><MultiBinding Converter="{StaticResource LocFmt}"><Binding Path="[fmt_deflection_2]" Source="{x:Static svc:L10n.I}"/><Binding Path="RightStickMagnitude"/></MultiBinding></TextBlock.Text></TextBlock>
+                                        <TextBlock  FontSize="12" FontWeight="Bold" Foreground="#F43F5E"><TextBlock.Text><MultiBinding Converter="{StaticResource LocFmt}"><Binding Path="[fmt_drift_at_rest_2]" Source="{x:Static svc:L10n.I}"/><Binding Path="RightStickDriftPercent"/></MultiBinding></TextBlock.Text></TextBlock>
                                     </StackPanel>
                                 </Grid>
                                 <Viewbox Stretch="Uniform">
@@ -1092,16 +1098,108 @@
                                     <ColumnDefinition Width="*"/>
                                 </Grid.ColumnDefinitions>
                                 <StackPanel Grid.Column="0" Margin="0,0,20,0">
-                                    <TextBlock Text="{Binding InnerDeadzone, StringFormat='INNER DEADZONE — {0:F0}% (red ring: input below this is ignored)'}" Style="{StaticResource SectionLabel}"/>
+                                    <TextBlock  Style="{StaticResource SectionLabel}"><TextBlock.Text><MultiBinding Converter="{StaticResource LocFmt}"><Binding Path="[fmt_inner_deadzone_red_ring_input]" Source="{x:Static svc:L10n.I}"/><Binding Path="InnerDeadzone"/></MultiBinding></TextBlock.Text></TextBlock>
                                     <Slider Minimum="0" Maximum="40" Value="{Binding InnerDeadzone}" Foreground="#F43F5E" TickFrequency="1" IsSnapToTickEnabled="True"/>
                                 </StackPanel>
                                 <StackPanel Grid.Column="1" Margin="20,0,0,0">
-                                    <TextBlock Text="{Binding OuterDeadzone, StringFormat='OUTER SATURATION — {0:F0}% (cyan ring: input beyond this counts as 100%)'}" Style="{StaticResource SectionLabel}"/>
+                                    <TextBlock  Style="{StaticResource SectionLabel}"><TextBlock.Text><MultiBinding Converter="{StaticResource LocFmt}"><Binding Path="[fmt_outer_saturation_cyan_ring_input]" Source="{x:Static svc:L10n.I}"/><Binding Path="OuterDeadzone"/></MultiBinding></TextBlock.Text></TextBlock>
                                     <Slider Minimum="60" Maximum="100" Value="{Binding OuterDeadzone}" Foreground="#06B6D4" TickFrequency="1" IsSnapToTickEnabled="True"/>
                                 </StackPanel>
                             </Grid>
                         </Border>
                     </Grid>
+                </TabItem>
+
+                <!-- ══ Settings tab ══ -->
+                <TabItem Header="{Binding [settings_tab], Source={x:Static svc:L10n.I}}">
+                    <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="0,12,0,0">
+                        <StackPanel MaxWidth="980" HorizontalAlignment="Left">
+
+                            <!-- General -->
+                            <Border Style="{StaticResource Card}" Padding="16" Margin="0,0,0,12">
+                                <StackPanel>
+                                    <TextBlock Text="{Binding [settings_general], Source={x:Static svc:L10n.I}}" Style="{StaticResource SectionLabel}"/>
+                                    <StackPanel Orientation="Horizontal" Margin="0,4,0,12">
+                                        <TextBlock Text="🌐" FontSize="14" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                                        <TextBlock Text="{Binding [settings_language], Source={x:Static svc:L10n.I}}" FontSize="12" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                                        <ComboBox Style="{StaticResource DarkCombo}" Width="160"
+                                                  ItemsSource="{Binding Languages}" SelectedItem="{Binding CurrentLanguage, Mode=TwoWay}"
+                                                  ToolTip="{Binding [ui_language_tip], Source={x:Static svc:L10n.I}}"/>
+                                    </StackPanel>
+                                    <CheckBox Content="{Binding [settings_start_with_windows], Source={x:Static svc:L10n.I}}" IsChecked="{Binding StartWithWindows}" FontSize="12"
+                                              ToolTip="{Binding [settings_start_with_windows_tip], Source={x:Static svc:L10n.I}}"/>
+                                    <CheckBox Content="{Binding [settings_start_minimized], Source={x:Static svc:L10n.I}}" IsChecked="{Binding StartMinimized}" FontSize="12" Margin="24,6,0,0"
+                                              IsEnabled="{Binding StartWithWindows}"/>
+                                    <CheckBox Content="{Binding [settings_autostart_engine], Source={x:Static svc:L10n.I}}" IsChecked="{Binding AutoStartEngine}" FontSize="12" Margin="0,10,0,0"
+                                              ToolTip="{Binding [settings_autostart_engine_tip], Source={x:Static svc:L10n.I}}"/>
+                                    <CheckBox Content="{Binding [settings_close_to_tray], Source={x:Static svc:L10n.I}}" IsChecked="{Binding CloseToTray}" FontSize="12" Margin="0,6,0,0"
+                                              ToolTip="{Binding [settings_close_to_tray_tip], Source={x:Static svc:L10n.I}}"/>
+                                </StackPanel>
+                            </Border>
+
+                            <!-- Updates -->
+                            <Border Style="{StaticResource Card}" Padding="16" Margin="0,0,0,12">
+                                <StackPanel>
+                                    <TextBlock Text="{Binding [settings_updates], Source={x:Static svc:L10n.I}}" Style="{StaticResource SectionLabel}"/>
+                                    <CheckBox Content="{Binding [settings_check_updates_startup], Source={x:Static svc:L10n.I}}" IsChecked="{Binding CheckUpdatesAtStartup}" FontSize="12" Margin="0,4,0,10"/>
+                                    <StackPanel Orientation="Horizontal">
+                                        <Button Content="{Binding [btn_check_now], Source={x:Static svc:L10n.I}}" Command="{Binding CheckUpdatesCommand}" Style="{StaticResource GhostButtonStyle}"/>
+                                        <TextBlock Text="{Binding UpdateStatusText}" FontSize="12" Foreground="#94A3B8" VerticalAlignment="Center" Margin="12,0,0,0"/>
+                                        <Button Content="{Binding [btn_download_update], Source={x:Static svc:L10n.I}}" Command="{Binding OpenUpdateCommand}" Style="{StaticResource ActionButtonStyle}" Height="30" Margin="12,0,0,0"
+                                                Visibility="{Binding UpdateAvailable, Converter={StaticResource BoolToVis}}"/>
+                                    </StackPanel>
+                                </StackPanel>
+                            </Border>
+
+                            <!-- Drivers -->
+                            <Border Style="{StaticResource Card}" Padding="16" Margin="0,0,0,12">
+                                <StackPanel>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Text="{Binding [settings_drivers], Source={x:Static svc:L10n.I}}" Style="{StaticResource SectionLabel}"/>
+                                        <Button Grid.Column="1" Content="{Binding [btn_refresh], Source={x:Static svc:L10n.I}}" Command="{Binding RefreshDriversCommand}" Style="{StaticResource GhostButtonStyle}" VerticalAlignment="Top"/>
+                                    </Grid>
+                                    <Grid Margin="0,6,0,0">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="120"/>
+                                            <ColumnDefinition Width="110"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                        </Grid.RowDefinitions>
+                                        <TextBlock Grid.Row="0" Grid.Column="0" Text="ViGEmBus" FontWeight="Bold" FontSize="12" VerticalAlignment="Center"/>
+                                        <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding ViGEmStatusText}" FontSize="12" Foreground="#38BDF8" VerticalAlignment="Center"/>
+                                        <TextBlock Grid.Row="0" Grid.Column="2" Text="{Binding [vigem_desc], Source={x:Static svc:L10n.I}}" FontSize="11" Foreground="#94A3B8" TextWrapping="Wrap" VerticalAlignment="Center" Margin="0,0,12,0"/>
+                                        <Button Grid.Row="0" Grid.Column="3" Content="{Binding [btn_download_page], Source={x:Static svc:L10n.I}}" Command="{Binding OpenViGEmPageCommand}" Style="{StaticResource GhostButtonStyle}"/>
+                                        <TextBlock Grid.Row="1" Grid.Column="0" Text="HidHide" FontWeight="Bold" FontSize="12" VerticalAlignment="Center" Margin="0,8,0,0"/>
+                                        <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding HidHideStatusText}" FontSize="12" Foreground="#38BDF8" VerticalAlignment="Center" Margin="0,8,0,0"/>
+                                        <TextBlock Grid.Row="1" Grid.Column="2" Text="{Binding [hidhide_desc], Source={x:Static svc:L10n.I}}" FontSize="11" Foreground="#94A3B8" TextWrapping="Wrap" VerticalAlignment="Center" Margin="0,8,12,0"/>
+                                        <Button Grid.Row="1" Grid.Column="3" Content="{Binding [btn_download_page], Source={x:Static svc:L10n.I}}" Command="{Binding OpenHidHidePageCommand}" Style="{StaticResource GhostButtonStyle}" Margin="0,8,0,0"/>
+                                    </Grid>
+                                </StackPanel>
+                            </Border>
+
+                            <!-- About -->
+                            <Border Style="{StaticResource Card}" Padding="16" Margin="0,0,0,12">
+                                <StackPanel>
+                                    <TextBlock Text="{Binding [settings_about], Source={x:Static svc:L10n.I}}" Style="{StaticResource SectionLabel}"/>
+                                    <StackPanel Orientation="Horizontal" Margin="0,4,0,6">
+                                        <TextBlock Text="Wolverine Remapper" FontWeight="Bold" FontSize="13" VerticalAlignment="Center"/>
+                                        <TextBlock Text="{Binding AppVersion}" FontSize="12" Foreground="#38BDF8" VerticalAlignment="Center" Margin="8,0,0,0"/>
+                                    </StackPanel>
+                                    <TextBlock Text="{Binding [about_text], Source={x:Static svc:L10n.I}}" FontSize="11" Foreground="#94A3B8" TextWrapping="Wrap" Margin="0,0,0,10"/>
+                                    <Button Content="{Binding [btn_github], Source={x:Static svc:L10n.I}}" Command="{Binding OpenGitHubCommand}" Style="{StaticResource GhostButtonStyle}" HorizontalAlignment="Left"/>
+                                </StackPanel>
+                            </Border>
+
+                        </StackPanel>
+                    </ScrollViewer>
                 </TabItem>
             </TabControl>
 
@@ -1114,10 +1212,10 @@
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
                         <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="CONSOLE" FontSize="11" FontWeight="Bold" Foreground="#94A3B8" VerticalAlignment="Center"/>
+                            <TextBlock Text="{Binding [console], Source={x:Static svc:L10n.I}}" FontSize="11" FontWeight="Bold" Foreground="#94A3B8" VerticalAlignment="Center"/>
                             <TextBlock Text="{Binding StatusMessage, StringFormat='  —  {0}'}" FontSize="11" Foreground="#38BDF8" VerticalAlignment="Center"/>
                         </StackPanel>
-                        <Button Grid.Column="1" Content="CLEAR" Command="{Binding ClearLogsCommand}" Style="{StaticResource GhostButtonStyle}" Padding="8,3" FontSize="10"/>
+                        <Button Grid.Column="1" Content="{Binding [clear], Source={x:Static svc:L10n.I}}" Command="{Binding ClearLogsCommand}" Style="{StaticResource GhostButtonStyle}" Padding="8,3" FontSize="10"/>
                     </Grid>
                     <ListBox ItemsSource="{Binding ActivityLogs}" Background="#0F172A" BorderBrush="#334155" BorderThickness="1"
                              Foreground="#38BDF8" FontFamily="Consolas" FontSize="11" Padding="6"
@@ -1136,10 +1234,10 @@
         <Grid Background="#D90F172A" Visibility="{Binding IsCapturing, Converter={StaticResource BoolToVis}}">
             <Border Style="{StaticResource Card}" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="40,32" BorderBrush="#06B6D4">
                 <StackPanel HorizontalAlignment="Center">
-                    <TextBlock Text="{Binding CapturingButtonName, StringFormat='REBINDING {0}'}" FontSize="22" FontWeight="Black" Foreground="#06B6D4" HorizontalAlignment="Center"/>
-                    <TextBlock Text="Press the key your controller sends for this button…" FontSize="14" Foreground="#F8FAFC" Margin="0,14,0,4" HorizontalAlignment="Center"/>
-                    <TextBlock Text="(Press M-buttons on the pad after mapping them to F13–F18 in Synapse)" FontSize="11" Foreground="#94A3B8" HorizontalAlignment="Center"/>
-                    <Button Content="CANCEL (ESC)" Command="{Binding CancelCaptureCommand}" Style="{StaticResource GhostButtonStyle}" Margin="0,20,0,0" HorizontalAlignment="Center"/>
+                    <TextBlock  FontSize="22" FontWeight="Black" Foreground="#06B6D4" HorizontalAlignment="Center"><TextBlock.Text><MultiBinding Converter="{StaticResource LocFmt}"><Binding Path="[fmt_rebinding]" Source="{x:Static svc:L10n.I}"/><Binding Path="CapturingButtonName"/></MultiBinding></TextBlock.Text></TextBlock>
+                    <TextBlock Text="{Binding [press_the_key_your_controller], Source={x:Static svc:L10n.I}}" FontSize="14" Foreground="#F8FAFC" Margin="0,14,0,4" HorizontalAlignment="Center"/>
+                    <TextBlock Text="{Binding [press_m_buttons_on_the], Source={x:Static svc:L10n.I}}" FontSize="11" Foreground="#94A3B8" HorizontalAlignment="Center"/>
+                    <Button Content="{Binding [cancel_esc], Source={x:Static svc:L10n.I}}" Command="{Binding CancelCaptureCommand}" Style="{StaticResource GhostButtonStyle}" Margin="0,20,0,0" HorizontalAlignment="Center"/>
                 </StackPanel>
             </Border>
         </Grid>
@@ -1149,12 +1247,12 @@
             <Border Style="{StaticResource Card}" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="48,36" BorderBrush="#10B981">
                 <StackPanel HorizontalAlignment="Center" Width="400">
                     <TextBlock Text="{Binding StickCaptureTitle}" FontSize="22" FontWeight="Black" Foreground="#10B981" HorizontalAlignment="Center"/>
-                    <TextBlock Text="Push and HOLD the stick toward your target — now!" FontSize="14" Foreground="#F8FAFC" Margin="0,12,0,0" HorizontalAlignment="Center"/>
+                    <TextBlock Text="{Binding [push_and_hold_the_stick], Source={x:Static svc:L10n.I}}" FontSize="14" Foreground="#F8FAFC" Margin="0,12,0,0" HorizontalAlignment="Center"/>
                     <TextBlock Text="{Binding StickCaptureLive}" FontSize="32" FontWeight="Bold" Foreground="#06B6D4" FontFamily="Consolas" HorizontalAlignment="Center" Margin="0,16,0,2"/>
                     <TextBlock Text="{Binding StickCaptureBest}" FontSize="12" Foreground="#94A3B8" HorizontalAlignment="Center" MinHeight="16"/>
                     <ProgressBar Style="{StaticResource TriggerBar}" Maximum="100" Value="{Binding StickCaptureProgress, Mode=OneWay}" Foreground="#10B981" Margin="0,16,0,0"/>
-                    <TextBlock Text="The strongest push wins — hold it until the bar fills." FontSize="11" Foreground="#94A3B8" HorizontalAlignment="Center" Margin="0,8,0,0"/>
-                    <Button Content="CANCEL" Command="{Binding CancelStickCaptureCommand}" Style="{StaticResource GhostButtonStyle}" Margin="0,18,0,0" HorizontalAlignment="Center"/>
+                    <TextBlock Text="{Binding [the_strongest_push_wins_hold], Source={x:Static svc:L10n.I}}" FontSize="11" Foreground="#94A3B8" HorizontalAlignment="Center" Margin="0,8,0,0"/>
+                    <Button Content="{Binding [cancel], Source={x:Static svc:L10n.I}}" Command="{Binding CancelStickCaptureCommand}" Style="{StaticResource GhostButtonStyle}" Margin="0,18,0,0" HorizontalAlignment="Center"/>
                 </StackPanel>
             </Border>
         </Grid>

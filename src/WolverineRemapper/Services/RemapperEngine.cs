@@ -366,7 +366,7 @@ namespace WolverineRemapper.Services
                 var preamble = config.Mode == ActionMode.HoldTap
                     ? BuildHoldTapPreamble(config)
                     : null;
-                var run = new MacroRun(_virtualPad, steps, config.Repeat, config.RepeatCount, config.RepeatGapMs, preamble);
+                var run = new MacroRun(_virtualPad, steps, config.EffectiveRepeat, config.RepeatCount, config.RepeatGapMs, preamble);
                 _macroRuns[vkCode] = run;
                 run.Start();
             }

@@ -40,6 +40,12 @@ namespace WolverineRemapper.ViewModels
             DeleteProfileCommand = new RelayCommand(_ => DeleteProfile());
             NewProfileCommand = new RelayCommand(_ => NewProfile());
             DuplicateProfileCommand = new RelayCommand(_ => DuplicateProfile());
+            CheckUpdatesCommand = new RelayCommand(_ => _ = CheckForUpdatesAsync(silent: false));
+            OpenUpdateCommand = new RelayCommand(_ => OpenUrl(_updateUrl ?? UpdateService.RepoUrl));
+            OpenGitHubCommand = new RelayCommand(_ => OpenUrl(UpdateService.RepoUrl));
+            OpenViGEmPageCommand = new RelayCommand(_ => OpenUrl(DriverCheck.ViGEmBusUrl));
+            OpenHidHidePageCommand = new RelayCommand(_ => OpenUrl(DriverCheck.HidHideUrl));
+            RefreshDriversCommand = new RelayCommand(_ => RefreshDriverStatus());
             SelectMButtonCommand = new RelayCommand(SelectMButton);
             RebindCommand = new RelayCommand(BeginRebind);
             CancelCaptureCommand = new RelayCommand(_ => _engine.CancelCapture());
@@ -54,6 +60,8 @@ namespace WolverineRemapper.ViewModels
             MButtons.CollectionChanged += OnMButtonsCollectionChanged;
 
             _settings = _profiles.LoadSettings();
+            L10n.I.CurrentLanguage = L10n.FromCode(_settings.Language);
+            L10n.I.LanguageChanged += OnLanguageChanged;
             RefreshProfileNames();
 
             var last = _settings.LastProfileName != null ? _profiles.Load(_settings.LastProfileName) : null;
@@ -73,6 +81,8 @@ namespace WolverineRemapper.ViewModels
             _pollTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(16) }; // ~60 FPS
             _pollTimer.Tick += PollGamepad;
             _pollTimer.Start();
+
+            if (_settings.CheckUpdatesAtStartup) _ = CheckForUpdatesAsync(silent: true);
         }
 
         #region Collections
@@ -97,16 +107,174 @@ namespace WolverineRemapper.ViewModels
         #region Engine state
 
         public bool IsRemapperActive => _engine.IsRunning;
-        public string StatusText => IsRemapperActive ? "ENGINE ONLINE" : "ENGINE STOPPED";
+        public string StatusText => IsRemapperActive ? L10n.I.T("engine_online") : L10n.I.T("engine_stopped");
         public string StatusColor => IsRemapperActive ? "#10B981" : "#F43F5E";
-        public string EngineButtonText => IsRemapperActive ? "◼  STOP ENGINE" : "▶  START ENGINE";
+        public string EngineButtonText => IsRemapperActive ? "◼  " + L10n.I.T("btn_stop_engine") : "▶  " + L10n.I.T("btn_start_engine");
 
-        private string _statusMessage = "Ready. Press START ENGINE to begin remapping.";
+        private string _statusMessage = L10n.I.T("status_ready");
         public string StatusMessage
         {
             get => _statusMessage;
             set { _statusMessage = value; OnPropertyChanged(); }
         }
+
+        #region Language
+
+        public IReadOnlyList<Language> Languages => L10n.Available;
+
+        public Language CurrentLanguage
+        {
+            get => L10n.I.CurrentLanguage;
+            set
+            {
+                if (value == null || value.Code == L10n.I.CurrentLanguage.Code) return;
+                L10n.I.CurrentLanguage = value;
+                _settings.Language = value.Code;
+                _profiles.SaveSettings(_settings);
+                OnPropertyChanged();
+            }
+        }
+
+        /// <summary>Strings computed in code (not bound through the indexer) need a nudge.</summary>
+        private void OnLanguageChanged()
+        {
+            OnPropertyChanged(nameof(StatusText));
+            OnPropertyChanged(nameof(EngineButtonText));
+            OnPropertyChanged(nameof(SlotInfoText));
+            OnPropertyChanged(nameof(SlotInfoTooltip));
+            OnPropertyChanged(nameof(PadTriggerHint));
+            OnPropertyChanged(nameof(CurrentLanguage));
+            OnPropertyChanged(nameof(UpdateStatusText));
+            OnPropertyChanged(nameof(ViGEmStatusText));
+            OnPropertyChanged(nameof(HidHideStatusText));
+        }
+
+        #endregion
+
+        #region Settings tab
+
+        private void SaveSettings() => _profiles.SaveSettings(_settings);
+
+        /// <summary>Per-user Run key; shared with the installer and the tray toggle.</summary>
+        public bool StartWithWindows
+        {
+            get => StartupService.IsEnabled();
+            set
+            {
+                StartupService.SetEnabled(value, _settings.StartMinimized);
+                OnPropertyChanged();
+                AddLog(value ? "[+] Start with Windows enabled." : "[−] Start with Windows disabled.");
+            }
+        }
+
+        public bool StartMinimized
+        {
+            get => _settings.StartMinimized;
+            set
+            {
+                _settings.StartMinimized = value;
+                SaveSettings();
+                if (StartWithWindows) StartupService.SetEnabled(true, value); // rewrite the Run command line
+                OnPropertyChanged();
+            }
+        }
+
+        public bool AutoStartEngine
+        {
+            get => _settings.AutoStartEngine;
+            set { _settings.AutoStartEngine = value; SaveSettings(); OnPropertyChanged(); }
+        }
+
+        public bool CloseToTray
+        {
+            get => _settings.CloseToTray;
+            set { _settings.CloseToTray = value; SaveSettings(); OnPropertyChanged(); }
+        }
+
+        public bool CheckUpdatesAtStartup
+        {
+            get => _settings.CheckUpdatesAtStartup;
+            set { _settings.CheckUpdatesAtStartup = value; SaveSettings(); OnPropertyChanged(); }
+        }
+
+        public string AppVersion => "v" + UpdateService.Current;
+
+        // Update check state is kept as data so the text re-localizes on language change.
+        private enum UpdateState { Unknown, Checking, UpToDate, Available, Failed }
+        private UpdateState _updateState = UpdateState.Unknown;
+        private Version? _latestVersion;
+        private string? _updateUrl;
+        private string _updateError = "";
+
+        public bool UpdateAvailable => _updateState == UpdateState.Available;
+
+        public string UpdateStatusText => _updateState switch
+        {
+            UpdateState.Checking => L10n.I.T("update_checking"),
+            UpdateState.UpToDate => L10n.I.F("update_latest", AppVersion),
+            UpdateState.Available => L10n.I.F("update_available", "v" + _latestVersion, AppVersion),
+            UpdateState.Failed => L10n.I.F("update_failed", _updateError),
+            _ => L10n.I.T("update_unknown")
+        };
+
+        private async Task CheckForUpdatesAsync(bool silent)
+        {
+            _updateState = UpdateState.Checking;
+            NotifyUpdate();
+            try
+            {
+                var info = await UpdateService.GetLatestAsync();
+                if (info == null)
+                {
+                    _updateState = UpdateState.Failed;
+                    _updateError = "no version tag";
+                }
+                else
+                {
+                    _latestVersion = info.Latest;
+                    _updateUrl = info.Url;
+                    _updateState = info.Latest > UpdateService.Current ? UpdateState.Available : UpdateState.UpToDate;
+                    if (_updateState == UpdateState.Available)
+                    {
+                        AddLog($"[i] Update available: v{info.Latest} (running {AppVersion}) — {info.Url}");
+                        if (silent) StatusMessage = UpdateStatusText;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                _updateState = UpdateState.Failed;
+                _updateError = ex.Message;
+                if (!silent) AddLog($"[!] Update check failed: {ex.Message}");
+            }
+            NotifyUpdate();
+        }
+
+        private void NotifyUpdate()
+        {
+            OnPropertyChanged(nameof(UpdateStatusText));
+            OnPropertyChanged(nameof(UpdateAvailable));
+        }
+
+        public string ViGEmStatusText => DriverCheck.ViGEmBusInstalled ? "✓ " + L10n.I.T("driver_installed") : "✕ " + L10n.I.T("driver_missing");
+        public string HidHideStatusText => DriverCheck.HidHideInstalled ? "✓ " + L10n.I.T("driver_installed") : "✕ " + L10n.I.T("driver_missing");
+
+        private void RefreshDriverStatus()
+        {
+            OnPropertyChanged(nameof(ViGEmStatusText));
+            OnPropertyChanged(nameof(HidHideStatusText));
+        }
+
+        private static void OpenUrl(string url)
+        {
+            try
+            {
+                System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(url) { UseShellExecute = true });
+            }
+            catch { /* no browser association — nothing sensible to do */ }
+        }
+
+        #endregion
 
         public bool PassthroughEnabled
         {
@@ -128,7 +296,7 @@ namespace WolverineRemapper.ViewModels
             if (IsRemapperActive)
             {
                 _engine.Stop();
-                StatusMessage = "Engine stopped. All virtual buttons released.";
+                StatusMessage = L10n.I.T("status_engine_stopped");
                 AddLog("[−] Engine stopped.");
             }
             else
@@ -137,14 +305,14 @@ namespace WolverineRemapper.ViewModels
                 if (_engine.Start(out var error))
                 {
                     StatusMessage = PassthroughEnabled
-                        ? "Engine online. Chords + full passthrough active on the virtual pad."
-                        : "Engine online. Intercepting trigger keys, emitting virtual chords.";
+                        ? L10n.I.T("status_engine_online_passthrough")
+                        : L10n.I.T("status_engine_online");
                     AddLog("[+] Engine ONLINE. Virtual Xbox 360 pad connected" +
                            (_engine.VirtualSlot >= 0 ? $" (XInput slot {_engine.VirtualSlot + 1})." : "."));
                 }
                 else
                 {
-                    StatusMessage = $"Start failed: {error} {ViGEmInstallHint}";
+                    StatusMessage = L10n.I.F("status_start_failed", error) + " " + L10n.I.T("hint_install_vigem");
                     AddLog($"[!] {error}");
                     AddLog($"[!] {ViGEmInstallHint}");
                 }
@@ -197,13 +365,13 @@ namespace WolverineRemapper.ViewModels
                     AddLog("[+] Controller set to Wolverine V2 family — each M-button now triggers on a sacrificed pad button.");
                     AddLog("[i] In Razer Controller Setup for Xbox, map each paddle to the button chosen here. Turn Passthrough ON and hide the physical pad from the game with HidHide.");
                     StatusMessage = PassthroughEnabled
-                        ? "V2 mode: pick the pad button each paddle sacrifices."
-                        : "V2 mode: turn Passthrough ON so the sacrificed buttons are stripped before they reach the game.";
+                        ? L10n.I.T("status_v2_pick")
+                        : L10n.I.T("status_v2_passthrough_off");
                 }
                 else
                 {
                     AddLog("[+] Controller set to Wolverine V3 Pro 8K — M-buttons trigger on keyboard keys from Synapse.");
-                    StatusMessage = "V3 mode: each M-button triggers on the keyboard key Synapse sends.";
+                    StatusMessage = L10n.I.T("status_v3");
                 }
             }
         }
@@ -215,10 +383,7 @@ namespace WolverineRemapper.ViewModels
 
         public IReadOnlyList<PadButtonChoice> PadTriggerChoices => PadButtons.Choices;
 
-        public string PadTriggerHint =>
-            "Map the paddle to this button in Razer Controller Setup for Xbox. The remapper watches the physical pad for it, " +
-            "removes it from passthrough and fires the combo instead — so the button itself is no longer usable in-game. " +
-            "Passthrough must be ON, and the physical pad must be hidden from the game with HidHide so only the virtual pad is seen.";
+        public string PadTriggerHint => L10n.I.T("hint_pad_trigger");
 
         private void SetControllerModelSilent(ControllerModel model)
         {
@@ -588,17 +753,23 @@ namespace WolverineRemapper.ViewModels
                 _loadedProfileName = profile.ProfileName;
                 HasUnsavedChanges = false;
                 FlashSaved();
-                StatusMessage = $"Profile '{profile.ProfileName}' saved.";
+                StatusMessage = L10n.I.F("status_profile_saved", profile.ProfileName);
                 AddLog($"[+] Saved profile '{profile.ProfileName}' to {_profiles.ProfilesDirectory}.");
             }
             catch (Exception ex)
             {
-                StatusMessage = $"Save failed: {ex.Message}";
+                StatusMessage = L10n.I.F("status_save_failed", ex.Message);
                 AddLog($"[!] Save failed: {ex.Message}");
             }
         }
 
         private void LoadProfile() => LoadProfileByName(ProfileNameInput);
+
+        /// <summary>Name of the profile currently loaded from disk (null for an unsaved new one).</summary>
+        public string? LoadedProfileName => _loadedProfileName;
+
+        /// <summary>Load a saved profile by name (tray menu entry point).</summary>
+        public void SwitchProfile(string name) => LoadProfileByName(name);
 
         private void LoadProfileByName(string name)
         {
@@ -607,8 +778,8 @@ namespace WolverineRemapper.ViewModels
                 if (HasUnsavedChanges)
                 {
                     var choice = MessageBox.Show(
-                        $"You have unsaved changes. Load '{name}' and discard them?",
-                        "Unsaved changes", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+                        L10n.I.F("prompt_load_discard", name),
+                        L10n.I.T("prompt_unsaved_title"), MessageBoxButton.YesNo, MessageBoxImage.Warning);
                     if (choice != MessageBoxResult.Yes)
                     {
                         SetSelectedProfileSilent(_loadedProfileName);
@@ -619,7 +790,7 @@ namespace WolverineRemapper.ViewModels
                 var profile = _profiles.Load(name);
                 if (profile == null)
                 {
-                    StatusMessage = $"Profile '{name}' not found.";
+                    StatusMessage = L10n.I.F("status_profile_not_found", name);
                     AddLog($"[!] Profile '{name}' not found in {_profiles.ProfilesDirectory}.");
                     SetSelectedProfileSilent(_loadedProfileName);
                     return;
@@ -630,12 +801,12 @@ namespace WolverineRemapper.ViewModels
                 _loadedProfileName = profile.ProfileName;
                 _settings.LastProfileName = profile.ProfileName;
                 _profiles.SaveSettings(_settings);
-                StatusMessage = $"Profile '{profile.ProfileName}' loaded.";
+                StatusMessage = L10n.I.F("status_profile_loaded", profile.ProfileName);
                 AddLog($"[+] Loaded profile '{profile.ProfileName}'.");
             }
             catch (Exception ex)
             {
-                StatusMessage = $"Load failed: {ex.Message}";
+                StatusMessage = L10n.I.F("status_load_failed", ex.Message);
                 AddLog($"[!] Load failed: {ex.Message}");
             }
         }
@@ -643,8 +814,8 @@ namespace WolverineRemapper.ViewModels
         private void DeleteProfile()
         {
             var choice = MessageBox.Show(
-                $"Delete profile '{ProfileNameInput}' permanently?",
-                "Delete profile", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+                L10n.I.F("prompt_delete_profile", ProfileNameInput),
+                L10n.I.T("prompt_delete_title"), MessageBoxButton.YesNo, MessageBoxImage.Warning);
             if (choice != MessageBoxResult.Yes) return;
 
             if (_profiles.Delete(ProfileNameInput))
@@ -652,12 +823,12 @@ namespace WolverineRemapper.ViewModels
                 RefreshProfileNames();
                 if (_loadedProfileName == ProfileNameInput) _loadedProfileName = null;
                 SetSelectedProfileSilent(_loadedProfileName);
-                StatusMessage = $"Profile '{ProfileNameInput}' deleted.";
+                StatusMessage = L10n.I.F("status_profile_deleted", ProfileNameInput);
                 AddLog($"[−] Deleted profile '{ProfileNameInput}'.");
             }
             else
             {
-                StatusMessage = $"Profile '{ProfileNameInput}' not found.";
+                StatusMessage = L10n.I.F("status_profile_not_found", ProfileNameInput);
             }
         }
 
@@ -694,13 +865,13 @@ namespace WolverineRemapper.ViewModels
                 FlashSaved();
 
                 StatusMessage = carriedEdits
-                    ? $"Duplicated as '{copy.ProfileName}' — includes your unsaved edits; '{source}' on disk is unchanged."
-                    : $"Duplicated as '{copy.ProfileName}'.";
+                    ? L10n.I.F("status_duplicated_with_edits", copy.ProfileName, source)
+                    : L10n.I.F("status_duplicated", copy.ProfileName);
                 AddLog($"[+] Duplicated '{source}' → '{copy.ProfileName}'.");
             }
             catch (Exception ex)
             {
-                StatusMessage = $"Duplicate failed: {ex.Message}";
+                StatusMessage = L10n.I.F("status_duplicate_failed", ex.Message);
                 AddLog($"[!] Duplicate failed: {ex.Message}");
             }
         }
@@ -710,16 +881,16 @@ namespace WolverineRemapper.ViewModels
             if (HasUnsavedChanges)
             {
                 var choice = MessageBox.Show(
-                    "You have unsaved changes. Start a new profile and discard them?",
-                    "Unsaved changes", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+                    L10n.I.T("prompt_new_discard"),
+                    L10n.I.T("prompt_unsaved_title"), MessageBoxButton.YesNo, MessageBoxImage.Warning);
                 if (choice != MessageBoxResult.Yes) return;
             }
 
             LoadDefaults();
-            ProfileNameInput = "New Profile";
+            ProfileNameInput = L10n.I.T("new_profile_name");
             _loadedProfileName = null;
             SetSelectedProfileSilent(null);
-            StatusMessage = "New profile started from defaults. Rename and Save when ready.";
+            StatusMessage = L10n.I.T("status_new_profile");
             AddLog("[+] Reset to default mapping.");
         }
 
@@ -847,10 +1018,10 @@ namespace WolverineRemapper.ViewModels
         {
             get
             {
-                if (!ControllerConnected) return "⚠ No controller";
+                if (!ControllerConnected) return "⚠ " + L10n.I.T("slot_no_controller");
                 return _engine.IsRunning && _engine.VirtualSlot >= 0
-                    ? "Controller ✓ · Virtual pad ✓"
-                    : "Controller ✓";
+                    ? L10n.I.T("slot_controller") + " ✓ · " + L10n.I.T("slot_virtual_pad") + " ✓"
+                    : L10n.I.T("slot_controller") + " ✓";
             }
         }
 
@@ -859,13 +1030,13 @@ namespace WolverineRemapper.ViewModels
             get
             {
                 if (!ControllerConnected)
-                    return "No XInput controller found.\nConnect the Wolverine via USB or its HyperSpeed dongle.";
+                    return L10n.I.T("slot_tip_none");
 
-                string tip = $"Physical controller detected (XInput slot {_monitorSlot + 1}).";
-                tip += _engine.IsRunning && _engine.VirtualSlot >= 0
-                    ? $"\nVirtual Xbox pad active (slot {_engine.VirtualSlot + 1}) — this is the pad that carries your chords, and the one the game should see."
-                    : "\nStart the engine to create the virtual Xbox pad that carries your chords.";
-                tip += "\n\nPAD 'Auto' follows whichever slot shows real input activity.";
+                string tip = L10n.I.F("slot_tip_detected", _monitorSlot + 1);
+                tip += "\n" + (_engine.IsRunning && _engine.VirtualSlot >= 0
+                    ? L10n.I.F("slot_tip_virtual", _engine.VirtualSlot + 1)
+                    : L10n.I.T("slot_tip_start"));
+                tip += "\n\n" + L10n.I.T("slot_tip_auto");
                 return tip;
             }
         }
@@ -1148,6 +1319,12 @@ namespace WolverineRemapper.ViewModels
         public ICommand DeleteProfileCommand { get; }
         public ICommand NewProfileCommand { get; }
         public ICommand DuplicateProfileCommand { get; }
+        public ICommand CheckUpdatesCommand { get; }
+        public ICommand OpenUpdateCommand { get; }
+        public ICommand OpenGitHubCommand { get; }
+        public ICommand OpenViGEmPageCommand { get; }
+        public ICommand OpenHidHidePageCommand { get; }
+        public ICommand RefreshDriversCommand { get; }
         public ICommand SelectMButtonCommand { get; }
         public ICommand RebindCommand { get; }
         public ICommand CancelCaptureCommand { get; }

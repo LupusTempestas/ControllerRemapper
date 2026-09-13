@@ -18,5 +18,15 @@ namespace WolverineRemapper.Models
     public class AppSettings
     {
         public string? LastProfileName { get; set; }
+        /// <summary>UI language code (en, fr, de, es, nl). Null = detect from the OS.</summary>
+        public string? Language { get; set; }
+        /// <summary>Start the engine as soon as the app launches (same as --autostart).</summary>
+        public bool AutoStartEngine { get; set; } = false;
+        /// <summary>Close button hides to the tray instead of quitting.</summary>
+        public bool CloseToTray { get; set; } = true;
+        /// <summary>When launched by the Windows Run key, stay hidden in the tray.</summary>
+        public bool StartMinimized { get; set; } = true;
+        /// <summary>Query GitHub releases once at startup.</summary>
+        public bool CheckUpdatesAtStartup { get; set; } = true;
     }
 }

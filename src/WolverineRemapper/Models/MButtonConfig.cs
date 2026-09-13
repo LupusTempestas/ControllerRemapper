@@ -43,6 +43,7 @@ namespace WolverineRemapper.Models
         private TriggerType _trigger = TriggerType.Hold;
         private RepeatMode _repeat = RepeatMode.Once;
         private int _repeatCount = 3;
+        private bool _ignoreRepeatLimit;
         private int _repeatGapMs = 40;
         private int _doubleTapWindowMs = 300;
         private int _holdTapDelayMs = 60;
@@ -224,6 +225,31 @@ namespace WolverineRemapper.Models
             set { _repeatCount = Math.Max(1, value); OnPropertyChanged(); OnPropertyChanged(nameof(ChordSummary)); }
         }
 
+        /// <summary>
+        /// Multiple-times mode with the count ignored: keep repeating until the
+        /// M-button is released (or toggled off). Runtime-equivalent to
+        /// WhileHeld, kept as a separate switch so the count survives toggling.
+        /// </summary>
+        public bool IgnoreRepeatLimit
+        {
+            get => _ignoreRepeatLimit;
+            set
+            {
+                if (_ignoreRepeatLimit == value) return;
+                _ignoreRepeatLimit = value;
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(RepeatLimitApplies));
+                OnPropertyChanged(nameof(ChordSummary));
+            }
+        }
+
+        [JsonIgnore] public bool RepeatLimitApplies => !IgnoreRepeatLimit;
+
+        /// <summary>What the engine actually runs: Count with the limit ignored becomes WhileHeld.</summary>
+        [JsonIgnore]
+        public RepeatMode EffectiveRepeat =>
+            Repeat == RepeatMode.Count && IgnoreRepeatLimit ? RepeatMode.WhileHeld : Repeat;
+
         /// <summary>Delay (ms) between repeats, and press-hold time for a repeated chord.</summary>
         public int RepeatGapMs
         {
@@ -241,6 +267,7 @@ namespace WolverineRemapper.Models
         [JsonIgnore]
         public string RepeatSuffix => Repeat switch
         {
+            RepeatMode.Count when IgnoreRepeatLimit => "  · until released",
             RepeatMode.Count => $"  ×{RepeatCount}",
             RepeatMode.WhileHeld => "  · turbo",
             _ => ""

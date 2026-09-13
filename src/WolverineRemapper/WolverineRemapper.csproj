@@ -6,8 +6,9 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
+    <UseWindowsForms>true</UseWindowsForms>
     <ApplicationIcon>Assets\app.ico</ApplicationIcon>
-    <Version>1.0.0</Version>
+    <Version>1.1.0</Version>
     <Authors>LupusTempestas</Authors>
     <Product>Wolverine Remapper</Product>
     <Description>Zero-lag M-button remapper for Razer Wolverine controllers (virtual Xbox 360 pad via ViGEmBus).</Description>
@@ -19,6 +20,13 @@
 
   <ItemGroup>
     <Resource Include="Assets\app.ico" />
+    <EmbeddedResource Include="Localization/*.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- WinForms is only for the tray NotifyIcon; keep its implicit usings out of the WPF code. -->
+    <Using Remove="System.Windows.Forms" />
+    <Using Remove="System.Drawing" />
   </ItemGroup>
 
 </Project>
