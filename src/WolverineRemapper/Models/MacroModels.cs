@@ -1,3 +1,4 @@
+using System.Linq;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Text.Json.Serialization;
@@ -72,6 +73,72 @@ namespace WolverineRemapper.Models
     {
         Left,
         Right
+    }
+
+    /// <summary>Where an M-button's trigger comes from.</summary>
+    [JsonConverter(typeof(JsonStringEnumConverter))]
+    public enum TriggerSource
+    {
+        /// <summary>A keyboard key the vendor software sends for the paddle (Wolverine V3 Pro 8K PC via Synapse).</summary>
+        Keyboard,
+        /// <summary>
+        /// A real pad button the paddle mirrors (Wolverine V2 family: Razer's
+        /// software can only map paddles to Xbox inputs). The engine watches
+        /// the physical pad for that button, strips it from passthrough and
+        /// fires the action instead. That button is "sacrificed".
+        /// </summary>
+        PadButton
+    }
+
+    /// <summary>Controller family selected at the top of the window.</summary>
+    [JsonConverter(typeof(JsonStringEnumConverter))]
+    public enum ControllerModel
+    {
+        /// <summary>PC edition: paddles send keyboard keys through Synapse 4.</summary>
+        WolverineV3Pro8K,
+        /// <summary>V2 / V2 Chroma / V2 Pro: paddles can only mirror pad buttons.</summary>
+        WolverineV2
+    }
+
+    /// <summary>One entry of the pad-button picker (pad-button trigger mode).</summary>
+    public sealed class PadButtonChoice
+    {
+        public VirtualButtonId Id { get; init; }
+        public string Label { get; init; } = "";
+        public override string ToString() => Label;
+    }
+
+    public static class PadButtons
+    {
+        public static string Label(VirtualButtonId id) => id switch
+        {
+            VirtualButtonId.DPadUp => "D-Up",
+            VirtualButtonId.DPadDown => "D-Down",
+            VirtualButtonId.DPadLeft => "D-Left",
+            VirtualButtonId.DPadRight => "D-Right",
+            VirtualButtonId.LS => "LS click",
+            VirtualButtonId.RS => "RS click",
+            _ => id.ToString()
+        };
+
+        /// <summary>
+        /// Picker order: the buttons most players can spare first (View, Menu,
+        /// stick clicks), then the rest so nothing is forbidden.
+        /// </summary>
+        public static readonly System.Collections.Generic.IReadOnlyList<PadButtonChoice> Choices = new[]
+        {
+            VirtualButtonId.View, VirtualButtonId.Menu, VirtualButtonId.LS, VirtualButtonId.RS,
+            VirtualButtonId.DPadUp, VirtualButtonId.DPadDown, VirtualButtonId.DPadLeft, VirtualButtonId.DPadRight,
+            VirtualButtonId.LB, VirtualButtonId.RB, VirtualButtonId.LT, VirtualButtonId.RT,
+            VirtualButtonId.A, VirtualButtonId.B, VirtualButtonId.X, VirtualButtonId.Y,
+        }.Select(id => new PadButtonChoice { Id = id, Label = Label(id) }).ToList();
+
+        /// <summary>Default sacrifice order when a profile first switches to pad-button mode.</summary>
+        public static readonly VirtualButtonId[] DefaultSacrificeOrder =
+        {
+            VirtualButtonId.View, VirtualButtonId.Menu, VirtualButtonId.LS, VirtualButtonId.RS,
+            VirtualButtonId.DPadLeft, VirtualButtonId.DPadRight,
+        };
     }
 
     /// <summary>One editable step of a macro sequence.</summary>

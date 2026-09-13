@@ -1,20 +1,20 @@
-# Profile backup
+# Example profile
 
-Snapshots of your saved remapping profiles and app settings, mirrored here from
-`%AppData%\WolverineRemapper\` so they can be restored on another PC.
+`Throne and Liberty.json` is a ready-made mapping for *Throne and Liberty* on a
+Wolverine V3 Pro 8K. Use it as a starting point, or as a reference for the
+profile file format.
 
-## Restore on a new machine
+## Install it
 
-1. Install/run the app once (this creates the `%AppData%\WolverineRemapper\` folders).
-2. Close the app.
-3. Copy the files from this folder into:
-   - `*.json` profiles → `%AppData%\WolverineRemapper\Profiles\`
-   - `settings.json` → `%AppData%\WolverineRemapper\`
-4. Launch the app — your last-used profile auto-loads.
+1. Run the app once (this creates the `%AppData%\WolverineRemapper\` folders).
+2. Copy the `.json` file into `%AppData%\WolverineRemapper\Profiles\`.
+3. Launch the app and pick it from the PROFILE dropdown.
 
 In PowerShell:
 
 ```powershell
-Copy-Item ".\Throne and Liberty*.json" "$env:APPDATA\WolverineRemapper\Profiles\" -Force
-Copy-Item ".\settings.json" "$env:APPDATA\WolverineRemapper\" -Force
+Copy-Item ".\Throne and Liberty.json" "$env:APPDATA\WolverineRemapper\Profiles\" -Force
 ```
+
+Your own profiles live in that same folder. To back them up or move them to
+another PC, copy the `.json` files from there.

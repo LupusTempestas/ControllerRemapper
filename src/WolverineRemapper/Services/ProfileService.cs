@@ -76,6 +76,34 @@ namespace WolverineRemapper.Services
             return true;
         }
 
+        /// <summary>Deep copy via a JSON round-trip (same shape as a Load).</summary>
+        public RemapperProfile Clone(RemapperProfile profile)
+        {
+            string json = JsonSerializer.Serialize(profile, JsonOptions);
+            return JsonSerializer.Deserialize<RemapperProfile>(json) ?? new RemapperProfile();
+        }
+
+        /// <summary>
+        /// Explorer-style copy name: "Name (2)", "Name (3)", … — the first
+        /// one not already on disk. A source that already carries a " (n)"
+        /// suffix continues the same series instead of nesting.
+        /// </summary>
+        public string NextAvailableName(string sourceName)
+        {
+            string baseName = Sanitize(sourceName);
+            if (string.IsNullOrWhiteSpace(baseName)) baseName = "Profile";
+
+            var m = System.Text.RegularExpressions.Regex.Match(baseName, @"^(.*\S)\s\((\d+)\)$");
+            if (m.Success) baseName = m.Groups[1].Value;
+
+            var existing = new HashSet<string>(ListProfiles(), StringComparer.OrdinalIgnoreCase);
+            for (int n = 2; ; n++)
+            {
+                string candidate = $"{baseName} ({n})";
+                if (!existing.Contains(candidate)) return candidate;
+            }
+        }
+
         public AppSettings LoadSettings()
         {
             try

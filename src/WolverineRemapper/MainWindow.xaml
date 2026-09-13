@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:WolverineRemapper"
         xmlns:vm="clr-namespace:WolverineRemapper.ViewModels"
         mc:Ignorable="d"
-        Title="Razer Wolverine V3 Pro 8K — Remapper &amp; Zero-Lag Input Suite"
+        Title="Razer Wolverine — Remapper &amp; Zero-Lag Input Suite"
         Icon="Assets/app.ico"
         Height="860" Width="1260"
         MinHeight="780" MinWidth="1120"
@@ -206,7 +206,7 @@
                             <StackPanel>
                                 <StackPanel Orientation="Horizontal">
                                     <TextBlock Text="{Binding MButtonName}" Foreground="#10B981" FontWeight="Bold" FontSize="12"/>
-                                    <TextBlock Text="{Binding KeyDisplayName, StringFormat=' · {0}'}" Foreground="#38BDF8" FontWeight="SemiBold" FontSize="12"/>
+                                    <TextBlock Text="{Binding TriggerDisplayName, StringFormat=' · {0}'}" Foreground="#38BDF8" FontWeight="SemiBold" FontSize="12"/>
                                 </StackPanel>
                                 <TextBlock Text="{Binding ChordSummary}" Foreground="#94A3B8" FontSize="10" TextTrimming="CharacterEllipsis"/>
                             </StackPanel>
@@ -284,6 +284,18 @@
                     </Style>
                 </Setter.Value>
             </Setter>
+        </Style>
+
+        <!-- ══ Header ComboBox: the controller selector, styled like the title it replaces ══ -->
+        <Style x:Key="HeaderCombo" TargetType="ComboBox" BasedOn="{StaticResource DarkCombo}">
+            <Setter Property="Foreground" Value="#06B6D4"/>
+            <Setter Property="FontSize" Value="18"/>
+            <Setter Property="FontWeight" Value="Black"/>
+            <Setter Property="Height" Value="38"/>
+            <!-- Wide enough for the longest model name: a popup wider than its
+                 combo gets right-aligned by WPF and spills past the window edge. -->
+            <Setter Property="MinWidth" Value="410"/>
+            <Setter Property="Cursor" Value="Hand"/>
         </Style>
 
         <!-- ══ Dark TextBox ══ -->
@@ -469,7 +481,10 @@
                         </Grid.ColumnDefinitions>
 
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                            <TextBlock Text="WOLVERINE V3 PRO 8K" FontSize="20" FontWeight="Black" Foreground="#06B6D4"/>
+                            <ComboBox Style="{StaticResource HeaderCombo}"
+                                      ItemsSource="{Binding ControllerModels}" DisplayMemberPath="Name"
+                                      SelectedItem="{Binding SelectedControllerModel, Mode=TwoWay}"
+                                      ToolTip="Which controller you are configuring. V3 Pro 8K paddles send keyboard keys via Synapse; the V2 family can only mirror pad buttons, so each M-button sacrifices one real button as its trigger."/>
                             <TextBlock Text="  //  ZERO-LAG REMAPPER SUITE" FontSize="14" FontWeight="SemiBold" Foreground="#94A3B8" VerticalAlignment="Center"/>
                         </StackPanel>
 
@@ -493,6 +508,7 @@
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
@@ -508,8 +524,10 @@
                         <Button Grid.Column="4" Content="LOAD" Command="{Binding LoadProfileCommand}" Style="{StaticResource GhostButtonStyle}" Margin="6,0,0,0"/>
                         <Button Grid.Column="5" Content="DELETE" Command="{Binding DeleteProfileCommand}" Style="{StaticResource GhostButtonStyle}" Margin="6,0,0,0"/>
                         <Button Grid.Column="6" Content="NEW" Command="{Binding NewProfileCommand}" Style="{StaticResource GhostButtonStyle}" Margin="6,0,0,0"/>
+                        <Button Grid.Column="7" Content="DUPLICATE" Command="{Binding DuplicateProfileCommand}" Style="{StaticResource GhostButtonStyle}" Margin="6,0,0,0"
+                                ToolTip="Save a copy of this profile as 'Name (2)' and switch to it"/>
 
-                        <Grid Grid.Column="7" VerticalAlignment="Center" Margin="10,0,0,0">
+                        <Grid Grid.Column="8" VerticalAlignment="Center" Margin="10,0,0,0">
                             <TextBlock Text="● unsaved" FontSize="11" FontWeight="Bold" Foreground="#F59E0B"
                                        ToolTip="You have unsaved mapping changes — click SAVE to keep them for next launch"
                                        Visibility="{Binding HasUnsavedChanges, Converter={StaticResource BoolToVis}}"/>
@@ -517,7 +535,7 @@
                                        Visibility="{Binding ShowSavedFlash, Converter={StaticResource BoolToVis}}"/>
                         </Grid>
 
-                        <StackPanel Grid.Column="8" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,14,0">
+                        <StackPanel Grid.Column="9" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,14,0">
                             <TextBlock Text="PAD" FontSize="11" FontWeight="Bold" Foreground="#94A3B8" VerticalAlignment="Center" Margin="0,0,6,0"
                                        ToolTip="Which XInput slot to monitor. Auto follows the slot with live input activity — use a fixed slot only if Auto picks the wrong device."/>
                             <ComboBox Style="{StaticResource DarkCombo}" Width="78" Margin="0,0,14,0"
@@ -526,7 +544,7 @@
                                       ToolTip="Mirror the physical pad into the virtual pad (buttons, sticks, triggers AND chords). Recommended when your game only listens to one controller."/>
                         </StackPanel>
 
-                        <StackPanel Grid.Column="9" Orientation="Horizontal" VerticalAlignment="Center"
+                        <StackPanel Grid.Column="10" Orientation="Horizontal" VerticalAlignment="Center"
                                     Background="Transparent" ToolTip="{Binding SlotInfoTooltip}">
                             <TextBlock Text="{Binding SlotInfoText}" FontSize="11" Foreground="#94A3B8"/>
                             <TextBlock Text="{Binding BatteryText, StringFormat=' · {0}'}" FontSize="11" Foreground="#10B981"
@@ -715,17 +733,39 @@
                                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                                 <TextBlock Text="{Binding MButtonName, StringFormat='CONFIGURING {0}'}" FontSize="17" FontWeight="Bold" Foreground="#06B6D4"/>
                                                 <Border Background="#1E293B" CornerRadius="4" Padding="8,2" Margin="10,0,0,0" VerticalAlignment="Center">
-                                                    <TextBlock Text="{Binding KeyDisplayName}" FontSize="12" FontWeight="Bold" Foreground="#38BDF8"/>
+                                                    <TextBlock Text="{Binding TriggerDisplayName}" FontSize="12" FontWeight="Bold" Foreground="#38BDF8"/>
                                                 </Border>
                                             </StackPanel>
+
+                                            <!-- V3: capture a keyboard key -->
                                             <Button Grid.Column="1" Content="⌨ REBIND KEY"
+                                                    Visibility="{Binding IsKeyboardTrigger, Converter={StaticResource BoolToVis}}"
                                                     Command="{Binding DataContext.RebindCommand, RelativeSource={RelativeSource AncestorType=Window}}"
                                                     CommandParameter="{Binding}"
                                                     Style="{StaticResource GhostButtonStyle}"/>
+
+                                            <!-- V2: pick the pad button this paddle sacrifices -->
+                                            <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center"
+                                                        Visibility="{Binding IsPadTrigger, Converter={StaticResource BoolToVis}}">
+                                                <TextBlock Text="SACRIFICED BUTTON" FontSize="11" FontWeight="Bold" Foreground="#94A3B8" VerticalAlignment="Center" Margin="0,0,8,0"
+                                                           ToolTip="The real pad button the paddle is mapped to in Razer's software. It becomes this M-button's trigger and is no longer usable in-game."/>
+                                                <ComboBox Style="{StaticResource DarkCombo}" Width="130"
+                                                          ItemsSource="{Binding DataContext.PadTriggerChoices, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                          DisplayMemberPath="Label" SelectedValuePath="Id"
+                                                          SelectedValue="{Binding PadTriggerButton, Mode=TwoWay}"/>
+                                            </StackPanel>
                                         </Grid>
                                         <CheckBox Content="Swallow key from Windows &amp; games (stops UI-mode flip)"
                                                   IsChecked="{Binding SuppressKey}" FontSize="12" Margin="0,10,0,0"
+                                                  Visibility="{Binding IsKeyboardTrigger, Converter={StaticResource BoolToVis}}"
                                                   ToolTip="While the engine runs, this key is invisible to Windows and every app — the game never sees a keyboard press, so it stays in controller UI."/>
+                                        <StackPanel Visibility="{Binding IsPadTrigger, Converter={StaticResource BoolToVis}}" Margin="0,10,0,0">
+                                            <TextBlock Text="{Binding DataContext.PadTriggerHint, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                       FontSize="11" Foreground="#94A3B8" TextWrapping="Wrap"/>
+                                            <TextBlock Text="⚠ Passthrough is OFF — the sacrificed button still reaches the game. Turn Passthrough ON in the profile bar."
+                                                       FontSize="11" FontWeight="Bold" Foreground="#F59E0B" TextWrapping="Wrap" Margin="0,6,0,0"
+                                                       Visibility="{Binding DataContext.ShowPadModeWarning, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource BoolToVis}}"/>
+                                        </StackPanel>
                                     </StackPanel>
                                 </Border>
 
@@ -752,13 +792,13 @@
                                         <WrapPanel Margin="0,0,0,4">
                                             <RadioButton Content="ONCE" IsChecked="{Binding IsRepeatOnce}" Style="{StaticResource PillToggleStyle}"
                                                          ToolTip="Run the action a single time (or, for a chord, simply hold it)."/>
-                                            <RadioButton Content="N TIMES" IsChecked="{Binding IsRepeatCount}" Style="{StaticResource PillToggleStyle}"
-                                                         ToolTip="Fire the action a fixed number of times, then stop — even on a quick press."/>
+                                            <RadioButton Content="MULTIPLE TIMES" IsChecked="{Binding IsRepeatCount}" Style="{StaticResource PillToggleStyle}"
+                                                         ToolTip="Fire the action a set number of times, then stop — even on a quick press. Pick the count below."/>
                                             <RadioButton Content="WHILE HELD" IsChecked="{Binding IsRepeatWhileHeld}" Style="{StaticResource PillToggleStyle}"
                                                          ToolTip="Repeat continuously until you release (or toggle off). This is turbo / auto-fire."/>
                                         </WrapPanel>
                                         <StackPanel Visibility="{Binding IsRepeatCount, Converter={StaticResource BoolToVis}}" Margin="0,0,0,4">
-                                            <TextBlock Text="{Binding RepeatCount, StringFormat='TIMES — {0}'}" Style="{StaticResource SectionLabel}"/>
+                                            <TextBlock Text="{Binding RepeatCount, StringFormat='HOW MANY TIMES — {0}'}" Style="{StaticResource SectionLabel}"/>
                                             <Slider Minimum="2" Maximum="20" Value="{Binding RepeatCount}" Foreground="#06B6D4" TickFrequency="1" IsSnapToTickEnabled="True"/>
                                         </StackPanel>
                                         <StackPanel Visibility="{Binding IsRepeatOnce, Converter={StaticResource InvBoolToVis}}" Margin="0,0,0,4">

@@ -39,6 +39,7 @@ namespace WolverineRemapper.ViewModels
             LoadProfileCommand = new RelayCommand(_ => LoadProfile());
             DeleteProfileCommand = new RelayCommand(_ => DeleteProfile());
             NewProfileCommand = new RelayCommand(_ => NewProfile());
+            DuplicateProfileCommand = new RelayCommand(_ => DuplicateProfile());
             SelectMButtonCommand = new RelayCommand(SelectMButton);
             RebindCommand = new RelayCommand(BeginRebind);
             CancelCaptureCommand = new RelayCommand(_ => _engine.CancelCapture());
@@ -114,6 +115,7 @@ namespace WolverineRemapper.ViewModels
             {
                 _engine.PassthroughEnabled = value;
                 OnPropertyChanged();
+                OnPropertyChanged(nameof(ShowPadModeWarning));
                 MarkDirty();
                 AddLog(value
                     ? "[+] Passthrough ON — physical pad is mirrored into the virtual pad (use the virtual pad in-game)."
@@ -153,6 +155,99 @@ namespace WolverineRemapper.ViewModels
             OnPropertyChanged(nameof(StatusColor));
             OnPropertyChanged(nameof(EngineButtonText));
             OnPropertyChanged(nameof(SlotInfoText)); OnPropertyChanged(nameof(SlotInfoTooltip));
+        }
+
+        #endregion
+
+        #region Controller model (top-left selector)
+
+        public sealed class ControllerModelChoice
+        {
+            public ControllerModel Model { get; init; }
+            public string Name { get; init; } = "";
+            public override string ToString() => Name;
+        }
+
+        public IReadOnlyList<ControllerModelChoice> ControllerModels { get; } = new[]
+        {
+            new ControllerModelChoice { Model = ControllerModel.WolverineV3Pro8K, Name = "WOLVERINE V3 PRO 8K" },
+            new ControllerModelChoice { Model = ControllerModel.WolverineV2,      Name = "WOLVERINE V2 / V2 CHROMA / V2 PRO" },
+        };
+
+        private ControllerModelChoice? _selectedControllerModel;
+        public ControllerModelChoice SelectedControllerModel
+        {
+            get => _selectedControllerModel ??= ControllerModels[0];
+            set
+            {
+                if (value == null || ReferenceEquals(_selectedControllerModel, value)) return;
+                _selectedControllerModel = value;
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(IsPadTriggerMode));
+                OnPropertyChanged(nameof(ShowPadModeWarning));
+
+                if (_suppressDirty) return; // profile load: configs already carry their source
+
+                ApplyControllerModelToButtons(assignDefaultSacrifices: true);
+                _engine.SetMappings(MButtons);
+                MarkDirty();
+
+                if (IsPadTriggerMode)
+                {
+                    AddLog("[+] Controller set to Wolverine V2 family — each M-button now triggers on a sacrificed pad button.");
+                    AddLog("[i] In Razer Controller Setup for Xbox, map each paddle to the button chosen here. Turn Passthrough ON and hide the physical pad from the game with HidHide.");
+                    StatusMessage = PassthroughEnabled
+                        ? "V2 mode: pick the pad button each paddle sacrifices."
+                        : "V2 mode: turn Passthrough ON so the sacrificed buttons are stripped before they reach the game.";
+                }
+                else
+                {
+                    AddLog("[+] Controller set to Wolverine V3 Pro 8K — M-buttons trigger on keyboard keys from Synapse.");
+                    StatusMessage = "V3 mode: each M-button triggers on the keyboard key Synapse sends.";
+                }
+            }
+        }
+
+        public bool IsPadTriggerMode => SelectedControllerModel.Model == ControllerModel.WolverineV2;
+
+        /// <summary>Pad-button mode without passthrough leaks the raw press to the game.</summary>
+        public bool ShowPadModeWarning => IsPadTriggerMode && !PassthroughEnabled;
+
+        public IReadOnlyList<PadButtonChoice> PadTriggerChoices => PadButtons.Choices;
+
+        public string PadTriggerHint =>
+            "Map the paddle to this button in Razer Controller Setup for Xbox. The remapper watches the physical pad for it, " +
+            "removes it from passthrough and fires the combo instead — so the button itself is no longer usable in-game. " +
+            "Passthrough must be ON, and the physical pad must be hidden from the game with HidHide so only the virtual pad is seen.";
+
+        private void SetControllerModelSilent(ControllerModel model)
+        {
+            var choice = ControllerModels.First(c => c.Model == model);
+            _selectedControllerModel = choice;
+            OnPropertyChanged(nameof(SelectedControllerModel));
+            OnPropertyChanged(nameof(IsPadTriggerMode));
+            OnPropertyChanged(nameof(ShowPadModeWarning));
+        }
+
+        /// <summary>
+        /// Push the selected model down to every M-button's trigger source.
+        /// On a fresh switch to pad mode, hand out distinct default sacrifices
+        /// (View, Menu, LS, RS, D-Left, D-Right) so nothing collides.
+        /// </summary>
+        private void ApplyControllerModelToButtons(bool assignDefaultSacrifices)
+        {
+            var source = IsPadTriggerMode ? TriggerSource.PadButton : TriggerSource.Keyboard;
+
+            bool fresh = assignDefaultSacrifices && IsPadTriggerMode
+                         && MButtons.Select(m => m.PadTriggerButton).Distinct().Count() <= 1;
+
+            for (int i = 0; i < MButtons.Count; i++)
+            {
+                var cfg = MButtons[i];
+                cfg.Source = source;
+                if (fresh && i < PadButtons.DefaultSacrificeOrder.Length)
+                    cfg.PadTriggerButton = PadButtons.DefaultSacrificeOrder[i];
+            }
         }
 
         #endregion
@@ -478,6 +573,7 @@ namespace WolverineRemapper.ViewModels
                 var profile = new RemapperProfile
                 {
                     ProfileName = ProfileNameInput,
+                    ControllerModel = SelectedControllerModel.Model,
                     MButtons = MButtons.ToList(),
                     PassthroughEnabled = PassthroughEnabled,
                     InnerDeadzone = InnerDeadzone,
@@ -565,6 +661,50 @@ namespace WolverineRemapper.ViewModels
             }
         }
 
+        /// <summary>
+        /// Save a copy of what the editor currently shows as "Name (2)" (Explorer
+        /// style) and switch to it. Unsaved edits travel with the copy; the
+        /// source file on disk is left exactly as last saved.
+        /// </summary>
+        private void DuplicateProfile()
+        {
+            try
+            {
+                string source = string.IsNullOrWhiteSpace(ProfileNameInput) ? "New Profile" : ProfileNameInput.Trim();
+                bool carriedEdits = HasUnsavedChanges;
+
+                var copy = _profiles.Clone(new RemapperProfile
+                {
+                    ProfileName = source,
+                    ControllerModel = SelectedControllerModel.Model,
+                    MButtons = MButtons.ToList(),
+                    PassthroughEnabled = PassthroughEnabled,
+                    InnerDeadzone = InnerDeadzone,
+                    OuterDeadzone = OuterDeadzone
+                });
+                copy.ProfileName = _profiles.NextAvailableName(source);
+                _profiles.Save(copy);
+
+                ApplyProfile(copy);
+                _settings.LastProfileName = copy.ProfileName;
+                _profiles.SaveSettings(_settings);
+                RefreshProfileNames();
+                SetSelectedProfileSilent(copy.ProfileName);
+                _loadedProfileName = copy.ProfileName;
+                FlashSaved();
+
+                StatusMessage = carriedEdits
+                    ? $"Duplicated as '{copy.ProfileName}' — includes your unsaved edits; '{source}' on disk is unchanged."
+                    : $"Duplicated as '{copy.ProfileName}'.";
+                AddLog($"[+] Duplicated '{source}' → '{copy.ProfileName}'.");
+            }
+            catch (Exception ex)
+            {
+                StatusMessage = $"Duplicate failed: {ex.Message}";
+                AddLog($"[!] Duplicate failed: {ex.Message}");
+            }
+        }
+
         private void NewProfile()
         {
             if (HasUnsavedChanges)
@@ -590,6 +730,11 @@ namespace WolverineRemapper.ViewModels
             {
                 MButtons.Clear();
                 foreach (var m in profile.MButtons) MButtons.Add(m);
+
+                // Model first, then make every button's source agree with it
+                // (older profiles have no source field and default to keyboard).
+                SetControllerModelSilent(profile.ControllerModel);
+                ApplyControllerModelToButtons(assignDefaultSacrifices: false);
 
                 ProfileNameInput = profile.ProfileName;
                 PassthroughEnabled = profile.PassthroughEnabled;
@@ -622,6 +767,7 @@ namespace WolverineRemapper.ViewModels
             MButtons.Add(new MButtonConfig { MButtonName = "M5", VkCode = 0x21, KeyDisplayName = "PageUp", LT = true, X = true });
             MButtons.Add(new MButtonConfig { MButtonName = "M6", VkCode = 0x22, KeyDisplayName = "PageDown", LB = true, RB = true, Y = true });
 
+            SetControllerModelSilent(ControllerModel.WolverineV3Pro8K);
             SelectedMButton = MButtons.FirstOrDefault();
             _engine.SetMappings(MButtons);
             }
@@ -659,8 +805,10 @@ namespace WolverineRemapper.ViewModels
 
             MarkDirty();
 
-            // A changed trigger key invalidates the vkCode lookup table.
-            if (e.PropertyName == nameof(MButtonConfig.VkCode))
+            // A changed trigger (key or sacrificed pad button) invalidates the lookup tables.
+            if (e.PropertyName is nameof(MButtonConfig.VkCode)
+                or nameof(MButtonConfig.PadTriggerButton)
+                or nameof(MButtonConfig.Source))
             {
                 _engine.SetMappings(MButtons);
             }
@@ -999,6 +1147,7 @@ namespace WolverineRemapper.ViewModels
         public ICommand LoadProfileCommand { get; }
         public ICommand DeleteProfileCommand { get; }
         public ICommand NewProfileCommand { get; }
+        public ICommand DuplicateProfileCommand { get; }
         public ICommand SelectMButtonCommand { get; }
         public ICommand RebindCommand { get; }
         public ICommand CancelCaptureCommand { get; }

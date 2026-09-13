@@ -28,6 +28,15 @@ namespace WolverineRemapper.Services
         private readonly DispatcherTimer _passthroughTimer;
 
         private Dictionary<uint, MButtonConfig> _mappings = new();
+
+        // Pad-button triggers (Wolverine V2 family). Keyed by the sacrificed
+        // physical button; the shared activation tables below use a synthetic
+        // id (PadTriggerId) that can never collide with a virtual-key code.
+        private Dictionary<VirtualButtonId, MButtonConfig> _padMappings = new();
+        private readonly HashSet<VirtualButtonId> _padTriggersDown = new();
+        private ushort _padStripMask;      // sacrificed digital buttons, removed from passthrough
+        private bool _padStripLT, _padStripRT;
+
         private readonly Dictionary<uint, ChordSnapshot> _activeChords = new();
         private readonly Dictionary<uint, MacroRun> _macroRuns = new();
         private readonly HashSet<uint> _heldKeys = new();   // physical key currently down (auto-repeat guard)
@@ -89,19 +98,71 @@ namespace WolverineRemapper.Services
             set => _virtualPad.OuterDeadzonePercent = value;
         }
 
-        /// <summary>Rebuild the vkCode lookup. Call whenever a trigger key changes.</summary>
+        /// <summary>Rebuild the trigger lookups. Call whenever a trigger key or pad button changes.</summary>
         public void SetMappings(IEnumerable<MButtonConfig> configs)
         {
             var map = new Dictionary<uint, MButtonConfig>();
+            var padMap = new Dictionary<VirtualButtonId, MButtonConfig>();
+            ushort strip = 0;
+            bool stripLT = false, stripRT = false;
+
             foreach (var cfg in configs)
             {
-                if (!map.TryAdd(cfg.VkCode, cfg))
+                if (cfg.Source == TriggerSource.PadButton)
+                {
+                    if (!padMap.TryAdd(cfg.PadTriggerButton, cfg))
+                    {
+                        Log?.Invoke($"[!] {cfg.MButtonName} shares pad button '{PadButtons.Label(cfg.PadTriggerButton)}' with {padMap[cfg.PadTriggerButton].MButtonName} — {padMap[cfg.PadTriggerButton].MButtonName} wins.");
+                        continue;
+                    }
+                    if (cfg.PadTriggerButton == VirtualButtonId.LT) stripLT = true;
+                    else if (cfg.PadTriggerButton == VirtualButtonId.RT) stripRT = true;
+                    else strip |= PadButtonMask(cfg.PadTriggerButton);
+                }
+                else if (!map.TryAdd(cfg.VkCode, cfg))
                 {
                     Log?.Invoke($"[!] {cfg.MButtonName} shares key '{cfg.KeyDisplayName}' with {map[cfg.VkCode].MButtonName} — {map[cfg.VkCode].MButtonName} wins.");
                 }
             }
+
             _mappings = map;
+            _padMappings = padMap;
+            _padStripMask = strip;
+            _padStripLT = stripLT;
+            _padStripRT = stripRT;
+            UpdatePassthroughTimer(); // pad triggers need the pad poll even without passthrough
         }
+
+        /// <summary>Synthetic activation id for a pad-button trigger (VK codes are ≤ 0xFF).</summary>
+        private static uint PadTriggerId(VirtualButtonId id) => 0x10000u | (uint)id;
+
+        private static ushort PadButtonMask(VirtualButtonId id) => id switch
+        {
+            VirtualButtonId.A => XInputService.XINPUT_GAMEPAD_A,
+            VirtualButtonId.B => XInputService.XINPUT_GAMEPAD_B,
+            VirtualButtonId.X => XInputService.XINPUT_GAMEPAD_X,
+            VirtualButtonId.Y => XInputService.XINPUT_GAMEPAD_Y,
+            VirtualButtonId.LB => XInputService.XINPUT_GAMEPAD_LEFT_SHOULDER,
+            VirtualButtonId.RB => XInputService.XINPUT_GAMEPAD_RIGHT_SHOULDER,
+            VirtualButtonId.DPadUp => XInputService.XINPUT_GAMEPAD_DPAD_UP,
+            VirtualButtonId.DPadDown => XInputService.XINPUT_GAMEPAD_DPAD_DOWN,
+            VirtualButtonId.DPadLeft => XInputService.XINPUT_GAMEPAD_DPAD_LEFT,
+            VirtualButtonId.DPadRight => XInputService.XINPUT_GAMEPAD_DPAD_RIGHT,
+            VirtualButtonId.LS => XInputService.XINPUT_GAMEPAD_LEFT_THUMB,
+            VirtualButtonId.RS => XInputService.XINPUT_GAMEPAD_RIGHT_THUMB,
+            VirtualButtonId.View => XInputService.XINPUT_GAMEPAD_BACK,
+            VirtualButtonId.Menu => XInputService.XINPUT_GAMEPAD_START,
+            _ => 0
+        };
+
+        private const byte TriggerPressThreshold = 30; // XInput's own recommended threshold
+
+        private static bool IsPadButtonDown(in XINPUT_GAMEPAD pad, VirtualButtonId id) => id switch
+        {
+            VirtualButtonId.LT => pad.bLeftTrigger > TriggerPressThreshold,
+            VirtualButtonId.RT => pad.bRightTrigger > TriggerPressThreshold,
+            _ => (pad.wButtons & PadButtonMask(id)) != 0
+        };
 
         public bool Start(out string? error)
         {
@@ -121,6 +182,10 @@ namespace WolverineRemapper.Services
                 }
 
                 VirtualSlot = ResolveVirtualSlot(slotsBefore);
+
+                // Push one neutral report right away: until the first Submit the
+                // driver can expose stale axis values (seen as a ~10% stick offset).
+                _virtualPad.Submit();
             }
 
             if (!_hook.IsActive && !_hook.Start(out var hookError))
@@ -141,6 +206,7 @@ namespace WolverineRemapper.Services
 
             // Release anything still held so no virtual button stays stuck.
             _heldKeys.Clear();
+            _padTriggersDown.Clear();
             _activeKeys.Clear();
             _lastTapTime.Clear();
             _activeChords.Clear();
@@ -307,7 +373,7 @@ namespace WolverineRemapper.Services
 
             config.IsPressed = true;
             string verb = config.Trigger == TriggerType.Hold ? "↓" : "ON";
-            Log?.Invoke($"[{config.MButtonName}] {config.KeyDisplayName} {verb} → {config.ChordSummary}");
+            Log?.Invoke($"[{config.MButtonName}] {config.TriggerDisplayName} {verb} → {config.ChordSummary}");
         }
 
         /// <summary>Stop an M-button's action, releasing exactly what it holds. Idempotent.</summary>
@@ -322,12 +388,12 @@ namespace WolverineRemapper.Services
 
             config.IsPressed = false;
             if (config.Trigger != TriggerType.Hold)
-                Log?.Invoke($"[{config.MButtonName}] {config.KeyDisplayName} OFF");
+                Log?.Invoke($"[{config.MButtonName}] {config.TriggerDisplayName} OFF");
         }
 
         /// <summary>
         /// A repeated chord is one pulse: press all outputs, hold briefly,
-        /// release all. MacroRun repeats it N times / while held.
+        /// release all. MacroRun repeats it a set number of times / while held.
         /// </summary>
         private static List<ResolvedStep> BuildChordPulseSteps(MButtonConfig config)
         {
@@ -386,9 +452,14 @@ namespace WolverineRemapper.Services
 
         #region Passthrough
 
+        /// <summary>
+        /// The 125 Hz pad poll serves two jobs: mirroring the physical pad
+        /// (passthrough) and watching sacrificed buttons (pad-button triggers).
+        /// It runs whenever either is needed.
+        /// </summary>
         private void UpdatePassthroughTimer()
         {
-            bool shouldRun = IsRunning && PassthroughEnabled;
+            bool shouldRun = IsRunning && (PassthroughEnabled || _padMappings.Count > 0);
             if (shouldRun && !_passthroughTimer.IsEnabled) _passthroughTimer.Start();
             else if (!shouldRun && _passthroughTimer.IsEnabled) _passthroughTimer.Stop();
         }
@@ -401,14 +472,63 @@ namespace WolverineRemapper.Services
                 slot = _xinput.FindFirstConnectedSlot(excludeSlot: VirtualSlot);
                 if (slot < 0 || !_xinput.GetState(slot, out state))
                 {
-                    _virtualPad.UpdatePhysicalState(null);
-                    _virtualPad.Submit();
+                    // Pad gone: a held pad-button trigger counts as released.
+                    ReleaseAllPadTriggers();
+                    if (PassthroughEnabled)
+                    {
+                        _virtualPad.UpdatePhysicalState(null);
+                        _virtualPad.Submit();
+                    }
                     return;
                 }
             }
 
-            _virtualPad.UpdatePhysicalState(state.Gamepad);
-            _virtualPad.Submit();
+            var pad = state.Gamepad;
+            if (_padMappings.Count > 0) ScanPadTriggers(ref pad);
+
+            if (PassthroughEnabled)
+            {
+                _virtualPad.UpdatePhysicalState(pad);
+                _virtualPad.Submit();
+            }
+        }
+
+        /// <summary>
+        /// Edge-detect every sacrificed button, route it through the same
+        /// trigger logic as a key, then remove it from the report so the
+        /// mirrored pad never shows the raw press.
+        /// </summary>
+        private void ScanPadTriggers(ref XINPUT_GAMEPAD pad)
+        {
+            foreach (var (button, config) in _padMappings)
+            {
+                bool down = IsPadButtonDown(pad, button);
+                uint id = PadTriggerId(button);
+
+                if (down)
+                {
+                    if (_padTriggersDown.Add(button)) HandleTriggerDown(config, id);
+                }
+                else if (_padTriggersDown.Remove(button) && config.Trigger == TriggerType.Hold)
+                {
+                    Deactivate(config, id);
+                }
+            }
+
+            pad.wButtons &= (ushort)~_padStripMask;
+            if (_padStripLT) pad.bLeftTrigger = 0;
+            if (_padStripRT) pad.bRightTrigger = 0;
+        }
+
+        private void ReleaseAllPadTriggers()
+        {
+            if (_padTriggersDown.Count == 0) return;
+            foreach (var button in _padTriggersDown.ToList())
+            {
+                _padTriggersDown.Remove(button);
+                if (_padMappings.TryGetValue(button, out var config) && config.Trigger == TriggerType.Hold)
+                    Deactivate(config, PadTriggerId(button));
+            }
         }
 
         #endregion

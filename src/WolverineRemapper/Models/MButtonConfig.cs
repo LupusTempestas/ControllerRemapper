@@ -25,6 +25,8 @@ namespace WolverineRemapper.Models
         private uint _vkCode = 0x7C; // F13 default
         private string _keyDisplayName = "F13";
         private bool _suppressKey = true;
+        private TriggerSource _source = TriggerSource.Keyboard;
+        private VirtualButtonId _padTriggerButton = VirtualButtonId.View;
 
         // Controller button toggles
         private bool _a, _b, _x, _y;
@@ -68,7 +70,7 @@ namespace WolverineRemapper.Models
         public string KeyDisplayName
         {
             get => _keyDisplayName;
-            set { _keyDisplayName = value; OnPropertyChanged(); }
+            set { _keyDisplayName = value; OnPropertyChanged(); OnPropertyChanged(nameof(TriggerDisplayName)); }
         }
 
         public bool SuppressKey
@@ -76,6 +78,47 @@ namespace WolverineRemapper.Models
             get => _suppressKey;
             set { _suppressKey = value; OnPropertyChanged(); }
         }
+
+        #region Trigger source (keyboard key vs sacrificed pad button)
+
+        /// <summary>Keyboard key (V3 Pro 8K via Synapse) or a sacrificed pad button (V2 family).</summary>
+        public TriggerSource Source
+        {
+            get => _source;
+            set
+            {
+                if (_source == value) return;
+                _source = value;
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(IsKeyboardTrigger));
+                OnPropertyChanged(nameof(IsPadTrigger));
+                OnPropertyChanged(nameof(TriggerDisplayName));
+            }
+        }
+
+        /// <summary>The real pad button this paddle mirrors (pad-button source only).</summary>
+        public VirtualButtonId PadTriggerButton
+        {
+            get => _padTriggerButton;
+            set
+            {
+                if (_padTriggerButton == value) return;
+                _padTriggerButton = value;
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(TriggerDisplayName));
+            }
+        }
+
+        [JsonIgnore] public bool IsKeyboardTrigger => Source == TriggerSource.Keyboard;
+        [JsonIgnore] public bool IsPadTrigger => Source == TriggerSource.PadButton;
+
+        /// <summary>What the badges and the config header show as the trigger.</summary>
+        [JsonIgnore]
+        public string TriggerDisplayName => Source == TriggerSource.PadButton
+            ? $"Pad · {PadButtons.Label(PadTriggerButton)}"
+            : KeyDisplayName;
+
+        #endregion
 
         [JsonIgnore]
         public bool IsPressed
@@ -155,7 +198,7 @@ namespace WolverineRemapper.Models
             set { _holdTapDelayMs = value; OnPropertyChanged(); }
         }
 
-        #region Repeat (Once / N times / While held)
+        #region Repeat (Once / Multiple times / While held)
 
         public RepeatMode Repeat
         {
