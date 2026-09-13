@@ -265,5 +265,16 @@
   "btn_switch_v2": "NAAR V2-MODUS",
   "btn_switch_v3": "NAAR V3-MODUS",
   "btn_install_hidhide": "HIDHIDE INSTALLEREN",
-  "btn_dismiss": "NEGEREN"
+  "btn_dismiss": "NEGEREN",
+"update_banner": "Versie {0} van Wolverine Remapper is beschikbaar (je hebt {1}). Eén klik downloadt hem, controleert het controlebestand en installeert hem; de app herstart vanzelf.",
+  "btn_update_now": "NU BIJWERKEN",
+  "btn_release_notes": "WAT IS NIEUW",
+  "btn_later": "LATER",
+  "update_downloading": "Installer wordt gedownload… {0}%",
+  "update_verifying": "Download wordt vergeleken met de gepubliceerde controlesom…",
+  "update_installing": "Controlesom klopt. Installeren; de app sluit en opent zo weer.",
+  "update_bad_hash": "De download komt niet overeen met de gepubliceerde controlesom en is niet geïnstalleerd. Probeer het later opnieuw of download via GitHub.",
+  "update_no_checksum": "Deze versie heeft geen controlebestand en kan dus niet automatisch worden geïnstalleerd. De downloadpagina wordt geopend.",
+  "tray_update_title": "Update beschikbaar",
+  "tray_update_text": "Wolverine Remapper {0} staat klaar. Klik om de app te openen en bij te werken."
 }

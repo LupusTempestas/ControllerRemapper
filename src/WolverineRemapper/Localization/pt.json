@@ -265,5 +265,16 @@
   "btn_switch_v2": "MUDAR PARA MODO V2",
   "btn_switch_v3": "MUDAR PARA MODO V3",
   "btn_install_hidhide": "INSTALAR HIDHIDE",
-  "btn_dismiss": "DISPENSAR"
+  "btn_dismiss": "DISPENSAR",
+"update_banner": "A versão {0} do Wolverine Remapper está disponível (você tem a {1}). Um clique baixa, confere o arquivo de verificação e instala; o aplicativo reinicia sozinho.",
+  "btn_update_now": "ATUALIZAR AGORA",
+  "btn_release_notes": "NOVIDADES",
+  "btn_later": "MAIS TARDE",
+  "update_downloading": "Baixando o instalador… {0}%",
+  "update_verifying": "Conferindo o download com a soma de verificação publicada…",
+  "update_installing": "Soma de verificação OK. Instalando; o aplicativo fecha e reabre em instantes.",
+  "update_bad_hash": "O download não corresponde à soma de verificação publicada, então não foi instalado. Tente de novo mais tarde ou baixe pelo GitHub.",
+  "update_no_checksum": "Esta versão não tem arquivo de verificação, então não pode ser instalada automaticamente. Abrindo a página de download.",
+  "tray_update_title": "Atualização disponível",
+  "tray_update_text": "Wolverine Remapper {0} está pronto. Clique para abrir o aplicativo e atualizar."
 }

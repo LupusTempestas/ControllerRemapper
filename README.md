@@ -66,6 +66,10 @@ check) plus a driver status check.
   icon's menu opens the window, starts/stops the engine, switches profiles,
   restarts or quits the app.
 - **Six languages** — English, French, German, Spanish, Dutch, Portuguese. Auto-detected
+- **One-click updates** — the app checks GitHub at startup; a banner and a tray
+  balloon announce a newer version. UPDATE NOW downloads the installer, verifies
+  it against the release's `SHA256SUMS.txt`, runs it silently and relaunches the
+  app with your language and settings untouched.
   from Windows, switchable live from the 🌐 dropdown in the header. Catalogues
   are plain JSON in `src/WolverineRemapper/Localization/`, so adding a language
   is one file.

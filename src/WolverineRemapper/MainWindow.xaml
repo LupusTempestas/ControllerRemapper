@@ -34,6 +34,7 @@
         <local:ScaleConverter x:Key="Scale"/>
         <local:BoolToVisibilityConverter x:Key="BoolToVis"/>
         <local:BoolToVisibilityConverter x:Key="InvBoolToVis" Invert="True"/>
+        <local:NonEmptyToVisibilityConverter x:Key="NonEmptyToVis"/>
         <local:ButtonNameConverter x:Key="ButtonName"/>
         <local:LocFormatConverter x:Key="LocFmt"/>
 
@@ -642,6 +643,29 @@
                                     Style="{StaticResource ActionButtonStyle}" VerticalAlignment="Center"/>
                             <Button Grid.Column="2" Content="{Binding [btn_dismiss], Source={x:Static svc:L10n.I}}" Command="{Binding DismissDeviceNoticeCommand}"
                                     Style="{StaticResource GhostButtonStyle}" VerticalAlignment="Center" Margin="6,0,0,0"/>
+                        </Grid>
+                    </Border>
+                    <!-- Update banner: a newer release exists; one click downloads, verifies and installs it -->
+                    <Border Background="#062A33" BorderBrush="#0E7490" BorderThickness="1" CornerRadius="8" Padding="10,7" Margin="0,12,0,0"
+                            Visibility="{Binding ShowUpdateBanner, Converter={StaticResource BoolToVis}}">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel VerticalAlignment="Center" Margin="0,0,12,0">
+                                <TextBlock Foreground="#A5F3FC" FontSize="12" FontWeight="SemiBold" TextWrapping="Wrap" Text="{Binding UpdateBannerText}"/>
+                                <TextBlock Foreground="#67E8F9" FontSize="11" TextWrapping="Wrap" Text="{Binding UpdateProgressText}" Margin="0,3,0,0"
+                                           Visibility="{Binding UpdateProgressText, Converter={StaticResource NonEmptyToVis}}"/>
+                            </StackPanel>
+                            <Button Grid.Column="1" Content="{Binding [btn_update_now], Source={x:Static svc:L10n.I}}" Command="{Binding InstallUpdateCommand}"
+                                    IsEnabled="{Binding CanInstallUpdate}" Style="{StaticResource ActionButtonStyle}" Height="30" VerticalAlignment="Center"/>
+                            <Button Grid.Column="2" Content="{Binding [btn_release_notes], Source={x:Static svc:L10n.I}}" Command="{Binding OpenUpdateCommand}"
+                                    Style="{StaticResource GhostButtonStyle}" VerticalAlignment="Center" Margin="6,0,0,0"/>
+                            <Button Grid.Column="3" Content="{Binding [btn_later], Source={x:Static svc:L10n.I}}" Command="{Binding DismissUpdateCommand}"
+                                    IsEnabled="{Binding CanInstallUpdate}" Style="{StaticResource GhostButtonStyle}" VerticalAlignment="Center" Margin="6,0,0,0"/>
                         </Grid>
                     </Border>
                     </StackPanel>
@@ -1273,9 +1297,13 @@
                                     <StackPanel Orientation="Horizontal">
                                         <Button Content="{Binding [btn_check_now], Source={x:Static svc:L10n.I}}" Command="{Binding CheckUpdatesCommand}" Style="{StaticResource GhostButtonStyle}"/>
                                         <TextBlock Text="{Binding UpdateStatusText}" FontSize="12" Foreground="#94A3B8" VerticalAlignment="Center" Margin="12,0,0,0"/>
-                                        <Button Content="{Binding [btn_download_update], Source={x:Static svc:L10n.I}}" Command="{Binding OpenUpdateCommand}" Style="{StaticResource ActionButtonStyle}" Height="30" Margin="12,0,0,0"
+                                        <Button Content="{Binding [btn_update_now], Source={x:Static svc:L10n.I}}" Command="{Binding InstallUpdateCommand}" IsEnabled="{Binding CanInstallUpdate}" Style="{StaticResource ActionButtonStyle}" Height="30" Margin="12,0,0,0"
+                                                Visibility="{Binding UpdateAvailable, Converter={StaticResource BoolToVis}}"/>
+                                        <Button Content="{Binding [btn_release_notes], Source={x:Static svc:L10n.I}}" Command="{Binding OpenUpdateCommand}" Style="{StaticResource GhostButtonStyle}" Margin="6,0,0,0"
                                                 Visibility="{Binding UpdateAvailable, Converter={StaticResource BoolToVis}}"/>
                                     </StackPanel>
+                                    <TextBlock Text="{Binding UpdateProgressText}" FontSize="11" Foreground="#67E8F9" Margin="0,6,0,0" TextWrapping="Wrap"
+                                               Visibility="{Binding UpdateProgressText, Converter={StaticResource NonEmptyToVis}}"/>
                                 </StackPanel>
                             </Border>
 

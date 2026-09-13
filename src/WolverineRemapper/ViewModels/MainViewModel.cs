@@ -42,6 +42,8 @@ namespace WolverineRemapper.ViewModels
             DuplicateProfileCommand = new RelayCommand(_ => DuplicateProfile());
             CheckUpdatesCommand = new RelayCommand(_ => _ = CheckForUpdatesAsync(silent: false));
             OpenUpdateCommand = new RelayCommand(_ => OpenUrl(_updateUrl ?? UpdateService.RepoUrl));
+            InstallUpdateCommand = new RelayCommand(_ => _ = InstallUpdateAsync());
+            DismissUpdateCommand = new RelayCommand(_ => DismissUpdate());
             OpenGitHubCommand = new RelayCommand(_ => OpenUrl(UpdateService.RepoUrl));
             OpenViGEmPageCommand = new RelayCommand(_ => OpenUrl(DriverCheck.ViGEmBusUrl));
             OpenHidHidePageCommand = new RelayCommand(_ => OpenUrl(DriverCheck.HidHideUrl));
@@ -248,11 +250,15 @@ namespace WolverineRemapper.ViewModels
                 {
                     _latestVersion = info.Latest;
                     _updateUrl = info.Url;
+                    _updateInfo = info;
                     _updateState = info.Latest > UpdateService.Current ? UpdateState.Available : UpdateState.UpToDate;
                     if (_updateState == UpdateState.Available)
                     {
-                        AddLog($"[i] Update available: v{info.Latest} (running {AppVersion}) — {info.Url}");
+                        AddLog($"[i] Update available: v{info.Latest} (running {AppVersion}) - {info.Url}");
                         if (silent) StatusMessage = UpdateStatusText;
+                        _updateDismissed = false;
+                        // Startup check: the user is not looking at Settings, so also raise the tray balloon.
+                        if (silent) UpdateNoticeRequested?.Invoke(info.Latest);
                     }
                 }
             }
@@ -269,7 +275,116 @@ namespace WolverineRemapper.ViewModels
         {
             OnPropertyChanged(nameof(UpdateStatusText));
             OnPropertyChanged(nameof(UpdateAvailable));
+            NotifyUpdateBanner();
         }
+
+        #region Update banner + one-click install
+
+        private UpdateInfo? _updateInfo;
+        private bool _updateDismissed;
+        private bool _updateBusy;
+        private string _updateProgress = "";
+
+        /// <summary>A newer version was found by the startup check: show a tray balloon.</summary>
+        public event Action<Version>? UpdateNoticeRequested;
+        /// <summary>Asked before the installer starts; return false to abort (unsaved-changes prompt).</summary>
+        public Func<bool>? ConfirmExitForUpdate { get; set; }
+        /// <summary>The installer is running: close the app so it can replace the files.</summary>
+        public event Action? ExitForUpdateRequested;
+
+        public bool ShowUpdateBanner => UpdateAvailable && !_updateDismissed;
+        public bool UpdateBusy => _updateBusy;
+        public bool CanInstallUpdate => UpdateAvailable && !_updateBusy;
+        public bool UpdateHasInstaller => _updateInfo?.InstallerUrl != null;
+        public string UpdateBannerText => _latestVersion == null ? "" : L10n.I.F("update_banner", "v" + _latestVersion, AppVersion);
+        public string UpdateProgressText => _updateProgress;
+
+        private void NotifyUpdateBanner()
+        {
+            OnPropertyChanged(nameof(ShowUpdateBanner));
+            OnPropertyChanged(nameof(UpdateBusy));
+            OnPropertyChanged(nameof(CanInstallUpdate));
+            OnPropertyChanged(nameof(UpdateHasInstaller));
+            OnPropertyChanged(nameof(UpdateBannerText));
+            OnPropertyChanged(nameof(UpdateProgressText));
+        }
+
+        private void SetUpdateProgress(string text)
+        {
+            _updateProgress = text;
+            OnPropertyChanged(nameof(UpdateProgressText));
+        }
+
+        private void DismissUpdate()
+        {
+            _updateDismissed = true;
+            NotifyUpdateBanner();
+        }
+
+        /// <summary>Called when the app was relaunched by the installer after an update.</summary>
+        public void NoteUpdated() => AddLog($"[+] Updated to {AppVersion}.");
+
+        /// <summary>
+        /// Download the installer, verify it against the release's SHA256SUMS.txt,
+        /// start it silently and close the app. Without a checksum file the
+        /// release page is opened instead of installing blindly.
+        /// </summary>
+        private async Task InstallUpdateAsync()
+        {
+            var info = _updateInfo;
+            if (info == null || _updateBusy) return;
+            if (info.InstallerUrl == null) { OpenUrl(info.Url); return; }
+
+            _updateBusy = true;
+            NotifyUpdateBanner();
+            try
+            {
+                SetUpdateProgress(L10n.I.F("update_downloading", 0));
+                AddLog($"[*] Downloading {info.InstallerName} ({info.InstallerSize / 1048576} MB)...");
+                var progress = new Progress<double>(p => SetUpdateProgress(L10n.I.F("update_downloading", (int)(p * 100))));
+                string path = await UpdateService.DownloadInstallerAsync(info, progress);
+
+                SetUpdateProgress(L10n.I.T("update_verifying"));
+                var check = await UpdateService.VerifyAsync(info, path);
+                if (check == UpdateService.Verify.NoChecksum)
+                {
+                    AddLog("[!] " + L10n.I.T("update_no_checksum"));
+                    SetUpdateProgress(L10n.I.T("update_no_checksum"));
+                    OpenUrl(info.Url);
+                    return;
+                }
+                if (check == UpdateService.Verify.Mismatch)
+                {
+                    try { System.IO.File.Delete(path); } catch { /* best effort */ }
+                    AddLog("[!] " + L10n.I.T("update_bad_hash"));
+                    SetUpdateProgress(L10n.I.T("update_bad_hash"));
+                    return;
+                }
+
+                if (ConfirmExitForUpdate != null && !ConfirmExitForUpdate())
+                {
+                    SetUpdateProgress("");
+                    return;
+                }
+
+                SetUpdateProgress(L10n.I.T("update_installing"));
+                AddLog("[+] Checksum OK. Starting the installer; the app closes now and reopens when it is done.");
+                UpdateService.StartInstaller(path, L10n.I.CurrentLanguage.Code);
+                ExitForUpdateRequested?.Invoke();
+            }
+            catch (Exception ex)
+            {
+                AddLog($"[!] Update failed: {ex.Message}");
+                SetUpdateProgress(L10n.I.F("update_failed", ex.Message));
+            }
+            finally
+            {
+                _updateBusy = false;
+                NotifyUpdateBanner();
+            }
+        }
+
+        #endregion
 
         public string ViGEmStatusText => DriverCheck.ViGEmBusInstalled ? "✓ " + L10n.I.T("driver_installed") : "✕ " + L10n.I.T("driver_missing");
         public string HidHideStatusText => DriverCheck.HidHideInstalled ? "✓ " + L10n.I.T("driver_installed") : "✕ " + L10n.I.T("driver_missing");
@@ -1781,6 +1896,8 @@ namespace WolverineRemapper.ViewModels
         public ICommand DuplicateProfileCommand { get; }
         public ICommand CheckUpdatesCommand { get; }
         public ICommand OpenUpdateCommand { get; }
+        public ICommand InstallUpdateCommand { get; }
+        public ICommand DismissUpdateCommand { get; }
         public ICommand OpenGitHubCommand { get; }
         public ICommand OpenViGEmPageCommand { get; }
         public ICommand OpenHidHidePageCommand { get; }

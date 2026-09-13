@@ -87,6 +87,20 @@ namespace WolverineRemapper.Services
             _icon.ShowBalloonTip(3000, L10n.I.T("tray_hidden_title"), L10n.I.T("tray_hidden_text"), ToolTipIcon.Info);
         }
 
+        /// <summary>Balloon for a newer release; clicking it brings the window (and its update banner) up.</summary>
+        public void ShowUpdateBalloon(Version latest)
+        {
+            _icon.BalloonTipClicked -= OnUpdateBalloonClicked;
+            _icon.BalloonTipClicked += OnUpdateBalloonClicked;
+            _icon.ShowBalloonTip(8000, L10n.I.T("tray_update_title"), L10n.I.F("tray_update_text", "v" + latest), ToolTipIcon.Info);
+        }
+
+        private void OnUpdateBalloonClicked(object? sender, EventArgs e)
+        {
+            _icon.BalloonTipClicked -= OnUpdateBalloonClicked;
+            _show();
+        }
+
         private void OnVmPropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName == nameof(MainViewModel.IsRemapperActive)) Relabel();

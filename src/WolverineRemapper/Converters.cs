@@ -65,6 +65,14 @@ namespace WolverineRemapper
     }
 
     /// <summary>bool → Visibility with optional inversion.</summary>
+    /// <summary>Visible when the bound string is non-empty; collapsed otherwise.</summary>
+    public class NonEmptyToVisibilityConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+            => string.IsNullOrEmpty(value as string) ? Visibility.Collapsed : Visibility.Visible;
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => throw new NotSupportedException();
+    }
+
     public class BoolToVisibilityConverter : IValueConverter
     {
         public bool Invert { get; set; }

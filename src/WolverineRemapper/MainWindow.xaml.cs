@@ -64,6 +64,14 @@ namespace WolverineRemapper
 
             _tray = new TrayService(vm, ShowFromTray, RequestRestart, RequestExit);
 
+            // Updates: balloon on the startup check, unsaved-changes prompt before the
+            // installer starts, then a real exit so the installer can replace the files.
+            vm.UpdateNoticeRequested += latest => _tray?.ShowUpdateBalloon(latest);
+            vm.ConfirmExitForUpdate = ConfirmExitForUpdate;
+            vm.ExitForUpdateRequested += () => { _skipUnsavedPrompt = true; RequestExit(); };
+            if (Environment.GetCommandLineArgs().Any(a => a.Equals("--updated", StringComparison.OrdinalIgnoreCase)))
+                vm.NoteUpdated();
+
             vm.PropertyChanged += (_, ev) => { if (ev.PropertyName == nameof(MainViewModel.OverlayEnabled)) SyncOverlay(vm); };
             vm.OverlayResetRequested += () => { if (_overlay != null) _overlay.ResetPosition(); };
             SyncOverlay(vm);
@@ -115,6 +123,24 @@ namespace WolverineRemapper
             Activate();
         }
 
+        private bool _skipUnsavedPrompt;
+
+        /// <summary>
+        /// Before an update installs: resolve unsaved changes now (save / discard /
+        /// cancel) so the exit that follows needs no prompt. False aborts the update.
+        /// </summary>
+        private bool ConfirmExitForUpdate()
+        {
+            if (DataContext is not MainViewModel vm || !vm.HasUnsavedChanges) return true;
+            ShowFromTray();
+            var choice = MessageBox.Show(
+                L10n.I.F("prompt_save_before_close", vm.ProfileNameInput),
+                L10n.I.T("prompt_unsaved_title"), MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
+            if (choice == MessageBoxResult.Cancel) return false;
+            if (choice == MessageBoxResult.Yes) vm.SaveProfileCommand.Execute(null);
+            return true;
+        }
+
         /// <summary>Really exit (tray Quit): runs the unsaved-changes prompt, then shuts down.</summary>
         public void RequestExit()
         {
@@ -153,7 +179,7 @@ namespace WolverineRemapper
                 return;
             }
 
-            if (vm.HasUnsavedChanges)
+            if (vm.HasUnsavedChanges && !_skipUnsavedPrompt)
             {
                 ShowFromTray(); // a prompt behind a hidden window is invisible
                 var choice = MessageBox.Show(

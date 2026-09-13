@@ -164,8 +164,11 @@ Filename: "{tmp}\HidHide_Setup.exe";  Parameters: "/quiet /norestart"; StatusMsg
 Filename: "{app}\{#AppExe}"; Parameters: "--enable-startup"; Tasks: startup; Flags: runasoriginaluser waituntilterminated
 ; The language picked on the installer's first screen becomes the app's UI language,
 ; and the controller answer becomes the default controller mode of new profiles.
-Filename: "{app}\{#AppExe}"; Parameters: "--set-language={language} --set-controller={code:ControllerCode}"; Flags: runasoriginaluser waituntilterminated
+; Skipped for in-app updates (/UPDATE=1): the user's choices already exist.
+Filename: "{app}\{#AppExe}"; Parameters: "--set-language={language} --set-controller={code:ControllerCode}"; Flags: runasoriginaluser waituntilterminated; Check: not IsUpdate
 Filename: "{app}\{#AppExe}"; Description: "{cm:LaunchProgram,{#AppName}}"; Flags: nowait postinstall skipifsilent
+; In-app update (silent): relaunch the app as the user once the files are replaced.
+Filename: "{app}\{#AppExe}"; Parameters: "--updated"; Flags: nowait runasoriginaluser; Check: IsUpdate
 
 [UninstallRun]
 Filename: "{app}\{#AppExe}"; Parameters: "--disable-startup"; RunOnceId: "DisableStartup"; Flags: waituntilterminated
@@ -196,6 +199,12 @@ begin
   ControllerPage.Add(CustomMessage('CtrlV2'));
   ControllerPage.Add(CustomMessage('CtrlUnsure'));
   ControllerPage.SelectedValueIndex := 0;
+end;
+
+{ Started by the app itself with /UPDATE=1 (silent in-place upgrade). }
+function IsUpdate: Boolean;
+begin
+  Result := ExpandConstant('{param:UPDATE|0}') = '1';
 end;
 
 { V2 and "not sure" need HidHide; a V3 Pro 8K does not. }

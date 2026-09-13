@@ -265,5 +265,16 @@
   "btn_switch_v2": "SWITCH TO V2 MODE",
   "btn_switch_v3": "SWITCH TO V3 MODE",
   "btn_install_hidhide": "INSTALL HIDHIDE",
-  "btn_dismiss": "DISMISS"
+  "btn_dismiss": "DISMISS",
+"update_banner": "Version {0} of Wolverine Remapper is available (you have {1}). One click downloads it, checks its signature file and installs it; the app restarts by itself.",
+  "btn_update_now": "UPDATE NOW",
+  "btn_release_notes": "WHAT'S NEW",
+  "btn_later": "LATER",
+  "update_downloading": "Downloading the installer… {0}%",
+  "update_verifying": "Checking the download against the published checksum…",
+  "update_installing": "Checksum OK. Installing; the app closes and reopens in a moment.",
+  "update_bad_hash": "The download does not match the published checksum, so it was not installed. Try again later or download from GitHub.",
+  "update_no_checksum": "This release has no checksum file, so it cannot be installed automatically. Opening the download page.",
+  "tray_update_title": "Update available",
+  "tray_update_text": "Wolverine Remapper {0} is ready. Click to open the app and update."
 }

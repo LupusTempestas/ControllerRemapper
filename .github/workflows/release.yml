@@ -65,6 +65,17 @@ jobs:
             installer\WolverineRemapper.iss
           Get-ChildItem installer/output
 
+      # The app's one-click updater verifies the installer against this file
+      # (sha256sum format: "<hash>  <filename>") before running it.
+      - name: Write SHA256SUMS.txt
+        shell: pwsh
+        run: |
+          $v = "${{ steps.ver.outputs.version }}"
+          $files = @("installer/output/WolverineRemapper-Setup-$v.exe", "dist/WolverineRemapper-$v-portable.exe")
+          $lines = foreach ($f in $files) { "{0}  {1}" -f (Get-FileHash $f -Algorithm SHA256).Hash.ToLower(), (Split-Path $f -Leaf) }
+          [System.IO.File]::WriteAllText("SHA256SUMS.txt", ($lines -join "`n") + "`n")
+          Get-Content SHA256SUMS.txt
+
       - name: Create release
         uses: softprops/action-gh-release@v2
         with:
@@ -74,3 +85,4 @@ jobs:
           files: |
             installer/output/WolverineRemapper-Setup-${{ steps.ver.outputs.version }}.exe
             dist/WolverineRemapper-${{ steps.ver.outputs.version }}-portable.exe
+            SHA256SUMS.txt
