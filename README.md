@@ -65,7 +65,7 @@ check) plus a driver status check.
 - **Runs in the tray** — closing the window keeps the engine running. The tray
   icon's menu opens the window, starts/stops the engine, switches profiles,
   restarts or quits the app.
-- **Five languages** — English, French, German, Spanish, Dutch. Auto-detected
+- **Six languages** — English, French, German, Spanish, Dutch, Portuguese. Auto-detected
   from Windows, switchable live from the 🌐 dropdown in the header. Catalogues
   are plain JSON in `src/WolverineRemapper/Localization/`, so adding a language
   is one file.

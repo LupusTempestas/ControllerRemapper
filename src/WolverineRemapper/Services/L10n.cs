@@ -34,6 +34,7 @@ namespace WolverineRemapper.Services
             new Language("de", "Deutsch"),
             new Language("es", "Español"),
             new Language("nl", "Nederlands"),
+            new Language("pt", "Português"),
         };
 
         public static readonly L10n I = new();

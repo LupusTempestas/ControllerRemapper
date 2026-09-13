@@ -55,6 +55,7 @@ Name: "french";  MessagesFile: "compiler:Languages\French.isl"
 Name: "german";  MessagesFile: "compiler:Languages\German.isl"
 Name: "spanish"; MessagesFile: "compiler:Languages\Spanish.isl"
 Name: "dutch";   MessagesFile: "compiler:Languages\Dutch.isl"
+Name: "portuguese"; MessagesFile: "compiler:Languages\BrazilianPortuguese.isl"
 
 [CustomMessages]
 english.StartupGroup=Startup:
@@ -92,6 +93,19 @@ dutch.ViGEmTask=ViGEmBus-stuurprogramma installeren (vereist — maakt de virtue
 dutch.HidHideTask=HidHide-stuurprogramma installeren (alleen voor de Wolverine V2-modus)
 dutch.InstallingViGEm=ViGEmBus-stuurprogramma wordt geïnstalleerd...
 dutch.InstallingHidHide=HidHide-stuurprogramma wordt geïnstalleerd...
+portuguese.StartupGroup=Inicialização:
+portuguese.StartupTask=Iniciar com o Windows (motor pronto antes de o jogo abrir)
+portuguese.DriversGroup=Drivers:
+portuguese.ViGEmTask=Instalar o driver ViGEmBus (obrigatório — cria o controle Xbox virtual)
+portuguese.HidHideTask=Instalar o driver HidHide (apenas para o modo de botões do Wolverine V2)
+portuguese.InstallingViGEm=Instalando o driver ViGEmBus...
+portuguese.InstallingHidHide=Instalando o driver HidHide...
+portuguese.CtrlTitle=Qual controle você tem?
+portuguese.CtrlSub=A escolha configura o aplicativo e seleciona os drivers necessários.
+portuguese.CtrlPrompt=Você pode mudar isso depois no aplicativo. "Não sei" instala tudo.
+portuguese.CtrlV3=Razer Wolverine V3 Pro 8K (edição PC, Synapse 4)
+portuguese.CtrlV2=Razer Wolverine V2 / V2 Chroma / V2 Pro (precisa do HidHide)
+portuguese.CtrlUnsure=Não sei, ou os dois
 
 english.CtrlTitle=Which controller do you have?
 english.CtrlSub=The choice sets up the app and picks the drivers you need.

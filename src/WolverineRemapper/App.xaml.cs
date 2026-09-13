@@ -59,6 +59,8 @@ public partial class App : Application
             "german" => "de",
             "spanish" => "es",
             "dutch" => "nl",
+            "portuguese" => "pt",
+            "brazilianportuguese" => "pt",
             var other => other
         };
         if (!L10n.Available.Any(l => l.Code == code)) return;
