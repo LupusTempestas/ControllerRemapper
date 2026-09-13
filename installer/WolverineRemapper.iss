@@ -43,6 +43,8 @@ ArchitecturesInstallIn64BitMode=x64compatible
 ; Driver installers need elevation, so the whole setup runs elevated.
 PrivilegesRequired=admin
 WizardStyle=modern
+; Always ask for the language first (also forwarded to the app, see [Run]).
+ShowLanguageDialog=yes
 CloseApplications=yes
 RestartApplications=no
 MinVersion=10.0
@@ -115,6 +117,8 @@ Filename: "{tmp}\HidHide_Setup.exe";  Parameters: "/quiet /norestart"; StatusMsg
 ; writes it itself as the ORIGINAL user (runasoriginaluser) — the same code path
 ; the Settings tab and the tray toggle use.
 Filename: "{app}\{#AppExe}"; Parameters: "--enable-startup"; Tasks: startup; Flags: runasoriginaluser waituntilterminated
+; The language picked on the installer's first screen becomes the app's UI language.
+Filename: "{app}\{#AppExe}"; Parameters: "--set-language={language}"; Flags: runasoriginaluser waituntilterminated
 Filename: "{app}\{#AppExe}"; Description: "{cm:LaunchProgram,{#AppName}}"; Flags: nowait postinstall skipifsilent
 
 [UninstallRun]

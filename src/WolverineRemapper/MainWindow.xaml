@@ -1372,6 +1372,10 @@
                             <TextBlock Text="{Binding GuidePageTitle}" FontSize="20" FontWeight="Black" Foreground="#22D3EE" Margin="0,2,0,0"/>
                         </StackPanel>
                         <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Top">
+                            <TextBlock Text="🌐" FontSize="13" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                            <ComboBox Style="{StaticResource DarkCombo}" Width="130" Margin="0,0,14,0" VerticalAlignment="Center"
+                                      ItemsSource="{Binding Languages}" SelectedItem="{Binding CurrentLanguage, Mode=TwoWay}"
+                                      ToolTip="{Binding [ui_language_tip], Source={x:Static svc:L10n.I}}"/>
                             <TextBlock Text="{Binding GuidePageCounter}" FontSize="12" Foreground="#94A3B8" VerticalAlignment="Center" Margin="0,0,12,0"/>
                             <Button Content="✕" Command="{Binding CloseGuideCommand}" Style="{StaticResource GhostButtonStyle}" Width="34" Padding="0"
                                     ToolTip="{Binding [guide_skip], Source={x:Static svc:L10n.I}}"/>
