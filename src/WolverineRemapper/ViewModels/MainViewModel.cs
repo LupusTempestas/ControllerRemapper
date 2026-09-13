@@ -52,6 +52,10 @@ namespace WolverineRemapper.ViewModels
             ClearLogsCommand = new RelayCommand(_ => ActivityLogs.Clear());
             AddStepCommand = new RelayCommand(AddStep);
             CaptureStickCommand = new RelayCommand(CaptureStickPosition);
+            ShowGuideCommand = new RelayCommand(_ => ShowGuide());
+            CloseGuideCommand = new RelayCommand(_ => CloseGuide());
+            GuideNextCommand = new RelayCommand(_ => GuidePageIndex = Math.Min(GuidePageCount - 1, GuidePageIndex + 1));
+            GuideBackCommand = new RelayCommand(_ => GuidePageIndex = Math.Max(0, GuidePageIndex - 1));
             RecordMacroCommand = new RelayCommand(_ => _ = RecordMacroAsync());
             StopRecordingCommand = new RelayCommand(_ => FinishRecording(cancel: false));
             CancelRecordingCommand = new RelayCommand(_ => FinishRecording(cancel: true));
@@ -150,6 +154,7 @@ namespace WolverineRemapper.ViewModels
             OnPropertyChanged(nameof(UpdateStatusText));
             OnPropertyChanged(nameof(ViGEmStatusText));
             OnPropertyChanged(nameof(HidHideStatusText));
+            NotifyGuidePage();
         }
 
         #endregion
@@ -595,6 +600,67 @@ namespace WolverineRemapper.ViewModels
                 IsCapturingStick = false;
             }
         }
+
+        #region First-run guide
+
+        public const int GuidePageCount = 7;
+
+        /// <summary>True until the guide has been shown once (installer/first launch).</summary>
+        public bool TutorialSeen => _settings.TutorialSeen;
+
+        private bool _isGuideOpen;
+        public bool IsGuideOpen
+        {
+            get => _isGuideOpen;
+            set { _isGuideOpen = value; OnPropertyChanged(); }
+        }
+
+        private int _guidePageIndex;
+        public int GuidePageIndex
+        {
+            get => _guidePageIndex;
+            set
+            {
+                _guidePageIndex = Math.Clamp(value, 0, GuidePageCount - 1);
+                OnPropertyChanged();
+                NotifyGuidePage();
+            }
+        }
+
+        public string GuidePageTitle => L10n.I.T($"guide_p{GuidePageIndex + 1}_title");
+        public string GuidePageBody => L10n.I.T($"guide_p{GuidePageIndex + 1}_body");
+        public string GuidePageCounter => $"{GuidePageIndex + 1} / {GuidePageCount}";
+        public bool GuideIsFirstPage => GuidePageIndex == 0;
+        public bool GuideIsLastPage => GuidePageIndex == GuidePageCount - 1;
+        public bool GuideIsNotLastPage => !GuideIsLastPage;
+
+        private void NotifyGuidePage()
+        {
+            OnPropertyChanged(nameof(GuidePageTitle));
+            OnPropertyChanged(nameof(GuidePageBody));
+            OnPropertyChanged(nameof(GuidePageCounter));
+            OnPropertyChanged(nameof(GuideIsFirstPage));
+            OnPropertyChanged(nameof(GuideIsLastPage));
+            OnPropertyChanged(nameof(GuideIsNotLastPage));
+        }
+
+        public void ShowGuide()
+        {
+            GuidePageIndex = 0;
+            IsGuideOpen = true;
+        }
+
+        private void CloseGuide()
+        {
+            IsGuideOpen = false;
+            if (!_settings.TutorialSeen)
+            {
+                _settings.TutorialSeen = true;
+                SaveSettings();
+            }
+        }
+
+        #endregion
 
         #region Macro recorder
 
@@ -1474,6 +1540,10 @@ namespace WolverineRemapper.ViewModels
         public ICommand CaptureStickCommand { get; }
         public ICommand CancelStickCaptureCommand { get; }
         public ICommand RemoveStepCommand { get; }
+        public ICommand ShowGuideCommand { get; }
+        public ICommand CloseGuideCommand { get; }
+        public ICommand GuideNextCommand { get; }
+        public ICommand GuideBackCommand { get; }
         public ICommand RecordMacroCommand { get; }
         public ICommand StopRecordingCommand { get; }
         public ICommand CancelRecordingCommand { get; }

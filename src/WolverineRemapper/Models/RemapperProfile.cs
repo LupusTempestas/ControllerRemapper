@@ -28,6 +28,8 @@ namespace WolverineRemapper.Models
         public bool StartMinimized { get; set; } = true;
         /// <summary>Query GitHub releases once at startup.</summary>
         public bool CheckUpdatesAtStartup { get; set; } = true;
+        /// <summary>First-run guide has been shown (or dismissed).</summary>
+        public bool TutorialSeen { get; set; } = false;
         /// <summary>Macro recorder: presses shorter than this become Tap steps.</summary>
         public int RecordTapThresholdMs { get; set; } = 150;
         /// <summary>Macro recorder: stick deflection (percent) that counts as a push.</summary>

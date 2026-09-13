@@ -43,6 +43,11 @@ namespace WolverineRemapper
                 _hiddenHintShown = true; // the user asked for this; no balloon
                 Dispatcher.BeginInvoke(new Action(Hide), System.Windows.Threading.DispatcherPriority.Background);
             }
+            else if (!vm.TutorialSeen)
+            {
+                // First launch: walk the user through Synapse / driver setup.
+                Dispatcher.BeginInvoke(new Action(vm.ShowGuide), System.Windows.Threading.DispatcherPriority.Background);
+            }
         }
 
         /// <summary>Bring the window back from the notification area.</summary>

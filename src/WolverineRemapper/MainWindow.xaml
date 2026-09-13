@@ -491,6 +491,9 @@
                         </StackPanel>
 
                         <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                            <Button Content="{Binding [guide_btn], Source={x:Static svc:L10n.I}}" Command="{Binding ShowGuideCommand}"
+                                    Style="{StaticResource GhostButtonStyle}" Margin="0,0,16,0" VerticalAlignment="Center"
+                                    ToolTip="{Binding [guide_btn_tip], Source={x:Static svc:L10n.I}}"/>
                             <Border CornerRadius="6" Background="{Binding StatusColor}" Padding="10,5" Margin="0,0,12,0" VerticalAlignment="Center">
                                 <TextBlock Text="{Binding StatusText}" FontWeight="Bold" FontSize="12" Foreground="#FFFFFF"/>
                             </Border>
@@ -1265,7 +1268,10 @@
                                         <TextBlock Text="{Binding AppVersion}" FontSize="12" Foreground="#38BDF8" VerticalAlignment="Center" Margin="8,0,0,0"/>
                                     </StackPanel>
                                     <TextBlock Text="{Binding [about_text], Source={x:Static svc:L10n.I}}" FontSize="11" Foreground="#94A3B8" TextWrapping="Wrap" Margin="0,0,0,10"/>
-                                    <Button Content="{Binding [btn_github], Source={x:Static svc:L10n.I}}" Command="{Binding OpenGitHubCommand}" Style="{StaticResource GhostButtonStyle}" HorizontalAlignment="Left"/>
+                                    <StackPanel Orientation="Horizontal">
+                                        <Button Content="{Binding [btn_github], Source={x:Static svc:L10n.I}}" Command="{Binding OpenGitHubCommand}" Style="{StaticResource GhostButtonStyle}"/>
+                                        <Button Content="{Binding [guide_show], Source={x:Static svc:L10n.I}}" Command="{Binding ShowGuideCommand}" Style="{StaticResource GhostButtonStyle}" Margin="8,0,0,0"/>
+                                    </StackPanel>
                                 </StackPanel>
                             </Border>
 
@@ -1343,6 +1349,53 @@
                         <Button Content="{Binding [cancel], Source={x:Static svc:L10n.I}}" Command="{Binding CancelRecordingCommand}" Style="{StaticResource GhostButtonStyle}" Margin="10,0,0,0"/>
                     </StackPanel>
                 </StackPanel>
+            </Border>
+        </Grid>
+
+        <!-- ═══════════ FIRST-RUN GUIDE OVERLAY ═══════════ -->
+        <Grid Background="#E60F172A" Visibility="{Binding IsGuideOpen, Converter={StaticResource BoolToVis}}">
+            <Border Style="{StaticResource Card}" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="36,28" BorderBrush="#22D3EE" Width="760" MaxHeight="640">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <Grid Grid.Row="0" Margin="0,0,0,14">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel>
+                            <TextBlock Text="{Binding [guide_heading], Source={x:Static svc:L10n.I}}" FontSize="11" FontWeight="Bold" Foreground="#94A3B8"/>
+                            <TextBlock Text="{Binding GuidePageTitle}" FontSize="20" FontWeight="Black" Foreground="#22D3EE" Margin="0,2,0,0"/>
+                        </StackPanel>
+                        <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Top">
+                            <TextBlock Text="{Binding GuidePageCounter}" FontSize="12" Foreground="#94A3B8" VerticalAlignment="Center" Margin="0,0,12,0"/>
+                            <Button Content="✕" Command="{Binding CloseGuideCommand}" Style="{StaticResource GhostButtonStyle}" Width="34" Padding="0"
+                                    ToolTip="{Binding [guide_skip], Source={x:Static svc:L10n.I}}"/>
+                        </StackPanel>
+                    </Grid>
+
+                    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                        <TextBlock local:MarkupText.Text="{Binding GuidePageBody}" FontSize="14" Foreground="#E2E8F0" TextWrapping="Wrap" LineHeight="22"/>
+                    </ScrollViewer>
+
+                    <Grid Grid.Row="2" Margin="0,18,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <Button Content="{Binding [guide_back], Source={x:Static svc:L10n.I}}" Command="{Binding GuideBackCommand}" Style="{StaticResource GhostButtonStyle}"
+                                Visibility="{Binding GuideIsFirstPage, Converter={StaticResource InvBoolToVis}}"/>
+                        <Button Grid.Column="2" Content="{Binding [guide_next], Source={x:Static svc:L10n.I}}" Command="{Binding GuideNextCommand}" Style="{StaticResource ActionButtonStyle}" Height="36" MinWidth="150"
+                                Visibility="{Binding GuideIsNotLastPage, Converter={StaticResource BoolToVis}}"/>
+                        <Button Grid.Column="2" Content="{Binding [guide_done], Source={x:Static svc:L10n.I}}" Command="{Binding CloseGuideCommand}" Style="{StaticResource ActionButtonStyle}" Height="36" MinWidth="150"
+                                Visibility="{Binding GuideIsLastPage, Converter={StaticResource BoolToVis}}"/>
+                    </Grid>
+                </Grid>
             </Border>
         </Grid>
     </Grid>

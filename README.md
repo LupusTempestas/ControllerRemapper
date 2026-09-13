@@ -102,7 +102,11 @@ both the installer and the portable exe on GitHub and attaches them to a release
 
 ## Quick start (V3 Pro 8K)
 
-1. In Synapse, map M1→ScrollLock, M2→Pause, M3→Insert, M4→Home, M5→PageUp, M6→PageDown.
+On the first launch the app opens a **step-by-step guide** (Synapse setup,
+drivers, first combo) in your language. Reopen it any time with **? GUIDE**
+in the header or from the Settings tab.
+
+1. In Synapse, set each M-button to a **Keyboard Function**: M1→ScrollLock, M2→Pause, M3→Insert, M4→Home, M5→PageUp, M6→PageDown.
 2. Launch the app, press **START ENGINE**.
 3. Configure each M-button on the **Visual Remapper** tab.
 4. Launch your game and play.
