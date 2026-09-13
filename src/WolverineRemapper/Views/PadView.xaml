@@ -34,7 +34,7 @@
     </UserControl.Resources>
 
     <Viewbox Stretch="Uniform">
-        <Canvas Width="470" Height="360">
+        <Canvas Width="470" Height="440">
             <!-- Triggers -->
             <Border Canvas.Left="93" Canvas.Top="6" Width="72" Height="20" CornerRadius="10" Background="{Binding IsLTPressed, Converter={StaticResource PadPressed}}">
                 <TextBlock Text="LT" FontSize="11" FontWeight="Bold" Foreground="#F8FAFC" HorizontalAlignment="Center" VerticalAlignment="Center"/>
@@ -101,9 +101,9 @@
 
             <!-- Back paddles M3–M6 -->
             <Border Canvas.Left="121" Canvas.Top="330" Style="{StaticResource MDot}" Background="{Binding M3.IsPressed, Converter={StaticResource PadMActive}}"><TextBlock Text="M3" Style="{StaticResource MDotText}"/></Border>
-            <Border Canvas.Left="103" Canvas.Top="338" Style="{StaticResource MDot}" Margin="0,26,0,0" Background="{Binding M5.IsPressed, Converter={StaticResource PadMActive}}"><TextBlock Text="M5" Style="{StaticResource MDotText}"/></Border>
+            <Border Canvas.Left="103" Canvas.Top="366" Style="{StaticResource MDot}" Background="{Binding M5.IsPressed, Converter={StaticResource PadMActive}}"><TextBlock Text="M5" Style="{StaticResource MDotText}"/></Border>
             <Border Canvas.Left="315" Canvas.Top="330" Style="{StaticResource MDot}" Background="{Binding M4.IsPressed, Converter={StaticResource PadMActive}}"><TextBlock Text="M4" Style="{StaticResource MDotText}"/></Border>
-            <Border Canvas.Left="333" Canvas.Top="338" Style="{StaticResource MDot}" Margin="0,26,0,0" Background="{Binding M6.IsPressed, Converter={StaticResource PadMActive}}"><TextBlock Text="M6" Style="{StaticResource MDotText}"/></Border>
+            <Border Canvas.Left="333" Canvas.Top="366" Style="{StaticResource MDot}" Background="{Binding M6.IsPressed, Converter={StaticResource PadMActive}}"><TextBlock Text="M6" Style="{StaticResource MDotText}"/></Border>
         </Canvas>
     </Viewbox>
 </UserControl>
