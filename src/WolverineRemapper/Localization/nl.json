@@ -230,5 +230,21 @@
   "guide_p6_title": "Stap 5 — Een knop instellen",
   "guide_p6_body": "Klik op een groene **M-badge** op de controllerafbeelding. Het paneel rechts opent met twee tabbladen:\n\n•  **HANDMATIG** — kies de **TRIGGER** (vasthouden / schakelaar / dubbeltik), de **HERHALING** (eenmaal / meerdere keren / zolang vastgehouden) en het **ACTIETYPE**: een **COMBO** (knoppen tegelijk), **VASTHOUDEN + DRUKKEN** (een modifier vasthouden en dan drukken) of een **MACRO** (je eigen lijst met stappen).\n\n•  **RECORDER** — druk op **OPNEMEN VAN CONTROLLER**, speel de combo op je controller en druk op **STOP**. De stappen worden voor je geschreven.\n\nDe regel **UITVOER** onderaan toont altijd wat de M-knop gaat sturen. Druk op **OPSLAAN** in de profielbalk om het te bewaren.",
   "guide_p7_title": "Stap 6 — Testen en spelen",
-  "guide_p7_body": "Druk op een M-knop op de controller: de badge licht op en de **console** onderaan logt wat er is verzonden.\n\nStart je game. Alles wat met je echte controller werkt, werkt ook met de virtuele — de combo's zijn gewoon extra knoppen.\n\nSchakelt de game naar de **toetsenbordmodus**, dan draait de engine niet of stuurt Synapse een andere toets dan verwacht. Controleer **ENGINE ACTIEF** en de toets naast de M-knop.\n\nVeel plezier! Een bug gevonden of een idee? De **GitHub**-link staat op het tabblad **Instellingen**."
+  "guide_p7_body": "Druk op een M-knop op de controller: de badge licht op en de **console** onderaan logt wat er is verzonden.\n\nStart je game. Alles wat met je echte controller werkt, werkt ook met de virtuele — de combo's zijn gewoon extra knoppen.\n\nSchakelt de game naar de **toetsenbordmodus**, dan draait de engine niet of stuurt Synapse een andere toets dan verwacht. Controleer **ENGINE ACTIEF** en de toets naast de M-knop.\n\nVeel plezier! Een bug gevonden of een idee? De **GitHub**-link staat op het tabblad **Instellingen**.",
+"record_again": "⏺ OPNIEUW OPNEMEN",
+  "record_clear": "STAPPEN WISSEN",
+  "settings_overlay": "IN-GAME OVERLAY",
+  "overlay_intro": "Een kleine doorzichtige controller die boven je game blijft en elke knop, stick en M-knop live laat oplichten — een visueel signaal dat je combo's afgaan.",
+  "overlay_show": "Overlay tonen",
+  "overlay_lock": "Positie vergrendelen (klik gaat erdoorheen)",
+  "overlay_lock_tip": "Ontgrendeld: sleep de overlay met de muis, rechtsklik om te vergrendelen. Vergrendeld: de muis gaat rechtstreeks naar de game; ontgrendel hier of via het systeemvakpictogram.",
+  "fmt_overlay_size": "GROOTTE — ×{0:F1}",
+  "fmt_overlay_opacity": "DEKKING — {0:P0}",
+  "overlay_reset": "POSITIE RESETTEN",
+  "overlay_fullscreen_note": "Werkt boven games in venster- en randloos-venstermodus. Games in exclusief volledig scherm tekenen over alle vensters, ook deze overlay — zet de game op randloos venster als hij verborgen is.",
+  "overlay_hint": "slepen om te verplaatsen · rechtsklik om te vergrendelen",
+  "tray_overlay": "Overlay",
+  "tray_overlay_show": "Overlay tonen",
+  "tray_overlay_lock": "Positie vergrendelen (klik gaat erdoorheen)",
+  "tray_overlay_reset": "Positie resetten"
 }

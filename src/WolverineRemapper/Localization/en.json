@@ -230,5 +230,21 @@
   "guide_p6_title": "Step 5 — Configure a button",
   "guide_p6_body": "Click a green **M badge** on the controller picture. The panel on the right opens with two tabs:\n\n•  **MANUAL** — choose the **TRIGGER** (hold / toggle / double-tap), the **REPEAT** (once / multiple times / while held) and the **ACTION TYPE**: a **CHORD** (buttons together), **HOLD + PRESS** (hold a modifier, then press) or a **MACRO** (your own list of steps).\n\n•  **RECORDER** — press **RECORD FROM PAD**, play the combo on your controller, press **STOP**. The steps are written for you.\n\nThe **OUTPUT** line at the bottom always shows what the M-button will send. Press **SAVE** in the profile bar to keep it.",
   "guide_p7_title": "Step 6 — Test and play",
-  "guide_p7_body": "Press an M-button on the controller: its badge lights up and the **console** at the bottom logs what was sent.\n\nLaunch your game. Anything that works with your real controller works with the virtual one — the combos are simply extra buttons.\n\nIf the game switches to **keyboard mode**, either the engine is not running or Synapse sends a different key than the app expects. Check **ENGINE ONLINE** and the key shown next to the M-button.\n\nHave fun! Found a bug or have an idea? The **GitHub** link is in the **Settings** tab."
+  "guide_p7_body": "Press an M-button on the controller: its badge lights up and the **console** at the bottom logs what was sent.\n\nLaunch your game. Anything that works with your real controller works with the virtual one — the combos are simply extra buttons.\n\nIf the game switches to **keyboard mode**, either the engine is not running or Synapse sends a different key than the app expects. Check **ENGINE ONLINE** and the key shown next to the M-button.\n\nHave fun! Found a bug or have an idea? The **GitHub** link is in the **Settings** tab.",
+"record_again": "⏺ RECORD AGAIN",
+  "record_clear": "CLEAR STEPS",
+  "settings_overlay": "IN-GAME OVERLAY",
+  "overlay_intro": "A small see-through controller that stays on top of your game and lights up every button, stick and M-button live — a visual cue that your combos are firing.",
+  "overlay_show": "Show the overlay",
+  "overlay_lock": "Lock position (click-through)",
+  "overlay_lock_tip": "Unlocked: drag the overlay with the mouse, right-click it to lock. Locked: the mouse passes straight through to the game; unlock here or from the tray icon.",
+  "fmt_overlay_size": "SIZE — ×{0:F1}",
+  "fmt_overlay_opacity": "OPACITY — {0:P0}",
+  "overlay_reset": "RESET POSITION",
+  "overlay_fullscreen_note": "Works over windowed and borderless-window games. Exclusive-fullscreen games draw over every window, including this overlay — switch the game to borderless if it is hidden.",
+  "overlay_hint": "drag to move · right-click to lock",
+  "tray_overlay": "Overlay",
+  "tray_overlay_show": "Show overlay",
+  "tray_overlay_lock": "Lock position (click-through)",
+  "tray_overlay_reset": "Reset position"
 }

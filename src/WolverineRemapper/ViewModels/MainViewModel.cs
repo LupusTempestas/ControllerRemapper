@@ -52,6 +52,8 @@ namespace WolverineRemapper.ViewModels
             ClearLogsCommand = new RelayCommand(_ => ActivityLogs.Clear());
             AddStepCommand = new RelayCommand(AddStep);
             CaptureStickCommand = new RelayCommand(CaptureStickPosition);
+            ResetOverlayPositionCommand = new RelayCommand(_ => ResetOverlayPosition());
+            ClearStepsCommand = new RelayCommand(_ => SelectedMButton?.Steps.Clear());
             ShowGuideCommand = new RelayCommand(_ => ShowGuide());
             CloseGuideCommand = new RelayCommand(_ => CloseGuide());
             GuideNextCommand = new RelayCommand(_ => GuidePageIndex = Math.Min(GuidePageCount - 1, GuidePageIndex + 1));
@@ -600,6 +602,63 @@ namespace WolverineRemapper.ViewModels
                 IsCapturingStick = false;
             }
         }
+
+        #region Overlay (see-through live controller)
+
+        /// <summary>Raised when the user asks to park the overlay back at its default spot.</summary>
+        public event Action? OverlayResetRequested;
+
+        public bool OverlayEnabled
+        {
+            get => _settings.OverlayVisible;
+            set
+            {
+                if (_settings.OverlayVisible == value) return;
+                _settings.OverlayVisible = value;
+                SaveSettings();
+                OnPropertyChanged();
+                AddLog(value ? "[+] Overlay shown — drag it into place, right-click to lock." : "[−] Overlay hidden.");
+            }
+        }
+
+        public bool OverlayLocked
+        {
+            get => _settings.OverlayLocked;
+            set
+            {
+                if (_settings.OverlayLocked == value) return;
+                _settings.OverlayLocked = value;
+                SaveSettings();
+                OnPropertyChanged();
+                AddLog(value ? "[+] Overlay locked (click-through). Unlock from the tray or Settings." : "[−] Overlay unlocked — drag to move, right-click to lock.");
+            }
+        }
+
+        public double OverlayScale
+        {
+            get => _settings.OverlayScale;
+            set { _settings.OverlayScale = Math.Clamp(value, 0.5, 1.6); SaveSettings(); OnPropertyChanged(); }
+        }
+
+        public double OverlayOpacity
+        {
+            get => _settings.OverlayOpacity;
+            set { _settings.OverlayOpacity = Math.Clamp(value, 0.2, 1.0); SaveSettings(); OnPropertyChanged(); }
+        }
+
+        public double OverlayX => _settings.OverlayX;
+        public double OverlayY => _settings.OverlayY;
+
+        public void SaveOverlayPosition(double x, double y)
+        {
+            _settings.OverlayX = x;
+            _settings.OverlayY = y;
+            SaveSettings();
+        }
+
+        public void ResetOverlayPosition() => OverlayResetRequested?.Invoke();
+
+        #endregion
 
         #region First-run guide
 
@@ -1540,6 +1599,8 @@ namespace WolverineRemapper.ViewModels
         public ICommand CaptureStickCommand { get; }
         public ICommand CancelStickCaptureCommand { get; }
         public ICommand RemoveStepCommand { get; }
+        public ICommand ResetOverlayPositionCommand { get; }
+        public ICommand ClearStepsCommand { get; }
         public ICommand ShowGuideCommand { get; }
         public ICommand CloseGuideCommand { get; }
         public ICommand GuideNextCommand { get; }

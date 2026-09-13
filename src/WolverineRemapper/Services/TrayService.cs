@@ -26,6 +26,10 @@ namespace WolverineRemapper.Services
         private readonly ToolStripMenuItem _engine = new();
         private readonly ToolStripMenuItem _profiles = new();
         private readonly ToolStripMenuItem _startup = new() { CheckOnClick = true };
+        private readonly ToolStripMenuItem _overlay = new();
+        private readonly ToolStripMenuItem _overlayShow = new() { CheckOnClick = true };
+        private readonly ToolStripMenuItem _overlayLock = new() { CheckOnClick = true };
+        private readonly ToolStripMenuItem _overlayReset = new();
         private readonly ToolStripMenuItem _restartItem = new();
         private readonly ToolStripMenuItem _quitItem = new();
 
@@ -42,15 +46,27 @@ namespace WolverineRemapper.Services
             _restartItem.Click += (_, _) => _restart();
             _quitItem.Click += (_, _) => _quit();
             _startup.CheckedChanged += (_, _) => { if (_vm.StartWithWindows != _startup.Checked) _vm.StartWithWindows = _startup.Checked; };
+            _overlayShow.CheckedChanged += (_, _) => { if (_vm.OverlayEnabled != _overlayShow.Checked) _vm.OverlayEnabled = _overlayShow.Checked; };
+            _overlayLock.CheckedChanged += (_, _) => { if (_vm.OverlayLocked != _overlayLock.Checked) _vm.OverlayLocked = _overlayLock.Checked; };
+            _overlayReset.Click += (_, _) => _vm.ResetOverlayPosition();
+            _overlay.DropDownItems.AddRange(new ToolStripItem[] { _overlayShow, _overlayLock, _overlayReset });
 
             _menu.Items.AddRange(new ToolStripItem[]
             {
                 _open, new ToolStripSeparator(),
-                _engine, _profiles, new ToolStripSeparator(),
+                _engine, _profiles, _overlay, new ToolStripSeparator(),
                 _startup, new ToolStripSeparator(),
                 _restartItem, _quitItem
             });
-            _menu.Opening += (_, _) => { RebuildProfiles(); _startup.Checked = _vm.StartWithWindows; };
+            _menu.Opening += (_, _) =>
+            {
+                RebuildProfiles();
+                _startup.Checked = _vm.StartWithWindows;
+                _overlayShow.Checked = _vm.OverlayEnabled;
+                _overlayLock.Checked = _vm.OverlayLocked;
+                _overlayLock.Enabled = _vm.OverlayEnabled;
+                _overlayReset.Enabled = _vm.OverlayEnabled;
+            };
 
             _icon = new NotifyIcon
             {
@@ -83,6 +99,10 @@ namespace WolverineRemapper.Services
             _engine.Text = running ? L10n.I.T("tray_stop_engine") : L10n.I.T("tray_start_engine");
             _profiles.Text = L10n.I.T("tray_profiles");
             _startup.Text = L10n.I.T("tray_start_with_windows");
+            _overlay.Text = L10n.I.T("tray_overlay");
+            _overlayShow.Text = L10n.I.T("tray_overlay_show");
+            _overlayLock.Text = L10n.I.T("tray_overlay_lock");
+            _overlayReset.Text = L10n.I.T("tray_overlay_reset");
             _restartItem.Text = L10n.I.T("tray_restart");
             _quitItem.Text = L10n.I.T("tray_quit");
 

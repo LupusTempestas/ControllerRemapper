@@ -230,5 +230,21 @@
   "guide_p6_title": "Schritt 5 — Eine Taste konfigurieren",
   "guide_p6_body": "Klicke auf ein grünes **M-Badge** am Controllerbild. Rechts öffnet sich das Panel mit zwei Tabs:\n\n•  **MANUELL** — wähle den **AUSLÖSER** (halten / umschalten / Doppeltipp), die **WIEDERHOLUNG** (einmal / mehrmals / solange gehalten) und den **AKTIONSTYP**: ein **KOMBO** (Tasten zusammen), **HALTEN + DRÜCKEN** (Modifikator halten, dann drücken) oder ein **MAKRO** (deine eigene Schrittliste).\n\n•  **RECORDER** — drücke **VOM CONTROLLER AUFNEHMEN**, spiele den Kombo auf dem Controller, drücke **STOP**. Die Schritte werden für dich geschrieben.\n\nDie Zeile **AUSGABE** unten zeigt immer, was die M-Taste senden wird. Drücke **SPEICHERN** in der Profilleiste, um es zu behalten.",
   "guide_p7_title": "Schritt 6 — Testen und spielen",
-  "guide_p7_body": "Drücke eine M-Taste am Controller: ihr Badge leuchtet auf und die **Konsole** unten protokolliert, was gesendet wurde.\n\nStarte dein Spiel. Alles, was mit deinem echten Controller geht, geht auch mit dem virtuellen — die Kombos sind einfach zusätzliche Tasten.\n\nSchaltet das Spiel in den **Tastaturmodus**, läuft entweder die Engine nicht oder Synapse sendet eine andere Taste als erwartet. Prüfe **ENGINE AKTIV** und die Taste neben der M-Taste.\n\nViel Spaß! Fehler gefunden oder eine Idee? Der **GitHub**-Link steht im Tab **Einstellungen**."
+  "guide_p7_body": "Drücke eine M-Taste am Controller: ihr Badge leuchtet auf und die **Konsole** unten protokolliert, was gesendet wurde.\n\nStarte dein Spiel. Alles, was mit deinem echten Controller geht, geht auch mit dem virtuellen — die Kombos sind einfach zusätzliche Tasten.\n\nSchaltet das Spiel in den **Tastaturmodus**, läuft entweder die Engine nicht oder Synapse sendet eine andere Taste als erwartet. Prüfe **ENGINE AKTIV** und die Taste neben der M-Taste.\n\nViel Spaß! Fehler gefunden oder eine Idee? Der **GitHub**-Link steht im Tab **Einstellungen**.",
+"record_again": "⏺ ERNEUT AUFNEHMEN",
+  "record_clear": "SCHRITTE LÖSCHEN",
+  "settings_overlay": "INGAME-OVERLAY",
+  "overlay_intro": "Ein kleiner durchsichtiger Controller, der über dem Spiel bleibt und jede Taste, jeden Stick und jede M-Taste live aufleuchten lässt — ein visuelles Signal, dass deine Kombos feuern.",
+  "overlay_show": "Overlay anzeigen",
+  "overlay_lock": "Position sperren (durchklickbar)",
+  "overlay_lock_tip": "Entsperrt: Overlay mit der Maus ziehen, Rechtsklick zum Sperren. Gesperrt: die Maus geht direkt zum Spiel durch; hier oder über das Tray-Symbol entsperren.",
+  "fmt_overlay_size": "GRÖSSE — ×{0:F1}",
+  "fmt_overlay_opacity": "DECKKRAFT — {0:P0}",
+  "overlay_reset": "POSITION ZURÜCKSETZEN",
+  "overlay_fullscreen_note": "Funktioniert über Spielen im Fenster- und randlosen Fenstermodus. Spiele im exklusiven Vollbild zeichnen über alle Fenster, auch über dieses Overlay — stelle das Spiel auf randloses Fenster um, wenn es verdeckt ist.",
+  "overlay_hint": "ziehen zum Verschieben · Rechtsklick zum Sperren",
+  "tray_overlay": "Overlay",
+  "tray_overlay_show": "Overlay anzeigen",
+  "tray_overlay_lock": "Position sperren (durchklickbar)",
+  "tray_overlay_reset": "Position zurücksetzen"
 }

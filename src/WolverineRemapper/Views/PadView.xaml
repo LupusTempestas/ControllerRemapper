@@ -1,0 +1,109 @@
+<UserControl x:Class="WolverineRemapper.Views.PadView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:WolverineRemapper">
+    <!-- Compact live controller: the same geometry as the main diagram, without
+         the callouts. DataContext is the MainViewModel (inherited). Used by the
+         recording overlay and by the see-through overlay window. -->
+    <UserControl.Resources>
+        <local:BoolToBrushConverter x:Key="PadPressed" FalseBrush="#334155">
+            <local:BoolToBrushConverter.TrueBrush>
+                <SolidColorBrush Color="#10B981"/>
+            </local:BoolToBrushConverter.TrueBrush>
+        </local:BoolToBrushConverter>
+        <local:BoolToBrushConverter x:Key="PadMActive" FalseBrush="#1F3B31">
+            <local:BoolToBrushConverter.TrueBrush>
+                <SolidColorBrush Color="#22D3EE"/>
+            </local:BoolToBrushConverter.TrueBrush>
+        </local:BoolToBrushConverter>
+        <local:ScaleConverter x:Key="PadScale"/>
+        <Style x:Key="MDot" TargetType="Border">
+            <Setter Property="Width" Value="34"/>
+            <Setter Property="Height" Value="20"/>
+            <Setter Property="CornerRadius" Value="5"/>
+            <Setter Property="BorderBrush" Value="#065F46"/>
+            <Setter Property="BorderThickness" Value="1.5"/>
+        </Style>
+        <Style x:Key="MDotText" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="10"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Foreground" Value="#ECFDF5"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+    </UserControl.Resources>
+
+    <Viewbox Stretch="Uniform">
+        <Canvas Width="470" Height="360">
+            <!-- Triggers -->
+            <Border Canvas.Left="93" Canvas.Top="6" Width="72" Height="20" CornerRadius="10" Background="{Binding IsLTPressed, Converter={StaticResource PadPressed}}">
+                <TextBlock Text="LT" FontSize="11" FontWeight="Bold" Foreground="#F8FAFC" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            </Border>
+            <Border Canvas.Left="305" Canvas.Top="6" Width="72" Height="20" CornerRadius="10" Background="{Binding IsRTPressed, Converter={StaticResource PadPressed}}">
+                <TextBlock Text="RT" FontSize="11" FontWeight="Bold" Foreground="#F8FAFC" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            </Border>
+            <!-- Bumpers -->
+            <Border Canvas.Left="83" Canvas.Top="34" Width="78" Height="22" CornerRadius="8" Background="{Binding IsLBPressed, Converter={StaticResource PadPressed}}">
+                <TextBlock Text="LB" FontSize="11" FontWeight="Bold" Foreground="#F8FAFC" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            </Border>
+            <Border Canvas.Left="309" Canvas.Top="34" Width="78" Height="22" CornerRadius="8" Background="{Binding IsRBPressed, Converter={StaticResource PadPressed}}">
+                <TextBlock Text="RB" FontSize="11" FontWeight="Bold" Foreground="#F8FAFC" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            </Border>
+            <!-- M1 / M2 (front) -->
+            <Border Canvas.Left="176" Canvas.Top="34" Style="{StaticResource MDot}" Background="{Binding M1.IsPressed, Converter={StaticResource PadMActive}}"><TextBlock Text="M1" Style="{StaticResource MDotText}"/></Border>
+            <Border Canvas.Left="260" Canvas.Top="34" Style="{StaticResource MDot}" Background="{Binding M2.IsPressed, Converter={StaticResource PadMActive}}"><TextBlock Text="M2" Style="{StaticResource MDotText}"/></Border>
+
+            <!-- Body (main diagram path shifted left by 75, up by 0) -->
+            <Path Fill="#111C2E" Stroke="#334155" StrokeThickness="3"
+                  Data="M 235,90 C 175,84 125,88 93,104 C 45,128 17,190 9,258 C 1,330 13,392 47,408 C 81,424 115,398 135,362 C 157,326 187,312 235,312 C 283,312 313,326 335,362 C 355,398 389,424 423,408 C 457,392 469,330 461,258 C 453,190 425,128 377,104 C 345,88 295,84 235,90 Z"/>
+
+            <!-- Left stick -->
+            <Ellipse Canvas.Left="57" Canvas.Top="157" Width="76" Height="76" Fill="#0F172A" Stroke="#06B6D4" StrokeThickness="2"/>
+            <Ellipse Canvas.Left="75" Canvas.Top="175" Width="40" Height="40" Fill="{Binding IsLSPressed, Converter={StaticResource PadPressed}}" Stroke="#475569" StrokeThickness="2">
+                <Ellipse.RenderTransform>
+                    <TranslateTransform X="{Binding LeftStickXNorm, Converter={StaticResource PadScale}, ConverterParameter='16'}"
+                                        Y="{Binding LeftStickYNorm, Converter={StaticResource PadScale}, ConverterParameter='-16'}"/>
+                </Ellipse.RenderTransform>
+            </Ellipse>
+            <!-- Right stick -->
+            <Ellipse Canvas.Left="277" Canvas.Top="234" Width="76" Height="76" Fill="#0F172A" Stroke="#06B6D4" StrokeThickness="2"/>
+            <Ellipse Canvas.Left="295" Canvas.Top="252" Width="40" Height="40" Fill="{Binding IsRSPressed, Converter={StaticResource PadPressed}}" Stroke="#475569" StrokeThickness="2">
+                <Ellipse.RenderTransform>
+                    <TranslateTransform X="{Binding RightStickXNorm, Converter={StaticResource PadScale}, ConverterParameter='16'}"
+                                        Y="{Binding RightStickYNorm, Converter={StaticResource PadScale}, ConverterParameter='-16'}"/>
+                </Ellipse.RenderTransform>
+            </Ellipse>
+
+            <!-- D-pad -->
+            <Rectangle Canvas.Left="138" Canvas.Top="227" Width="30" Height="32" RadiusX="4" RadiusY="4" Fill="{Binding IsDPadUpPressed, Converter={StaticResource PadPressed}}"/>
+            <Rectangle Canvas.Left="138" Canvas.Top="285" Width="30" Height="32" RadiusX="4" RadiusY="4" Fill="{Binding IsDPadDownPressed, Converter={StaticResource PadPressed}}"/>
+            <Rectangle Canvas.Left="106" Canvas.Top="257" Width="32" Height="30" RadiusX="4" RadiusY="4" Fill="{Binding IsDPadLeftPressed, Converter={StaticResource PadPressed}}"/>
+            <Rectangle Canvas.Left="168" Canvas.Top="257" Width="32" Height="30" RadiusX="4" RadiusY="4" Fill="{Binding IsDPadRightPressed, Converter={StaticResource PadPressed}}"/>
+            <Rectangle Canvas.Left="138" Canvas.Top="257" Width="30" Height="30" Fill="#334155"/>
+
+            <!-- Face buttons -->
+            <Border Canvas.Left="359" Canvas.Top="141" Width="36" Height="36" CornerRadius="18" Background="{Binding IsYPressed, Converter={StaticResource PadPressed}}">
+                <TextBlock Text="Y" FontWeight="Bold" Foreground="#FACC15" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            </Border>
+            <Border Canvas.Left="323" Canvas.Top="177" Width="36" Height="36" CornerRadius="18" Background="{Binding IsXPressed, Converter={StaticResource PadPressed}}">
+                <TextBlock Text="X" FontWeight="Bold" Foreground="#60A5FA" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            </Border>
+            <Border Canvas.Left="395" Canvas.Top="177" Width="36" Height="36" CornerRadius="18" Background="{Binding IsBPressed, Converter={StaticResource PadPressed}}">
+                <TextBlock Text="B" FontWeight="Bold" Foreground="#F87171" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            </Border>
+            <Border Canvas.Left="359" Canvas.Top="213" Width="36" Height="36" CornerRadius="18" Background="{Binding IsAPressed, Converter={StaticResource PadPressed}}">
+                <TextBlock Text="A" FontWeight="Bold" Foreground="#4ADE80" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            </Border>
+
+            <!-- View / Menu -->
+            <Border Canvas.Left="197" Canvas.Top="160" Width="24" Height="24" CornerRadius="12" Background="{Binding IsViewPressed, Converter={StaticResource PadPressed}}"/>
+            <Border Canvas.Left="249" Canvas.Top="160" Width="24" Height="24" CornerRadius="12" Background="{Binding IsMenuPressed, Converter={StaticResource PadPressed}}"/>
+
+            <!-- Back paddles M3–M6 -->
+            <Border Canvas.Left="121" Canvas.Top="330" Style="{StaticResource MDot}" Background="{Binding M3.IsPressed, Converter={StaticResource PadMActive}}"><TextBlock Text="M3" Style="{StaticResource MDotText}"/></Border>
+            <Border Canvas.Left="103" Canvas.Top="338" Style="{StaticResource MDot}" Margin="0,26,0,0" Background="{Binding M5.IsPressed, Converter={StaticResource PadMActive}}"><TextBlock Text="M5" Style="{StaticResource MDotText}"/></Border>
+            <Border Canvas.Left="315" Canvas.Top="330" Style="{StaticResource MDot}" Background="{Binding M4.IsPressed, Converter={StaticResource PadMActive}}"><TextBlock Text="M4" Style="{StaticResource MDotText}"/></Border>
+            <Border Canvas.Left="333" Canvas.Top="338" Style="{StaticResource MDot}" Margin="0,26,0,0" Background="{Binding M6.IsPressed, Converter={StaticResource PadMActive}}"><TextBlock Text="M6" Style="{StaticResource MDotText}"/></Border>
+        </Canvas>
+    </Viewbox>
+</UserControl>

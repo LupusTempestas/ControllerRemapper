@@ -6,6 +6,7 @@
         xmlns:local="clr-namespace:WolverineRemapper"
         xmlns:vm="clr-namespace:WolverineRemapper.ViewModels"
         xmlns:svc="clr-namespace:WolverineRemapper.Services"
+        xmlns:views="clr-namespace:WolverineRemapper.Views"
         mc:Ignorable="d"
         Title="{Binding [razer_wolverine_remapper_zero_lag], Source={x:Static svc:L10n.I}}"
         Icon="Assets/app.ico"
@@ -35,6 +36,7 @@
         <local:BoolToVisibilityConverter x:Key="InvBoolToVis" Invert="True"/>
         <local:ButtonNameConverter x:Key="ButtonName"/>
         <local:LocFormatConverter x:Key="LocFmt"/>
+
 
         <!-- ══ Palette ══ -->
         <SolidColorBrush x:Key="CardBg" Color="#1E293B"/>
@@ -457,6 +459,66 @@
                 </Trigger>
             </Style.Triggers>
         </Style>
+        <!-- ══ One editable macro step (shared by the MANUAL macro editor and the RECORDER tab) ══ -->
+        <DataTemplate x:Key="StepEditorTemplate">
+            <Border Background="#0F172A" CornerRadius="6" BorderBrush="#334155" BorderThickness="1" Padding="8,6" Margin="0,0,0,6">
+                <StackPanel>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="106"/>
+                            <ColumnDefinition Width="110"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <ComboBox Grid.Column="0" Style="{StaticResource DarkCombo}" Margin="0,0,8,0"
+                                  ItemsSource="{Binding DataContext.MacroStepTypes, RelativeSource={RelativeSource AncestorType=Window}}"
+                                  SelectedItem="{Binding Type}"/>
+                        <Grid Grid.Column="1" Margin="0,0,8,0">
+                            <ComboBox Style="{StaticResource DarkCombo}"
+                                      ItemsSource="{Binding DataContext.VirtualButtons, RelativeSource={RelativeSource AncestorType=Window}}"
+                                      SelectedItem="{Binding Button}"
+                                      Visibility="{Binding UsesButton, Converter={StaticResource BoolToVis}}"/>
+                            <ComboBox Style="{StaticResource DarkCombo}"
+                                      ItemsSource="{Binding DataContext.StickSides, RelativeSource={RelativeSource AncestorType=Window}}"
+                                      SelectedItem="{Binding Stick}"
+                                      Visibility="{Binding UsesStick, Converter={StaticResource BoolToVis}}"/>
+                        </Grid>
+                        <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center"
+                                    Visibility="{Binding UsesDuration, Converter={StaticResource BoolToVis}}">
+                            <TextBox Style="{StaticResource DarkTextBox}" Width="54"
+                                     Text="{Binding DurationMs, UpdateSourceTrigger=PropertyChanged}"/>
+                            <TextBlock Text="ms" FontSize="11" Foreground="#94A3B8" VerticalAlignment="Center" Margin="4,0,0,0"/>
+                        </StackPanel>
+
+                        <StackPanel Grid.Column="4" Orientation="Horizontal">
+                            <Button Content="▲" Style="{StaticResource GhostButtonStyle}" Padding="7,4" Margin="0,0,4,0"
+                                    Command="{Binding DataContext.MoveStepUpCommand, RelativeSource={RelativeSource AncestorType=Window}}" CommandParameter="{Binding}"/>
+                            <Button Content="▼" Style="{StaticResource GhostButtonStyle}" Padding="7,4" Margin="0,0,4,0"
+                                    Command="{Binding DataContext.MoveStepDownCommand, RelativeSource={RelativeSource AncestorType=Window}}" CommandParameter="{Binding}"/>
+                            <Button Content="✕" Style="{StaticResource GhostButtonStyle}" Padding="7,4"
+                                    Command="{Binding DataContext.RemoveStepCommand, RelativeSource={RelativeSource AncestorType=Window}}" CommandParameter="{Binding}"/>
+                        </StackPanel>
+                    </Grid>
+
+                    <!-- Stick position sub-row (PushStick only) -->
+                    <StackPanel Orientation="Horizontal" Margin="0,6,0,0"
+                                Visibility="{Binding UsesStickPosition, Converter={StaticResource BoolToVis}}">
+                        <Button Content="{Binding [capture_position], Source={x:Static svc:L10n.I}}" Style="{StaticResource GhostButtonStyle}" Margin="0,0,10,0"
+                                Command="{Binding DataContext.CaptureStickCommand, RelativeSource={RelativeSource AncestorType=Window}}" CommandParameter="{Binding}"
+                                ToolTip="{Binding [click_then_push_the_physical], Source={x:Static svc:L10n.I}}"/>
+                        <TextBlock Text="X" FontSize="11" Foreground="#94A3B8" VerticalAlignment="Center" Margin="0,0,4,0"/>
+                        <TextBox Style="{StaticResource DarkTextBox}" Width="52" Margin="0,0,8,0"
+                                 Text="{Binding StickX, StringFormat=F3, UpdateSourceTrigger=LostFocus}"/>
+                        <TextBlock Text="Y" FontSize="11" Foreground="#94A3B8" VerticalAlignment="Center" Margin="0,0,4,0"/>
+                        <TextBox Style="{StaticResource DarkTextBox}" Width="52" Margin="0,0,10,0"
+                                 Text="{Binding StickY, StringFormat=F3, UpdateSourceTrigger=LostFocus}"/>
+                        <TextBlock Text="{Binding StickSummary}" FontSize="11" FontWeight="Bold" Foreground="#10B981" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+        </DataTemplate>
     </Window.Resources>
 
     <Grid>
@@ -920,69 +982,7 @@
                                                         ToolTip="{Binding [recenter_a_thumbstick_pushed_earlier], Source={x:Static svc:L10n.I}}"/>
                                             </WrapPanel>
 
-                                            <ItemsControl ItemsSource="{Binding Steps}">
-                                                <ItemsControl.ItemTemplate>
-                                                    <DataTemplate>
-                                                        <Border Background="#0F172A" CornerRadius="6" BorderBrush="#334155" BorderThickness="1" Padding="8,6" Margin="0,0,0,6">
-                                                            <StackPanel>
-                                                                <Grid>
-                                                                    <Grid.ColumnDefinitions>
-                                                                        <ColumnDefinition Width="106"/>
-                                                                        <ColumnDefinition Width="110"/>
-                                                                        <ColumnDefinition Width="Auto"/>
-                                                                        <ColumnDefinition Width="*"/>
-                                                                        <ColumnDefinition Width="Auto"/>
-                                                                    </Grid.ColumnDefinitions>
-
-                                                                    <ComboBox Grid.Column="0" Style="{StaticResource DarkCombo}" Margin="0,0,8,0"
-                                                                              ItemsSource="{Binding DataContext.MacroStepTypes, RelativeSource={RelativeSource AncestorType=Window}}"
-                                                                              SelectedItem="{Binding Type}"/>
-                                                                    <Grid Grid.Column="1" Margin="0,0,8,0">
-                                                                        <ComboBox Style="{StaticResource DarkCombo}"
-                                                                                  ItemsSource="{Binding DataContext.VirtualButtons, RelativeSource={RelativeSource AncestorType=Window}}"
-                                                                                  SelectedItem="{Binding Button}"
-                                                                                  Visibility="{Binding UsesButton, Converter={StaticResource BoolToVis}}"/>
-                                                                        <ComboBox Style="{StaticResource DarkCombo}"
-                                                                                  ItemsSource="{Binding DataContext.StickSides, RelativeSource={RelativeSource AncestorType=Window}}"
-                                                                                  SelectedItem="{Binding Stick}"
-                                                                                  Visibility="{Binding UsesStick, Converter={StaticResource BoolToVis}}"/>
-                                                                    </Grid>
-                                                                    <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center"
-                                                                                Visibility="{Binding UsesDuration, Converter={StaticResource BoolToVis}}">
-                                                                        <TextBox Style="{StaticResource DarkTextBox}" Width="54"
-                                                                                 Text="{Binding DurationMs, UpdateSourceTrigger=PropertyChanged}"/>
-                                                                        <TextBlock Text="ms" FontSize="11" Foreground="#94A3B8" VerticalAlignment="Center" Margin="4,0,0,0"/>
-                                                                    </StackPanel>
-
-                                                                    <StackPanel Grid.Column="4" Orientation="Horizontal">
-                                                                        <Button Content="▲" Style="{StaticResource GhostButtonStyle}" Padding="7,4" Margin="0,0,4,0"
-                                                                                Command="{Binding DataContext.MoveStepUpCommand, RelativeSource={RelativeSource AncestorType=Window}}" CommandParameter="{Binding}"/>
-                                                                        <Button Content="▼" Style="{StaticResource GhostButtonStyle}" Padding="7,4" Margin="0,0,4,0"
-                                                                                Command="{Binding DataContext.MoveStepDownCommand, RelativeSource={RelativeSource AncestorType=Window}}" CommandParameter="{Binding}"/>
-                                                                        <Button Content="✕" Style="{StaticResource GhostButtonStyle}" Padding="7,4"
-                                                                                Command="{Binding DataContext.RemoveStepCommand, RelativeSource={RelativeSource AncestorType=Window}}" CommandParameter="{Binding}"/>
-                                                                    </StackPanel>
-                                                                </Grid>
-
-                                                                <!-- Stick position sub-row (PushStick only) -->
-                                                                <StackPanel Orientation="Horizontal" Margin="0,6,0,0"
-                                                                            Visibility="{Binding UsesStickPosition, Converter={StaticResource BoolToVis}}">
-                                                                    <Button Content="{Binding [capture_position], Source={x:Static svc:L10n.I}}" Style="{StaticResource GhostButtonStyle}" Margin="0,0,10,0"
-                                                                            Command="{Binding DataContext.CaptureStickCommand, RelativeSource={RelativeSource AncestorType=Window}}" CommandParameter="{Binding}"
-                                                                            ToolTip="{Binding [click_then_push_the_physical], Source={x:Static svc:L10n.I}}"/>
-                                                                    <TextBlock Text="X" FontSize="11" Foreground="#94A3B8" VerticalAlignment="Center" Margin="0,0,4,0"/>
-                                                                    <TextBox Style="{StaticResource DarkTextBox}" Width="52" Margin="0,0,8,0"
-                                                                             Text="{Binding StickX, StringFormat=F3, UpdateSourceTrigger=LostFocus}"/>
-                                                                    <TextBlock Text="Y" FontSize="11" Foreground="#94A3B8" VerticalAlignment="Center" Margin="0,0,4,0"/>
-                                                                    <TextBox Style="{StaticResource DarkTextBox}" Width="52" Margin="0,0,10,0"
-                                                                             Text="{Binding StickY, StringFormat=F3, UpdateSourceTrigger=LostFocus}"/>
-                                                                    <TextBlock Text="{Binding StickSummary}" FontSize="11" FontWeight="Bold" Foreground="#10B981" VerticalAlignment="Center"/>
-                                                                </StackPanel>
-                                                            </StackPanel>
-                                                        </Border>
-                                                    </DataTemplate>
-                                                </ItemsControl.ItemTemplate>
-                                            </ItemsControl>
+                                            <ItemsControl ItemsSource="{Binding Steps}" ItemTemplate="{StaticResource StepEditorTemplate}"/>
 
                                             <TextBlock Text="{Binding [a_started_macro_always_runs], Source={x:Static svc:L10n.I}}"
                                                        FontSize="11" Foreground="#94A3B8" TextWrapping="Wrap" Margin="0,4,0,0"/>
@@ -1039,21 +1039,25 @@
                                         </StackPanel>
                                         <Border Height="1" Background="#334155" Margin="0,8,0,12"/>
 
-                                        <!-- What was recorded -->
-                                        <TextBlock Text="{Binding [record_steps_title], Source={x:Static svc:L10n.I}}" Style="{StaticResource SectionLabel}"/>
+                                        <!-- What was recorded: same editable rows as the macro editor -->
+                                        <Grid Margin="0,0,0,6">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Text="{Binding [record_steps_title], Source={x:Static svc:L10n.I}}" Style="{StaticResource SectionLabel}" VerticalAlignment="Center"/>
+                                            <StackPanel Grid.Column="1" Orientation="Horizontal" Visibility="{Binding HasSteps, Converter={StaticResource BoolToVis}}">
+                                                <Button Content="{Binding [record_again], Source={x:Static svc:L10n.I}}" Style="{StaticResource GhostButtonStyle}" Foreground="#F43F5E" Margin="0,0,6,0"
+                                                        Command="{Binding DataContext.RecordMacroCommand, RelativeSource={RelativeSource AncestorType=Window}}"/>
+                                                <Button Content="{Binding [record_clear], Source={x:Static svc:L10n.I}}" Style="{StaticResource GhostButtonStyle}"
+                                                        Command="{Binding DataContext.ClearStepsCommand, RelativeSource={RelativeSource AncestorType=Window}}"/>
+                                            </StackPanel>
+                                        </Grid>
                                         <TextBlock Text="{Binding [record_no_steps], Source={x:Static svc:L10n.I}}" FontSize="12" Foreground="#94A3B8" Margin="0,4,0,0"
                                                    Visibility="{Binding HasSteps, Converter={StaticResource InvBoolToVis}}"/>
-                                        <Border Background="#0F172A" CornerRadius="8" Padding="10" Margin="0,4,0,0"
-                                                Visibility="{Binding HasSteps, Converter={StaticResource BoolToVis}}">
-                                            <ItemsControl ItemsSource="{Binding Steps}" AlternationCount="1000">
-                                                <ItemsControl.ItemTemplate>
-                                                    <DataTemplate>
-                                                        <TextBlock Text="{Binding StepSummary}" FontFamily="Consolas" FontSize="12" Foreground="#E2E8F0" Margin="0,1"/>
-                                                    </DataTemplate>
-                                                </ItemsControl.ItemTemplate>
-                                            </ItemsControl>
-                                        </Border>
-                                        <TextBlock Text="{Binding [record_edit_hint], Source={x:Static svc:L10n.I}}" FontSize="11" Foreground="#94A3B8" TextWrapping="Wrap" Margin="0,8,0,0"/>
+                                        <ItemsControl ItemsSource="{Binding Steps}" ItemTemplate="{StaticResource StepEditorTemplate}"
+                                                      Visibility="{Binding HasSteps, Converter={StaticResource BoolToVis}}"/>
+                                        <TextBlock Text="{Binding [record_edit_hint], Source={x:Static svc:L10n.I}}" FontSize="11" Foreground="#94A3B8" TextWrapping="Wrap" Margin="0,4,0,0"/>
                                     </StackPanel>
                                 </ScrollViewer>
                                 </TabItem>
@@ -1211,6 +1215,23 @@
                                 </StackPanel>
                             </Border>
 
+                            <!-- Overlay -->
+                            <Border Style="{StaticResource Card}" Padding="16" Margin="0,0,0,12">
+                                <StackPanel>
+                                    <TextBlock Text="{Binding [settings_overlay], Source={x:Static svc:L10n.I}}" Style="{StaticResource SectionLabel}"/>
+                                    <TextBlock Text="{Binding [overlay_intro], Source={x:Static svc:L10n.I}}" FontSize="11" Foreground="#94A3B8" TextWrapping="Wrap" Margin="0,2,0,8"/>
+                                    <CheckBox Content="{Binding [overlay_show], Source={x:Static svc:L10n.I}}" IsChecked="{Binding OverlayEnabled}" FontSize="12"/>
+                                    <CheckBox Content="{Binding [overlay_lock], Source={x:Static svc:L10n.I}}" IsChecked="{Binding OverlayLocked}" FontSize="12" Margin="24,6,0,0"
+                                              IsEnabled="{Binding OverlayEnabled}" ToolTip="{Binding [overlay_lock_tip], Source={x:Static svc:L10n.I}}"/>
+                                    <TextBlock Style="{StaticResource SectionLabel}" Margin="0,10,0,0"><TextBlock.Text><MultiBinding Converter="{StaticResource LocFmt}"><Binding Path="[fmt_overlay_size]" Source="{x:Static svc:L10n.I}"/><Binding Path="OverlayScale"/></MultiBinding></TextBlock.Text></TextBlock>
+                                    <Slider Minimum="0.5" Maximum="1.6" Value="{Binding OverlayScale}" Foreground="#06B6D4" TickFrequency="0.1" IsSnapToTickEnabled="True" IsEnabled="{Binding OverlayEnabled}"/>
+                                    <TextBlock Style="{StaticResource SectionLabel}" Margin="0,6,0,0"><TextBlock.Text><MultiBinding Converter="{StaticResource LocFmt}"><Binding Path="[fmt_overlay_opacity]" Source="{x:Static svc:L10n.I}"/><Binding Path="OverlayOpacity"/></MultiBinding></TextBlock.Text></TextBlock>
+                                    <Slider Minimum="0.2" Maximum="1.0" Value="{Binding OverlayOpacity}" Foreground="#06B6D4" TickFrequency="0.05" IsSnapToTickEnabled="True" IsEnabled="{Binding OverlayEnabled}"/>
+                                    <Button Content="{Binding [overlay_reset], Source={x:Static svc:L10n.I}}" Command="{Binding ResetOverlayPositionCommand}" Style="{StaticResource GhostButtonStyle}" HorizontalAlignment="Left" Margin="0,10,0,0" IsEnabled="{Binding OverlayEnabled}"/>
+                                    <TextBlock Text="{Binding [overlay_fullscreen_note], Source={x:Static svc:L10n.I}}" FontSize="11" Foreground="#F59E0B" TextWrapping="Wrap" Margin="0,10,0,0"/>
+                                </StackPanel>
+                            </Border>
+
                             <!-- Updates -->
                             <Border Style="{StaticResource Card}" Padding="16" Margin="0,0,0,12">
                                 <StackPanel>
@@ -1340,7 +1361,9 @@
                 <StackPanel HorizontalAlignment="Center" Width="440">
                     <TextBlock Text="{Binding RecordTitle}" FontSize="22" FontWeight="Black" Foreground="#F43F5E" HorizontalAlignment="Center"/>
                     <TextBlock Text="{Binding RecordDetail}" FontSize="14" Foreground="#F8FAFC" Margin="0,12,0,0" HorizontalAlignment="Center" TextWrapping="Wrap" TextAlignment="Center"/>
-                    <TextBlock Text="{Binding RecordBig}" FontSize="40" FontWeight="Bold" Foreground="#06B6D4" FontFamily="Consolas" HorizontalAlignment="Center" Margin="0,14,0,4"/>
+                    <!-- Live pad so the player sees every input light up while recording -->
+                    <views:PadView Width="360" Margin="0,12,0,0"/>
+                    <TextBlock Text="{Binding RecordBig}" FontSize="40" FontWeight="Bold" Foreground="#06B6D4" FontFamily="Consolas" HorizontalAlignment="Center" Margin="0,6,0,4"/>
                     <TextBlock Text="{Binding [record_hint], Source={x:Static svc:L10n.I}}" FontSize="11" Foreground="#94A3B8" HorizontalAlignment="Center" TextWrapping="Wrap" TextAlignment="Center" Margin="0,8,0,0"/>
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,18,0,0">
                         <Button Content="{Binding [btn_stop_recording], Source={x:Static svc:L10n.I}}" Command="{Binding StopRecordingCommand}"

@@ -30,6 +30,13 @@ namespace WolverineRemapper.Models
         public bool CheckUpdatesAtStartup { get; set; } = true;
         /// <summary>First-run guide has been shown (or dismissed).</summary>
         public bool TutorialSeen { get; set; } = false;
+        /// <summary>See-through live controller overlay.</summary>
+        public bool OverlayVisible { get; set; } = false;
+        public bool OverlayLocked { get; set; } = false;
+        public double OverlayX { get; set; } = double.NaN;
+        public double OverlayY { get; set; } = double.NaN;
+        public double OverlayScale { get; set; } = 1.0;
+        public double OverlayOpacity { get; set; } = 0.85;
         /// <summary>Macro recorder: presses shorter than this become Tap steps.</summary>
         public int RecordTapThresholdMs { get; set; } = 150;
         /// <summary>Macro recorder: stick deflection (percent) that counts as a push.</summary>

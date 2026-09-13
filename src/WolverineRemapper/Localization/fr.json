@@ -230,5 +230,21 @@
   "guide_p6_title": "Étape 5 — Configurez un bouton",
   "guide_p6_body": "Cliquez sur un **badge M** vert sur l'image de la manette. Le panneau de droite s'ouvre avec deux onglets :\n\n•  **MANUEL** — choisissez le **DÉCLENCHEUR** (maintenir / bascule / double appui), la **RÉPÉTITION** (une fois / plusieurs fois / tant que maintenu) et le **TYPE D'ACTION** : un **COMBO** (boutons ensemble), **MAINTENIR + APPUYER** (maintenir un modificateur, puis appuyer) ou une **MACRO** (votre propre liste d'étapes).\n\n•  **ENREGISTREUR** — appuyez sur **ENREGISTRER DEPUIS LA MANETTE**, jouez le combo sur votre manette, appuyez sur **STOP**. Les étapes s'écrivent toutes seules.\n\nLa ligne **SORTIE** en bas montre toujours ce que le bouton M enverra. Appuyez sur **ENREGISTRER** dans la barre de profil pour le conserver.",
   "guide_p7_title": "Étape 6 — Testez et jouez",
-  "guide_p7_body": "Appuyez sur un bouton M de la manette : son badge s'allume et la **console** en bas note ce qui a été envoyé.\n\nLancez votre jeu. Tout ce qui fonctionne avec votre vraie manette fonctionne avec la virtuelle — les combos sont simplement des boutons en plus.\n\nSi le jeu passe en **mode clavier**, soit le moteur ne tourne pas, soit Synapse envoie une autre touche que celle attendue. Vérifiez **MOTEUR ACTIF** et la touche affichée à côté du bouton M.\n\nAmusez-vous bien ! Un bug ou une idée ? Le lien **GitHub** est dans l'onglet **Paramètres**."
+  "guide_p7_body": "Appuyez sur un bouton M de la manette : son badge s'allume et la **console** en bas note ce qui a été envoyé.\n\nLancez votre jeu. Tout ce qui fonctionne avec votre vraie manette fonctionne avec la virtuelle — les combos sont simplement des boutons en plus.\n\nSi le jeu passe en **mode clavier**, soit le moteur ne tourne pas, soit Synapse envoie une autre touche que celle attendue. Vérifiez **MOTEUR ACTIF** et la touche affichée à côté du bouton M.\n\nAmusez-vous bien ! Un bug ou une idée ? Le lien **GitHub** est dans l'onglet **Paramètres**.",
+"record_again": "⏺ RÉENREGISTRER",
+  "record_clear": "EFFACER LES ÉTAPES",
+  "settings_overlay": "OVERLAY EN JEU",
+  "overlay_intro": "Une petite manette transparente qui reste au-dessus de votre jeu et allume en direct chaque bouton, stick et bouton M — un repère visuel que vos combos partent bien.",
+  "overlay_show": "Afficher l'overlay",
+  "overlay_lock": "Verrouiller la position (clics traversants)",
+  "overlay_lock_tip": "Déverrouillé : déplacez l'overlay à la souris, clic droit pour verrouiller. Verrouillé : la souris passe à travers vers le jeu ; déverrouillez ici ou depuis l'icône de la zone de notification.",
+  "fmt_overlay_size": "TAILLE — ×{0:F1}",
+  "fmt_overlay_opacity": "OPACITÉ — {0:P0}",
+  "overlay_reset": "RÉINITIALISER LA POSITION",
+  "overlay_fullscreen_note": "Fonctionne avec les jeux en fenêtre et en fenêtre sans bordure. Les jeux en plein écran exclusif dessinent par-dessus toutes les fenêtres, overlay compris — passez le jeu en fenêtre sans bordure s'il est masqué.",
+  "overlay_hint": "glisser pour déplacer · clic droit pour verrouiller",
+  "tray_overlay": "Overlay",
+  "tray_overlay_show": "Afficher l'overlay",
+  "tray_overlay_lock": "Verrouiller la position (clics traversants)",
+  "tray_overlay_reset": "Réinitialiser la position"
 }

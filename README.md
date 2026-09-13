@@ -46,9 +46,15 @@ check) plus a driver status check.
 - **Macro editor** — ordered Press / Release / Tap / Wait / Push-stick / Center-stick
   steps, with joystick positions recorded live from the controller (great for
   radial "ring menu" gestures).
-- **Macro recorder** — press ⏺ RECORD FROM PAD, play the combo on the controller,
-  press STOP: short presses become taps, long ones press + release, pauses become
-  waits, stick pushes become stick steps. Then pick the repeat mode like any macro.
+- **Macro recorder** — press ⏺ RECORD FROM PAD, play the combo on the controller
+  (a live pad shows every input while you record), press STOP: short presses
+  become taps, long ones press + release, pauses become waits, stick pushes
+  become stick steps. The steps come back as an editable list (change buttons,
+  timings, order), with RECORD AGAIN and a repeat mode like any macro.
+- **In-game overlay** — a small see-through controller that stays on top of the
+  game and lights up every button, stick and M-button live. Drag it where you
+  want, right-click to lock it (mouse then passes through to the game); unlock
+  from the tray icon or the Settings tab. Works over windowed / borderless games.
 - **Passthrough mode** — mirrors the physical pad (buttons, sticks, triggers)
   into the virtual pad, so games that only read one controller get everything.
 - **Live controller diagram**, **analog trigger bars**, and a

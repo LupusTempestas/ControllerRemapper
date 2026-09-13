@@ -11,6 +11,7 @@ namespace WolverineRemapper
     public partial class MainWindow : Window
     {
         private TrayService? _tray;
+        private OverlayWindow? _overlay;
         private bool _exitRequested;
         private bool _restartRequested;
         private bool _hiddenHintShown;
@@ -27,6 +28,10 @@ namespace WolverineRemapper
             if (DataContext is not MainViewModel vm) return;
 
             _tray = new TrayService(vm, ShowFromTray, RequestRestart, RequestExit);
+
+            vm.PropertyChanged += (_, ev) => { if (ev.PropertyName == nameof(MainViewModel.OverlayEnabled)) SyncOverlay(vm); };
+            vm.OverlayResetRequested += () => { if (_overlay != null) _overlay.ResetPosition(); };
+            SyncOverlay(vm);
 
             // `--autostart` (or the setting) launches straight into remapping;
             // `--minimized` (what the Windows Run key passes) stays in the tray.
@@ -47,6 +52,20 @@ namespace WolverineRemapper
             {
                 // First launch: walk the user through Synapse / driver setup.
                 Dispatcher.BeginInvoke(new Action(vm.ShowGuide), System.Windows.Threading.DispatcherPriority.Background);
+            }
+        }
+
+        /// <summary>Create / show / hide the see-through overlay to match the setting.</summary>
+        private void SyncOverlay(MainViewModel vm)
+        {
+            if (vm.OverlayEnabled)
+            {
+                _overlay ??= new OverlayWindow(vm);
+                if (!_overlay.IsVisible) _overlay.Show();
+            }
+            else if (_overlay != null && _overlay.IsVisible)
+            {
+                _overlay.Hide();
             }
         }
 
@@ -119,6 +138,8 @@ namespace WolverineRemapper
             // Release the keyboard hook and disconnect the virtual pad —
             // otherwise a stale hook can degrade system-wide input latency.
             vm.Shutdown();
+            _overlay?.Close();
+            _overlay = null;
             _tray?.Dispose();
             _tray = null;
 

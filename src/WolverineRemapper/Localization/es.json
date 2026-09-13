@@ -230,5 +230,21 @@
   "guide_p6_title": "Paso 5 — Configura un botón",
   "guide_p6_body": "Haz clic en una **insignia M** verde en la imagen del mando. El panel de la derecha se abre con dos pestañas:\n\n•  **MANUAL** — elige el **DISPARADOR** (mantener / alternar / doble toque), la **REPETICIÓN** (una vez / varias veces / mientras se mantiene) y el **TIPO DE ACCIÓN**: un **COMBO** (botones a la vez), **MANTENER + PULSAR** (mantener un modificador y luego pulsar) o una **MACRO** (tu propia lista de pasos).\n\n•  **GRABADORA** — pulsa **GRABAR DESDE EL MANDO**, ejecuta el combo en tu mando y pulsa **STOP**. Los pasos se escriben solos.\n\nLa línea **SALIDA** de abajo muestra siempre lo que enviará el botón M. Pulsa **GUARDAR** en la barra de perfil para conservarlo.",
   "guide_p7_title": "Paso 6 — Prueba y juega",
-  "guide_p7_body": "Pulsa un botón M en el mando: su insignia se ilumina y la **consola** de abajo registra lo enviado.\n\nAbre tu juego. Todo lo que funciona con tu mando real funciona con el virtual — los combos son simplemente botones extra.\n\nSi el juego cambia al **modo teclado**, o el motor no está en marcha o Synapse envía una tecla distinta de la esperada. Comprueba **MOTOR ACTIVO** y la tecla mostrada junto al botón M.\n\n¡Que lo disfrutes! ¿Un fallo o una idea? El enlace a **GitHub** está en la pestaña **Ajustes**."
+  "guide_p7_body": "Pulsa un botón M en el mando: su insignia se ilumina y la **consola** de abajo registra lo enviado.\n\nAbre tu juego. Todo lo que funciona con tu mando real funciona con el virtual — los combos son simplemente botones extra.\n\nSi el juego cambia al **modo teclado**, o el motor no está en marcha o Synapse envía una tecla distinta de la esperada. Comprueba **MOTOR ACTIVO** y la tecla mostrada junto al botón M.\n\n¡Que lo disfrutes! ¿Un fallo o una idea? El enlace a **GitHub** está en la pestaña **Ajustes**.",
+"record_again": "⏺ GRABAR DE NUEVO",
+  "record_clear": "BORRAR PASOS",
+  "settings_overlay": "SUPERPOSICIÓN EN EL JUEGO",
+  "overlay_intro": "Un pequeño mando transparente que se queda encima de tu juego e ilumina en vivo cada botón, stick y botón M — una señal visual de que tus combos se están disparando.",
+  "overlay_show": "Mostrar la superposición",
+  "overlay_lock": "Bloquear posición (los clics la atraviesan)",
+  "overlay_lock_tip": "Desbloqueada: arrastra la superposición con el ratón y haz clic derecho para bloquearla. Bloqueada: el ratón pasa directamente al juego; desbloquéala aquí o desde el icono de la bandeja.",
+  "fmt_overlay_size": "TAMAÑO — ×{0:F1}",
+  "fmt_overlay_opacity": "OPACIDAD — {0:P0}",
+  "overlay_reset": "RESTABLECER POSICIÓN",
+  "overlay_fullscreen_note": "Funciona sobre juegos en ventana y en ventana sin bordes. Los juegos en pantalla completa exclusiva dibujan sobre todas las ventanas, incluida esta superposición — pon el juego en ventana sin bordes si queda oculta.",
+  "overlay_hint": "arrastra para mover · clic derecho para bloquear",
+  "tray_overlay": "Superposición",
+  "tray_overlay_show": "Mostrar superposición",
+  "tray_overlay_lock": "Bloquear posición (los clics la atraviesan)",
+  "tray_overlay_reset": "Restablecer posición"
 }
