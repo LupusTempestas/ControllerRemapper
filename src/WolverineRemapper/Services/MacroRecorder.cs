@@ -18,13 +18,21 @@ namespace WolverineRemapper.Services
     ///  • inputs still down when recording stops stay down (macro hold semantics).
     /// Timings are quantized to <see cref="QuantumMs"/>.
     /// </summary>
+    /// <summary>User-tunable recorder behaviour (Recorder tab).</summary>
+    public sealed record RecorderOptions(int TapThresholdMs, double StickPushThreshold, bool KeepWaits, bool HoldAtEnd)
+    {
+        public static readonly RecorderOptions Default = new(150, 0.35, true, true);
+    }
+
     public sealed class MacroRecorder
     {
-        public const int TapThresholdMs = 150;
         public const int QuantumMs = 10;
-        public const double StickPushThreshold = 0.35;
-        public const double StickCenterThreshold = 0.20;
         private const byte TriggerThreshold = 30;
+
+        private RecorderOptions _opt = RecorderOptions.Default;
+        private int TapThresholdMs => _opt.TapThresholdMs;
+        private double StickPushThreshold => _opt.StickPushThreshold;
+        private double StickCenterThreshold => _opt.StickPushThreshold * 0.6;
 
         private enum Kind { Down, Up, StickPush, StickCenter }
         private sealed record Event(long T, Kind Kind, VirtualButtonId Button, StickSide Stick, double X, double Y);
@@ -56,8 +64,9 @@ namespace WolverineRemapper.Services
             (XInputService.XINPUT_GAMEPAD_START, VirtualButtonId.Menu),
         };
 
-        public void Start(long nowMs)
+        public void Start(long nowMs, RecorderOptions? options = null)
         {
+            _opt = options ?? RecorderOptions.Default;
             _events.Clear();
             _down.Clear();
             _sticks.Clear();
@@ -134,7 +143,7 @@ namespace WolverineRemapper.Services
                 var ev = _events[i];
 
                 int gap = Quantize(ev.T - cursor);
-                if (gap >= QuantumMs)
+                if (_opt.KeepWaits && gap >= QuantumMs)
                     steps.Add(new MacroStep { Type = MacroStepType.Wait, DurationMs = gap });
                 cursor = ev.T;
 
@@ -172,6 +181,15 @@ namespace WolverineRemapper.Services
                         steps.Add(new MacroStep { Type = MacroStepType.CenterStick, Stick = ev.Stick });
                         break;
                 }
+            }
+
+            if (!_opt.HoldAtEnd)
+            {
+                // Tidy ending: release whatever was still down when STOP was pressed.
+                foreach (var (button, down) in _down)
+                    if (down) steps.Add(new MacroStep { Type = MacroStepType.Release, Button = button });
+                foreach (var (side, s) in _sticks)
+                    if (s.Pushed) steps.Add(new MacroStep { Type = MacroStepType.CenterStick, Stick = side });
             }
             return steps;
         }

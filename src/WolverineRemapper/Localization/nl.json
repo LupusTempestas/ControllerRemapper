@@ -194,5 +194,19 @@
   "btn_stop_recording": "■  STOP & GEBRUIKEN",
   "record_summary": "{0} stappen opgenomen in {1}. Kies hierboven de herhaling en dan OPSLAAN.",
   "record_nothing": "Er is niets ingedrukt — stappen ongewijzigd.",
-  "record_no_pad": "Sluit je controller aan voordat je opneemt."
+  "record_no_pad": "Sluit je controller aan voordat je opneemt.",
+"tab_manual": "✎  HANDMATIG",
+  "tab_recorder": "⏺  RECORDER",
+  "record_intro": "Speel de combo op je controller en de app schrijft de stappen voor je. Korte drukken worden tikken, lange drukken + loslaten, pauzes worden wachten, stickbewegingen worden stickstappen. De triggerinstellingen van het tabblad HANDMATIG blijven gelden.",
+  "record_detection": "DETECTIE — HOE INVOER WORDT GEÏNTERPRETEERD",
+  "fmt_tap_threshold": "TIK ALS KORTER VASTGEHOUDEN DAN — {0} ms",
+  "record_tap_threshold_tip": "Een knop die korter dan dit wordt vastgehouden (zonder andere invoer ertussen) wordt één TIK-stap. Langer vasthouden wordt DRUKKEN … LOSLATEN.",
+  "fmt_stick_threshold": "STICK TELT ALS GEDUWD VANAF — {0} %",
+  "record_keep_waits": "Pauzes tussen invoeren bewaren als WACHT-stappen",
+  "record_keep_waits_tip": "Uitvinken voor een strakke macro zonder gaten — invoeren volgen elkaar dan direct op met de ingestelde snelheid.",
+  "record_hold_at_end": "Invoer die bij STOP nog wordt vastgehouden, blijft vast tot de M-knop wordt losgelaten",
+  "record_hold_at_end_tip": "Uitvinken om aan het einde LOSLATEN / CENTREREN-stappen toe te voegen, zodat de macro netjes vanzelf eindigt.",
+  "record_steps_title": "OPGENOMEN STAPPEN",
+  "record_no_steps": "Nog niets opgenomen — druk op OPNEMEN VAN CONTROLLER.",
+  "record_edit_hint": "Om een stap bij te stellen, open je het tabblad HANDMATIG: dezelfde stappen zijn bewerkbaar onder ACTIETYPE → MACRO."
 }

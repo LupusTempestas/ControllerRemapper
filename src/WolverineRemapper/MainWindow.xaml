@@ -771,7 +771,9 @@
                                     </StackPanel>
                                 </Border>
 
-                                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                                <TabControl Grid.Row="1" Background="Transparent" BorderThickness="0" Padding="0" Margin="0,2,0,0">
+                                <TabItem Header="{Binding [tab_manual], Source={x:Static svc:L10n.I}}">
+                                <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="0,10,0,0">
                                     <StackPanel>
                                         <!-- Trigger type selector -->
                                         <TextBlock Text="{Binding [trigger_how_the_m_button], Source={x:Static svc:L10n.I}}" Style="{StaticResource SectionLabel}"/>
@@ -893,17 +895,7 @@
 
                                         <!-- ══ MACRO MODE ══ -->
                                         <StackPanel Visibility="{Binding IsSequenceMode, Converter={StaticResource BoolToVis}}">
-                                            <Grid Margin="0,0,0,4">
-                                                <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="*"/>
-                                                    <ColumnDefinition Width="Auto"/>
-                                                </Grid.ColumnDefinitions>
-                                                <TextBlock Text="{Binding [add_a_step], Source={x:Static svc:L10n.I}}" Style="{StaticResource SectionLabel}" VerticalAlignment="Center"/>
-                                                <Button Grid.Column="1" Content="{Binding [record_from_pad], Source={x:Static svc:L10n.I}}"
-                                                        Command="{Binding DataContext.RecordMacroCommand, RelativeSource={RelativeSource AncestorType=Window}}"
-                                                        Style="{StaticResource GhostButtonStyle}" Foreground="#F43F5E" VerticalAlignment="Center"
-                                                        ToolTip="{Binding [record_tip], Source={x:Static svc:L10n.I}}"/>
-                                            </Grid>
+                                            <TextBlock Text="{Binding [add_a_step], Source={x:Static svc:L10n.I}}" Style="{StaticResource SectionLabel}"/>
                                             <WrapPanel Margin="0,0,0,10">
                                                 <Button Content="{Binding [press], Source={x:Static svc:L10n.I}}" Style="{StaticResource GhostButtonStyle}" Margin="0,0,6,0"
                                                         Command="{Binding DataContext.AddStepCommand, RelativeSource={RelativeSource AncestorType=Window}}" CommandParameter="Press"
@@ -994,6 +986,75 @@
                                         </StackPanel>
                                     </StackPanel>
                                 </ScrollViewer>
+                                </TabItem>
+
+                                <!-- ══ RECORDER TAB ══ -->
+                                <TabItem Header="{Binding [tab_recorder], Source={x:Static svc:L10n.I}}">
+                                <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="0,10,0,0">
+                                    <StackPanel>
+                                        <TextBlock Text="{Binding [record_intro], Source={x:Static svc:L10n.I}}" FontSize="12" Foreground="#94A3B8" TextWrapping="Wrap" Margin="0,0,0,10"/>
+                                        <Button Content="{Binding [record_from_pad], Source={x:Static svc:L10n.I}}"
+                                                Command="{Binding DataContext.RecordMacroCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                Style="{StaticResource ActionButtonStyle}" Height="40" MinWidth="260" HorizontalAlignment="Left"
+                                                ToolTip="{Binding [record_tip], Source={x:Static svc:L10n.I}}"/>
+                                        <Border Height="1" Background="#334155" Margin="0,14,0,12"/>
+
+                                        <!-- Detection parameters (app-wide, saved in settings) -->
+                                        <TextBlock Text="{Binding [record_detection], Source={x:Static svc:L10n.I}}" Style="{StaticResource SectionLabel}"/>
+                                        <TextBlock Style="{StaticResource SectionLabel}" Margin="0,4,0,0"><TextBlock.Text><MultiBinding Converter="{StaticResource LocFmt}"><Binding Path="[fmt_tap_threshold]" Source="{x:Static svc:L10n.I}"/><Binding Path="DataContext.RecordTapThresholdMs" RelativeSource="{RelativeSource AncestorType=Window}"/></MultiBinding></TextBlock.Text></TextBlock>
+                                        <Slider Minimum="50" Maximum="400" Value="{Binding DataContext.RecordTapThresholdMs, RelativeSource={RelativeSource AncestorType=Window}}" Foreground="#06B6D4" TickFrequency="10" IsSnapToTickEnabled="True"
+                                                ToolTip="{Binding [record_tap_threshold_tip], Source={x:Static svc:L10n.I}}"/>
+                                        <TextBlock Style="{StaticResource SectionLabel}" Margin="0,8,0,0"><TextBlock.Text><MultiBinding Converter="{StaticResource LocFmt}"><Binding Path="[fmt_stick_threshold]" Source="{x:Static svc:L10n.I}"/><Binding Path="DataContext.RecordStickThresholdPercent" RelativeSource="{RelativeSource AncestorType=Window}"/></MultiBinding></TextBlock.Text></TextBlock>
+                                        <Slider Minimum="20" Maximum="80" Value="{Binding DataContext.RecordStickThresholdPercent, RelativeSource={RelativeSource AncestorType=Window}}" Foreground="#06B6D4" TickFrequency="5" IsSnapToTickEnabled="True"/>
+                                        <CheckBox Content="{Binding [record_keep_waits], Source={x:Static svc:L10n.I}}" IsChecked="{Binding DataContext.RecordKeepWaits, RelativeSource={RelativeSource AncestorType=Window}}" FontSize="12" Margin="0,10,0,0"
+                                                  ToolTip="{Binding [record_keep_waits_tip], Source={x:Static svc:L10n.I}}"/>
+                                        <CheckBox Content="{Binding [record_hold_at_end], Source={x:Static svc:L10n.I}}" IsChecked="{Binding DataContext.RecordHoldAtEnd, RelativeSource={RelativeSource AncestorType=Window}}" FontSize="12" Margin="0,6,0,0"
+                                                  ToolTip="{Binding [record_hold_at_end_tip], Source={x:Static svc:L10n.I}}"/>
+                                        <Border Height="1" Background="#334155" Margin="0,12,0,12"/>
+
+                                        <!-- Repeat (same settings as the MANUAL tab — one M-button, one repeat mode) -->
+                                        <TextBlock Text="{Binding [repeat_how_many_times], Source={x:Static svc:L10n.I}}" Style="{StaticResource SectionLabel}"/>
+                                        <WrapPanel Margin="0,0,0,4">
+                                            <RadioButton Content="{Binding [once], Source={x:Static svc:L10n.I}}" IsChecked="{Binding IsRepeatOnce}" Style="{StaticResource PillToggleStyle}"
+                                                         ToolTip="{Binding [run_the_action_a_single], Source={x:Static svc:L10n.I}}"/>
+                                            <RadioButton Content="{Binding [multiple_times], Source={x:Static svc:L10n.I}}" IsChecked="{Binding IsRepeatCount}" Style="{StaticResource PillToggleStyle}"
+                                                         ToolTip="{Binding [fire_the_action_a_set], Source={x:Static svc:L10n.I}}"/>
+                                            <RadioButton Content="{Binding [while_held], Source={x:Static svc:L10n.I}}" IsChecked="{Binding IsRepeatWhileHeld}" Style="{StaticResource PillToggleStyle}"
+                                                         ToolTip="{Binding [repeat_continuously_until_you_release], Source={x:Static svc:L10n.I}}"/>
+                                        </WrapPanel>
+                                        <StackPanel Visibility="{Binding IsRepeatCount, Converter={StaticResource BoolToVis}}" Margin="0,0,0,4">
+                                            <TextBlock  Style="{StaticResource SectionLabel}"><TextBlock.Text><MultiBinding Converter="{StaticResource LocFmt}"><Binding Path="[fmt_how_many_times]" Source="{x:Static svc:L10n.I}"/><Binding Path="RepeatCount"/></MultiBinding></TextBlock.Text></TextBlock>
+                                            <Slider Minimum="2" Maximum="20" Value="{Binding RepeatCount}" Foreground="#06B6D4" TickFrequency="1" IsSnapToTickEnabled="True"
+                                                    IsEnabled="{Binding RepeatLimitApplies}"/>
+                                            <CheckBox Content="{Binding [ignore_limit], Source={x:Static svc:L10n.I}}"
+                                                      IsChecked="{Binding IgnoreRepeatLimit}" FontSize="12" Margin="0,6,0,0"
+                                                      ToolTip="{Binding [ignore_limit_tip], Source={x:Static svc:L10n.I}}"/>
+                                        </StackPanel>
+                                        <StackPanel Visibility="{Binding IsRepeatOnce, Converter={StaticResource InvBoolToVis}}" Margin="0,0,0,4">
+                                            <TextBlock  Style="{StaticResource SectionLabel}"><TextBlock.Text><MultiBinding Converter="{StaticResource LocFmt}"><Binding Path="[fmt_speed_ms_between_repeats]" Source="{x:Static svc:L10n.I}"/><Binding Path="RepeatGapMs"/></MultiBinding></TextBlock.Text></TextBlock>
+                                            <Slider Minimum="20" Maximum="300" Value="{Binding RepeatGapMs}" Foreground="#06B6D4" TickFrequency="5" IsSnapToTickEnabled="True"/>
+                                        </StackPanel>
+                                        <Border Height="1" Background="#334155" Margin="0,8,0,12"/>
+
+                                        <!-- What was recorded -->
+                                        <TextBlock Text="{Binding [record_steps_title], Source={x:Static svc:L10n.I}}" Style="{StaticResource SectionLabel}"/>
+                                        <TextBlock Text="{Binding [record_no_steps], Source={x:Static svc:L10n.I}}" FontSize="12" Foreground="#94A3B8" Margin="0,4,0,0"
+                                                   Visibility="{Binding HasSteps, Converter={StaticResource InvBoolToVis}}"/>
+                                        <Border Background="#0F172A" CornerRadius="8" Padding="10" Margin="0,4,0,0"
+                                                Visibility="{Binding HasSteps, Converter={StaticResource BoolToVis}}">
+                                            <ItemsControl ItemsSource="{Binding Steps}" AlternationCount="1000">
+                                                <ItemsControl.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <TextBlock Text="{Binding StepSummary}" FontFamily="Consolas" FontSize="12" Foreground="#E2E8F0" Margin="0,1"/>
+                                                    </DataTemplate>
+                                                </ItemsControl.ItemTemplate>
+                                            </ItemsControl>
+                                        </Border>
+                                        <TextBlock Text="{Binding [record_edit_hint], Source={x:Static svc:L10n.I}}" FontSize="11" Foreground="#94A3B8" TextWrapping="Wrap" Margin="0,8,0,0"/>
+                                    </StackPanel>
+                                </ScrollViewer>
+                                </TabItem>
+                                </TabControl>
 
                                 <Border Grid.Row="2" Background="#0F172A" CornerRadius="8" Padding="10" Margin="0,10,0,0">
                                     <StackPanel Orientation="Horizontal">

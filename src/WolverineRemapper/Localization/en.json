@@ -194,5 +194,19 @@
   "btn_stop_recording": "■  STOP & USE",
   "record_summary": "Recorded {0} steps into {1}. Set the repeat mode above, then SAVE.",
   "record_nothing": "Nothing was pressed — steps unchanged.",
-  "record_no_pad": "Connect your controller before recording."
+  "record_no_pad": "Connect your controller before recording.",
+"tab_manual": "✎  MANUAL",
+  "tab_recorder": "⏺  RECORDER",
+  "record_intro": "Play the combo on your controller and the app writes the steps for you. Short presses become taps, long ones press + release, pauses become waits, stick pushes become stick steps. The trigger settings from the MANUAL tab still apply.",
+  "record_detection": "DETECTION — HOW INPUTS ARE INTERPRETED",
+  "fmt_tap_threshold": "TAP IF HELD LESS THAN — {0} ms",
+  "record_tap_threshold_tip": "A button held shorter than this (with nothing else pressed meanwhile) becomes a single TAP step. Longer holds become PRESS … RELEASE.",
+  "fmt_stick_threshold": "STICK COUNTS AS PUSHED BEYOND — {0}%",
+  "record_keep_waits": "Keep the pauses between inputs as WAIT steps",
+  "record_keep_waits_tip": "Uncheck for a tight macro with no gaps — inputs then fire back-to-back at the speed setting.",
+  "record_hold_at_end": "Inputs still held when I press STOP stay held until the M-button is released",
+  "record_hold_at_end_tip": "Uncheck to add RELEASE / CENTER steps at the end so the macro finishes cleanly on its own.",
+  "record_steps_title": "RECORDED STEPS",
+  "record_no_steps": "Nothing recorded yet — press RECORD FROM PAD.",
+  "record_edit_hint": "To fine-tune a step, open the MANUAL tab: the same steps are editable under ACTION TYPE → MACRO."
 }

@@ -194,5 +194,19 @@
   "btn_stop_recording": "■  STOP Y USAR",
   "record_summary": "{0} pasos grabados en {1}. Elige la repetición arriba y luego GUARDAR.",
   "record_nothing": "No se pulsó nada — pasos sin cambios.",
-  "record_no_pad": "Conecta tu mando antes de grabar."
+  "record_no_pad": "Conecta tu mando antes de grabar.",
+"tab_manual": "✎  MANUAL",
+  "tab_recorder": "⏺  GRABADORA",
+  "record_intro": "Ejecuta el combo en tu mando y la aplicación escribe los pasos por ti. Pulsaciones cortas = toques, largas = pulsar + soltar, pausas = esperas, movimientos de stick = pasos de stick. Los ajustes de disparador de la pestaña MANUAL siguen aplicándose.",
+  "record_detection": "DETECCIÓN — CÓMO SE INTERPRETAN LAS ENTRADAS",
+  "fmt_tap_threshold": "TOQUE SI SE MANTIENE MENOS DE — {0} ms",
+  "record_tap_threshold_tip": "Un botón mantenido menos tiempo que esto (sin otra pulsación entre medias) se convierte en un solo paso TOQUE. Más tiempo: PULSAR … SOLTAR.",
+  "fmt_stick_threshold": "EL STICK CUENTA COMO EMPUJADO A PARTIR DE — {0} %",
+  "record_keep_waits": "Conservar las pausas entre entradas como pasos ESPERAR",
+  "record_keep_waits_tip": "Desmarca para una macro compacta sin huecos — las entradas se encadenan a la velocidad configurada.",
+  "record_hold_at_end": "Las entradas aún pulsadas al hacer STOP se mantienen hasta soltar el botón M",
+  "record_hold_at_end_tip": "Desmarca para añadir pasos SOLTAR / CENTRAR al final, de modo que la macro termine limpiamente por sí sola.",
+  "record_steps_title": "PASOS GRABADOS",
+  "record_no_steps": "Nada grabado todavía — pulsa GRABAR DESDE EL MANDO.",
+  "record_edit_hint": "Para ajustar un paso, abre la pestaña MANUAL: los mismos pasos se editan en TIPO DE ACCIÓN → MACRO."
 }

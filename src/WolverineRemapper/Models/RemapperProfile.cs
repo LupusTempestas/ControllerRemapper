@@ -28,5 +28,13 @@ namespace WolverineRemapper.Models
         public bool StartMinimized { get; set; } = true;
         /// <summary>Query GitHub releases once at startup.</summary>
         public bool CheckUpdatesAtStartup { get; set; } = true;
+        /// <summary>Macro recorder: presses shorter than this become Tap steps.</summary>
+        public int RecordTapThresholdMs { get; set; } = 150;
+        /// <summary>Macro recorder: stick deflection (percent) that counts as a push.</summary>
+        public int RecordStickThresholdPercent { get; set; } = 35;
+        /// <summary>Macro recorder: keep Wait steps for the pauses between inputs.</summary>
+        public bool RecordKeepWaits { get; set; } = true;
+        /// <summary>Macro recorder: inputs still down at STOP stay held (else released at the end).</summary>
+        public bool RecordHoldAtEnd { get; set; } = true;
     }
 }

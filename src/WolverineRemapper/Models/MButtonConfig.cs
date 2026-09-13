@@ -285,8 +285,11 @@ namespace WolverineRemapper.Models
                 AttachSteps(_steps);
                 OnPropertyChanged();
                 OnPropertyChanged(nameof(ChordSummary));
+                OnPropertyChanged(nameof(HasSteps));
             }
         }
+
+        [JsonIgnore] public bool HasSteps => Steps.Count > 0;
 
         /// <summary>UI pickers for Hold+Tap mode (serialized via Hold/TapButtons).</summary>
         [JsonIgnore] public ObservableCollection<ButtonPick> HoldPicks { get; }
@@ -318,7 +321,7 @@ namespace WolverineRemapper.Models
 
         private void AttachSteps(ObservableCollection<MacroStep> steps)
         {
-            steps.CollectionChanged += (_, _) => OnPropertyChanged(nameof(ChordSummary));
+            steps.CollectionChanged += (_, _) => { OnPropertyChanged(nameof(ChordSummary)); OnPropertyChanged(nameof(HasSteps)); };
         }
 
         #endregion

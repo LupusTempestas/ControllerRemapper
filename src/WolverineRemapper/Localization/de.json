@@ -194,5 +194,19 @@
   "btn_stop_recording": "■  STOP & ÜBERNEHMEN",
   "record_summary": "{0} Schritte in {1} aufgenommen. Oben die Wiederholung wählen, dann SPEICHERN.",
   "record_nothing": "Nichts gedrückt — Schritte unverändert.",
-  "record_no_pad": "Schließe den Controller an, bevor du aufnimmst."
+  "record_no_pad": "Schließe den Controller an, bevor du aufnimmst.",
+"tab_manual": "✎  MANUELL",
+  "tab_recorder": "⏺  RECORDER",
+  "record_intro": "Spiele den Kombo auf dem Controller und die App schreibt die Schritte für dich. Kurze Drücke werden Tipps, lange Drücken + Loslassen, Pausen werden Warten, Stick-Bewegungen werden Stick-Schritte. Die Auslöser-Einstellungen aus dem Tab MANUELL gelten weiterhin.",
+  "record_detection": "ERKENNUNG — WIE EINGABEN INTERPRETIERT WERDEN",
+  "fmt_tap_threshold": "TIPP, WENN KÜRZER GEHALTEN ALS — {0} ms",
+  "record_tap_threshold_tip": "Eine Taste, die kürzer als dies gehalten wird (ohne weitere Eingabe dazwischen), wird ein einzelner TIPP-Schritt. Längeres Halten wird DRÜCKEN … LOSLASSEN.",
+  "fmt_stick_threshold": "STICK GILT ALS GEDRÜCKT AB — {0} %",
+  "record_keep_waits": "Pausen zwischen Eingaben als WARTEN-Schritte behalten",
+  "record_keep_waits_tip": "Abwählen für ein enges Makro ohne Lücken — Eingaben folgen dann direkt aufeinander im eingestellten Tempo.",
+  "record_hold_at_end": "Bei STOP noch gehaltene Eingaben bleiben gehalten, bis die M-Taste losgelassen wird",
+  "record_hold_at_end_tip": "Abwählen, um am Ende LOSLASSEN / ZENTRIEREN-Schritte anzuhängen, damit das Makro von selbst sauber endet.",
+  "record_steps_title": "AUFGENOMMENE SCHRITTE",
+  "record_no_steps": "Noch nichts aufgenommen — drücke VOM CONTROLLER AUFNEHMEN.",
+  "record_edit_hint": "Zum Feinjustieren eines Schritts den Tab MANUELL öffnen: dieselben Schritte sind unter AKTIONSTYP → MAKRO editierbar."
 }

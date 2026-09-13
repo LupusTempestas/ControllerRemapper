@@ -194,5 +194,19 @@
   "btn_stop_recording": "■  STOP & UTILISER",
   "record_summary": "{0} étapes enregistrées dans {1}. Choisissez la répétition ci-dessus, puis ENREGISTRER.",
   "record_nothing": "Rien n'a été pressé — étapes inchangées.",
-  "record_no_pad": "Branchez votre manette avant d'enregistrer."
+  "record_no_pad": "Branchez votre manette avant d'enregistrer.",
+"tab_manual": "✎  MANUEL",
+  "tab_recorder": "⏺  ENREGISTREUR",
+  "record_intro": "Jouez le combo sur votre manette et l'application écrit les étapes pour vous. Appuis courts = taps, appuis longs = appui + relâchement, pauses = attentes, poussées de stick = étapes de stick. Les réglages de déclencheur de l'onglet MANUEL s'appliquent toujours.",
+  "record_detection": "DÉTECTION — COMMENT LES ENTRÉES SONT INTERPRÉTÉES",
+  "fmt_tap_threshold": "TAP SI MAINTENU MOINS DE — {0} ms",
+  "record_tap_threshold_tip": "Un bouton maintenu moins longtemps que ceci (sans autre appui entre-temps) devient une seule étape TAP. Plus long : APPUI … RELÂCHEMENT.",
+  "fmt_stick_threshold": "STICK CONSIDÉRÉ POUSSÉ AU-DELÀ DE — {0} %",
+  "record_keep_waits": "Conserver les pauses entre les entrées comme étapes ATTENTE",
+  "record_keep_waits_tip": "Décochez pour une macro serrée sans pauses — les entrées s'enchaînent alors à la vitesse réglée.",
+  "record_hold_at_end": "Les entrées encore maintenues au STOP restent maintenues jusqu'au relâchement du bouton M",
+  "record_hold_at_end_tip": "Décochez pour ajouter des étapes RELÂCHER / RECENTRER à la fin, afin que la macro se termine proprement d'elle-même.",
+  "record_steps_title": "ÉTAPES ENREGISTRÉES",
+  "record_no_steps": "Rien d'enregistré pour l'instant — appuyez sur ENREGISTRER DEPUIS LA MANETTE.",
+  "record_edit_hint": "Pour ajuster une étape, ouvrez l'onglet MANUEL : les mêmes étapes sont modifiables sous TYPE D'ACTION → MACRO."
 }

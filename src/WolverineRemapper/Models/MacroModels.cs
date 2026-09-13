@@ -162,20 +162,34 @@ namespace WolverineRemapper.Models
                 OnPropertyChanged(nameof(UsesDuration));
                 OnPropertyChanged(nameof(UsesStick));
                 OnPropertyChanged(nameof(UsesStickPosition));
+                OnPropertyChanged(nameof(StepSummary));
             }
         }
 
         public VirtualButtonId Button
         {
             get => _button;
-            set { _button = value; OnPropertyChanged(); }
+            set { _button = value; OnPropertyChanged(); OnPropertyChanged(nameof(StepSummary)); }
         }
 
         public int DurationMs
         {
             get => _durationMs;
-            set { _durationMs = value; OnPropertyChanged(); }
+            set { _durationMs = value; OnPropertyChanged(); OnPropertyChanged(nameof(StepSummary)); }
         }
+
+        /// <summary>One-line read-only description (recorder tab list).</summary>
+        [JsonIgnore]
+        public string StepSummary => Type switch
+        {
+            MacroStepType.Press => $"Press    {Button}",
+            MacroStepType.Release => $"Release  {Button}",
+            MacroStepType.Tap => $"Tap      {Button}  ·  {DurationMs} ms",
+            MacroStepType.Wait => $"Wait     {DurationMs} ms",
+            MacroStepType.PushStick => $"Push     {Stick} stick  ·  {StickSummary}",
+            MacroStepType.CenterStick => $"Center   {Stick} stick",
+            _ => Type.ToString()
+        };
 
         /// <summary>Which thumbstick a PushStick/CenterStick step drives.</summary>
         public StickSide Stick
@@ -188,13 +202,13 @@ namespace WolverineRemapper.Models
         public double StickX
         {
             get => _stickX;
-            set { _stickX = System.Math.Clamp(value, -1, 1); OnPropertyChanged(); OnPropertyChanged(nameof(StickSummary)); }
+            set { _stickX = System.Math.Clamp(value, -1, 1); OnPropertyChanged(); OnPropertyChanged(nameof(StickSummary)); OnPropertyChanged(nameof(StepSummary)); }
         }
 
         public double StickY
         {
             get => _stickY;
-            set { _stickY = System.Math.Clamp(value, -1, 1); OnPropertyChanged(); OnPropertyChanged(nameof(StickSummary)); }
+            set { _stickY = System.Math.Clamp(value, -1, 1); OnPropertyChanged(); OnPropertyChanged(nameof(StickSummary)); OnPropertyChanged(nameof(StepSummary)); }
         }
 
         [JsonIgnore] public bool UsesButton => Type is MacroStepType.Press or MacroStepType.Release or MacroStepType.Tap;

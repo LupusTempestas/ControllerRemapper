@@ -628,6 +628,28 @@ namespace WolverineRemapper.ViewModels
         private string _recordDetail = "";
         public string RecordDetail { get => _recordDetail; set { _recordDetail = value; OnPropertyChanged(); } }
 
+        // Recorder parameters (app-wide, persisted in settings).
+        public int RecordTapThresholdMs
+        {
+            get => _settings.RecordTapThresholdMs;
+            set { _settings.RecordTapThresholdMs = Math.Clamp(value, 50, 400); SaveSettings(); OnPropertyChanged(); }
+        }
+        public int RecordStickThresholdPercent
+        {
+            get => _settings.RecordStickThresholdPercent;
+            set { _settings.RecordStickThresholdPercent = Math.Clamp(value, 20, 80); SaveSettings(); OnPropertyChanged(); }
+        }
+        public bool RecordKeepWaits
+        {
+            get => _settings.RecordKeepWaits;
+            set { _settings.RecordKeepWaits = value; SaveSettings(); OnPropertyChanged(); }
+        }
+        public bool RecordHoldAtEnd
+        {
+            get => _settings.RecordHoldAtEnd;
+            set { _settings.RecordHoldAtEnd = value; SaveSettings(); OnPropertyChanged(); }
+        }
+
         private async Task RecordMacroAsync()
         {
             if (IsRecordingMacro || SelectedMButton == null) return;
@@ -652,7 +674,11 @@ namespace WolverineRemapper.ViewModels
                 if (_recordCountdownCancelled) return;
             }
 
-            _recorder.Start(Environment.TickCount64);
+            _recorder.Start(Environment.TickCount64, new RecorderOptions(
+                _settings.RecordTapThresholdMs,
+                _settings.RecordStickThresholdPercent / 100.0,
+                _settings.RecordKeepWaits,
+                _settings.RecordHoldAtEnd));
             RecordBig = "0.0 s";
             RecordDetail = L10n.I.T("record_now_play");
             IsRecordingLive = true;
