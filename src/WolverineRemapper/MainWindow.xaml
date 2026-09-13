@@ -893,7 +893,17 @@
 
                                         <!-- ══ MACRO MODE ══ -->
                                         <StackPanel Visibility="{Binding IsSequenceMode, Converter={StaticResource BoolToVis}}">
-                                            <TextBlock Text="{Binding [add_a_step], Source={x:Static svc:L10n.I}}" Style="{StaticResource SectionLabel}"/>
+                                            <Grid Margin="0,0,0,4">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                </Grid.ColumnDefinitions>
+                                                <TextBlock Text="{Binding [add_a_step], Source={x:Static svc:L10n.I}}" Style="{StaticResource SectionLabel}" VerticalAlignment="Center"/>
+                                                <Button Grid.Column="1" Content="{Binding [record_from_pad], Source={x:Static svc:L10n.I}}"
+                                                        Command="{Binding DataContext.RecordMacroCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                        Style="{StaticResource GhostButtonStyle}" Foreground="#F43F5E" VerticalAlignment="Center"
+                                                        ToolTip="{Binding [record_tip], Source={x:Static svc:L10n.I}}"/>
+                                            </Grid>
                                             <WrapPanel Margin="0,0,0,10">
                                                 <Button Content="{Binding [press], Source={x:Static svc:L10n.I}}" Style="{StaticResource GhostButtonStyle}" Margin="0,0,6,0"
                                                         Command="{Binding DataContext.AddStepCommand, RelativeSource={RelativeSource AncestorType=Window}}" CommandParameter="Press"
@@ -1253,6 +1263,24 @@
                     <ProgressBar Style="{StaticResource TriggerBar}" Maximum="100" Value="{Binding StickCaptureProgress, Mode=OneWay}" Foreground="#10B981" Margin="0,16,0,0"/>
                     <TextBlock Text="{Binding [the_strongest_push_wins_hold], Source={x:Static svc:L10n.I}}" FontSize="11" Foreground="#94A3B8" HorizontalAlignment="Center" Margin="0,8,0,0"/>
                     <Button Content="{Binding [cancel], Source={x:Static svc:L10n.I}}" Command="{Binding CancelStickCaptureCommand}" Style="{StaticResource GhostButtonStyle}" Margin="0,18,0,0" HorizontalAlignment="Center"/>
+                </StackPanel>
+            </Border>
+        </Grid>
+
+        <!-- ═══════════ MACRO-RECORDER OVERLAY ═══════════ -->
+        <Grid Background="#D90F172A" Visibility="{Binding IsRecordingMacro, Converter={StaticResource BoolToVis}}">
+            <Border Style="{StaticResource Card}" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="48,36" BorderBrush="#F43F5E">
+                <StackPanel HorizontalAlignment="Center" Width="440">
+                    <TextBlock Text="{Binding RecordTitle}" FontSize="22" FontWeight="Black" Foreground="#F43F5E" HorizontalAlignment="Center"/>
+                    <TextBlock Text="{Binding RecordDetail}" FontSize="14" Foreground="#F8FAFC" Margin="0,12,0,0" HorizontalAlignment="Center" TextWrapping="Wrap" TextAlignment="Center"/>
+                    <TextBlock Text="{Binding RecordBig}" FontSize="40" FontWeight="Bold" Foreground="#06B6D4" FontFamily="Consolas" HorizontalAlignment="Center" Margin="0,14,0,4"/>
+                    <TextBlock Text="{Binding [record_hint], Source={x:Static svc:L10n.I}}" FontSize="11" Foreground="#94A3B8" HorizontalAlignment="Center" TextWrapping="Wrap" TextAlignment="Center" Margin="0,8,0,0"/>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,18,0,0">
+                        <Button Content="{Binding [btn_stop_recording], Source={x:Static svc:L10n.I}}" Command="{Binding StopRecordingCommand}"
+                                Style="{StaticResource ActionButtonStyle}" Height="36" Width="200"
+                                Visibility="{Binding IsRecordingLive, Converter={StaticResource BoolToVis}}"/>
+                        <Button Content="{Binding [cancel], Source={x:Static svc:L10n.I}}" Command="{Binding CancelRecordingCommand}" Style="{StaticResource GhostButtonStyle}" Margin="10,0,0,0"/>
+                    </StackPanel>
                 </StackPanel>
             </Border>
         </Grid>

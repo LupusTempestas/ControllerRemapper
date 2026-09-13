@@ -52,6 +52,9 @@ namespace WolverineRemapper.ViewModels
             ClearLogsCommand = new RelayCommand(_ => ActivityLogs.Clear());
             AddStepCommand = new RelayCommand(AddStep);
             CaptureStickCommand = new RelayCommand(CaptureStickPosition);
+            RecordMacroCommand = new RelayCommand(_ => _ = RecordMacroAsync());
+            StopRecordingCommand = new RelayCommand(_ => FinishRecording(cancel: false));
+            CancelRecordingCommand = new RelayCommand(_ => FinishRecording(cancel: true));
             CancelStickCaptureCommand = new RelayCommand(_ => _stickCaptureCancelled = true);
             RemoveStepCommand = new RelayCommand(p => { if (p is MacroStep s) SelectedMButton?.Steps.Remove(s); });
             MoveStepUpCommand = new RelayCommand(p => MoveStep(p, -1));
@@ -592,6 +595,117 @@ namespace WolverineRemapper.ViewModels
                 IsCapturingStick = false;
             }
         }
+
+        #region Macro recorder
+
+        private readonly MacroRecorder _recorder = new();
+        private MButtonConfig? _recordTarget;
+        private bool _recordCountdownCancelled;
+
+        private bool _isRecordingMacro;
+        /// <summary>Overlay visible (countdown or recording).</summary>
+        public bool IsRecordingMacro
+        {
+            get => _isRecordingMacro;
+            set { _isRecordingMacro = value; OnPropertyChanged(); }
+        }
+
+        private bool _isRecordingLive;
+        /// <summary>True once the countdown is over and samples are being captured.</summary>
+        public bool IsRecordingLive
+        {
+            get => _isRecordingLive;
+            set { _isRecordingLive = value; OnPropertyChanged(); }
+        }
+
+        private string _recordTitle = "";
+        public string RecordTitle { get => _recordTitle; set { _recordTitle = value; OnPropertyChanged(); } }
+
+        private string _recordBig = "";
+        /// <summary>Countdown digit, then the elapsed time.</summary>
+        public string RecordBig { get => _recordBig; set { _recordBig = value; OnPropertyChanged(); } }
+
+        private string _recordDetail = "";
+        public string RecordDetail { get => _recordDetail; set { _recordDetail = value; OnPropertyChanged(); } }
+
+        private async Task RecordMacroAsync()
+        {
+            if (IsRecordingMacro || SelectedMButton == null) return;
+            if (!ControllerConnected)
+            {
+                StatusMessage = L10n.I.T("record_no_pad");
+                AddLog("[Record] No physical controller detected — connect the pad first.");
+                return;
+            }
+
+            _recordTarget = SelectedMButton;
+            _recordCountdownCancelled = false;
+            RecordTitle = L10n.I.F("record_title", _recordTarget.MButtonName);
+            RecordDetail = L10n.I.T("record_get_ready");
+            IsRecordingLive = false;
+            IsRecordingMacro = true;
+
+            for (int n = 3; n >= 1; n--)
+            {
+                RecordBig = n.ToString();
+                await Task.Delay(1000);
+                if (_recordCountdownCancelled) return;
+            }
+
+            _recorder.Start(Environment.TickCount64);
+            RecordBig = "0.0 s";
+            RecordDetail = L10n.I.T("record_now_play");
+            IsRecordingLive = true;
+            AddLog($"[Record] Recording {_recordTarget.MButtonName} from the pad…");
+        }
+
+        /// <summary>Called from the pad poll loop.</summary>
+        private void RecorderTick(in XINPUT_GAMEPAD pad)
+        {
+            if (!_recorder.IsRecording) return;
+            long now = Environment.TickCount64;
+            _recorder.Sample(pad, now);
+            RecordBig = $"{_recorder.ElapsedMs(now) / 1000.0:F1} s";
+            RecordDetail = L10n.I.F("record_inputs", _recorder.EventCount);
+        }
+
+        private void FinishRecording(bool cancel)
+        {
+            if (!IsRecordingMacro) return;
+
+            if (!_recorder.IsRecording)
+            {
+                // Still in the countdown.
+                _recordCountdownCancelled = true;
+                IsRecordingMacro = false;
+                return;
+            }
+
+            var steps = _recorder.Stop();
+            IsRecordingLive = false;
+            IsRecordingMacro = false;
+
+            if (cancel)
+            {
+                AddLog("[Record] Cancelled — steps unchanged.");
+                return;
+            }
+            if (steps.Count == 0 || _recordTarget == null)
+            {
+                StatusMessage = L10n.I.T("record_nothing");
+                AddLog("[Record] Nothing was pressed — steps unchanged.");
+                return;
+            }
+
+            _recordTarget.Steps.Clear();
+            foreach (var s in steps) _recordTarget.Steps.Add(s);
+            if (_recordTarget.Mode != ActionMode.Sequence) _recordTarget.Mode = ActionMode.Sequence;
+
+            StatusMessage = L10n.I.F("record_summary", steps.Count, _recordTarget.MButtonName);
+            AddLog($"[Record] {_recordTarget.MButtonName}: {steps.Count} steps — {MacroRecorder.Describe(steps)}");
+        }
+
+        #endregion
 
         private static string FormatStickDirection(double x, double y)
         {
@@ -1155,6 +1269,7 @@ namespace WolverineRemapper.ViewModels
 
             ControllerConnected = true;
             var pad = state.Gamepad;
+            RecorderTick(pad);
             ushort btn = pad.wButtons;
 
             IsAPressed = (btn & XInputService.XINPUT_GAMEPAD_A) != 0;
@@ -1333,6 +1448,9 @@ namespace WolverineRemapper.ViewModels
         public ICommand CaptureStickCommand { get; }
         public ICommand CancelStickCaptureCommand { get; }
         public ICommand RemoveStepCommand { get; }
+        public ICommand RecordMacroCommand { get; }
+        public ICommand StopRecordingCommand { get; }
+        public ICommand CancelRecordingCommand { get; }
         public ICommand MoveStepUpCommand { get; }
         public ICommand MoveStepDownCommand { get; }
 

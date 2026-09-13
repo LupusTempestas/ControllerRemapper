@@ -183,5 +183,16 @@
   "settings_about": "À PROPOS",
   "about_text": "Remapper zéro latence des boutons M des manettes Razer Wolverine. Licence MIT. Non affilié à Razer ; Xbox est une marque de Microsoft.",
   "btn_github": "GITHUB",
-  "tray_start_with_windows": "Lancer avec Windows"
+  "tray_start_with_windows": "Lancer avec Windows",
+"record_from_pad": "⏺ ENREGISTRER DEPUIS LA MANETTE",
+  "record_tip": "Jouez le combo sur votre manette et les étapes s'écrivent toutes seules : appuis courts = taps, appuis longs = appui + relâchement, pauses = attentes, poussées de stick = étapes de stick. Remplace les étapes actuelles.",
+  "record_title": "ENREGISTREMENT DE {0}",
+  "record_get_ready": "Préparez-vous — l'enregistrement démarre à la fin du compte à rebours.",
+  "record_now_play": "Jouez le combo sur la manette maintenant. Appuyez sur STOP quand c'est fini.",
+  "record_inputs": "{0} entrées capturées. Appuyez sur STOP quand c'est fini.",
+  "record_hint": "Les appuis de moins de 150 ms deviennent des taps ; les plus longs un appui puis un relâchement. Ce qui est encore maintenu au STOP reste maintenu jusqu'au relâchement du bouton M.",
+  "btn_stop_recording": "■  STOP & UTILISER",
+  "record_summary": "{0} étapes enregistrées dans {1}. Choisissez la répétition ci-dessus, puis ENREGISTRER.",
+  "record_nothing": "Rien n'a été pressé — étapes inchangées.",
+  "record_no_pad": "Branchez votre manette avant d'enregistrer."
 }

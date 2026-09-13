@@ -183,5 +183,16 @@
   "settings_about": "ACERCA DE",
   "about_text": "Remapper sin latencia para los botones M de los mandos Razer Wolverine. Licencia MIT. Sin afiliación con Razer; Xbox es una marca de Microsoft.",
   "btn_github": "GITHUB",
-  "tray_start_with_windows": "Iniciar con Windows"
+  "tray_start_with_windows": "Iniciar con Windows",
+"record_from_pad": "⏺ GRABAR DESDE EL MANDO",
+  "record_tip": "Ejecuta el combo en tu mando y los pasos se escriben solos: las pulsaciones cortas son toques, las largas pulsar + soltar, las pausas son esperas y los movimientos de stick son pasos de stick. Reemplaza los pasos actuales.",
+  "record_title": "GRABANDO {0}",
+  "record_get_ready": "Prepárate — la grabación empieza al terminar la cuenta atrás.",
+  "record_now_play": "Ejecuta el combo en el mando ahora. Pulsa STOP al terminar.",
+  "record_inputs": "{0} entradas capturadas. Pulsa STOP al terminar.",
+  "record_hint": "Las pulsaciones de menos de 150 ms se convierten en toques; las más largas en pulsar y soltar. Lo que siga pulsado al hacer STOP se mantiene hasta soltar el botón M.",
+  "btn_stop_recording": "■  STOP Y USAR",
+  "record_summary": "{0} pasos grabados en {1}. Elige la repetición arriba y luego GUARDAR.",
+  "record_nothing": "No se pulsó nada — pasos sin cambios.",
+  "record_no_pad": "Conecta tu mando antes de grabar."
 }

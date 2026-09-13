@@ -183,5 +183,16 @@
   "settings_about": "ÜBER",
   "about_text": "Zero-Lag-Remapper für die M-Tasten von Razer-Wolverine-Controllern. MIT-Lizenz. Nicht mit Razer verbunden; Xbox ist eine Marke von Microsoft.",
   "btn_github": "GITHUB",
-  "tray_start_with_windows": "Mit Windows starten"
+  "tray_start_with_windows": "Mit Windows starten",
+"record_from_pad": "⏺ VOM CONTROLLER AUFNEHMEN",
+  "record_tip": "Spiele den Kombo auf dem Controller und die Schritte werden für dich geschrieben: kurze Drücke werden Tipps, lange Drücken + Loslassen, Pausen werden Warten, Stick-Bewegungen werden Stick-Schritte. Ersetzt die aktuellen Schritte.",
+  "record_title": "AUFNAHME {0}",
+  "record_get_ready": "Bereit machen — die Aufnahme beginnt nach dem Countdown.",
+  "record_now_play": "Spiele den Kombo jetzt auf dem Controller. Drücke STOP, wenn du fertig bist.",
+  "record_inputs": "{0} Eingaben erfasst. Drücke STOP, wenn du fertig bist.",
+  "record_hint": "Drücke unter 150 ms werden Tipps; längere Drücken und Loslassen. Was bei STOP noch gehalten wird, bleibt gehalten, bis die M-Taste losgelassen wird.",
+  "btn_stop_recording": "■  STOP & ÜBERNEHMEN",
+  "record_summary": "{0} Schritte in {1} aufgenommen. Oben die Wiederholung wählen, dann SPEICHERN.",
+  "record_nothing": "Nichts gedrückt — Schritte unverändert.",
+  "record_no_pad": "Schließe den Controller an, bevor du aufnimmst."
 }

@@ -183,5 +183,16 @@
   "settings_about": "OVER",
   "about_text": "Zero-lag remapper voor de M-knoppen van Razer Wolverine-controllers. MIT-licentie. Niet verbonden met Razer; Xbox is een handelsmerk van Microsoft.",
   "btn_github": "GITHUB",
-  "tray_start_with_windows": "Starten met Windows"
+  "tray_start_with_windows": "Starten met Windows",
+"record_from_pad": "⏺ OPNEMEN VAN CONTROLLER",
+  "record_tip": "Speel de combo op je controller en de stappen worden voor je geschreven: korte drukken worden tikken, lange drukken + loslaten, pauzes worden wachten, stickbewegingen worden stickstappen. Vervangt de huidige stappen.",
+  "record_title": "OPNAME {0}",
+  "record_get_ready": "Maak je klaar — de opname start als het aftellen voorbij is.",
+  "record_now_play": "Speel de combo nu op de controller. Druk op STOP als je klaar bent.",
+  "record_inputs": "{0} invoeren vastgelegd. Druk op STOP als je klaar bent.",
+  "record_hint": "Drukken korter dan 150 ms worden tikken; langere drukken en loslaten. Wat bij STOP nog wordt vastgehouden, blijft vast tot de M-knop wordt losgelaten.",
+  "btn_stop_recording": "■  STOP & GEBRUIKEN",
+  "record_summary": "{0} stappen opgenomen in {1}. Kies hierboven de herhaling en dan OPSLAAN.",
+  "record_nothing": "Er is niets ingedrukt — stappen ongewijzigd.",
+  "record_no_pad": "Sluit je controller aan voordat je opneemt."
 }
