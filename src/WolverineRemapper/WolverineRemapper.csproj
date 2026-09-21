@@ -8,7 +8,7 @@
     <UseWPF>true</UseWPF>
     <UseWindowsForms>true</UseWindowsForms>
     <ApplicationIcon>Assets\app.ico</ApplicationIcon>
-    <Version>1.2.1</Version>
+    <Version>1.2.2</Version>
     <Authors>LupusTempestas</Authors>
     <Product>Wolverine Remapper</Product>
     <Description>Zero-lag M-button remapper for Razer Wolverine controllers (virtual Xbox 360 pad via ViGEmBus).</Description>
