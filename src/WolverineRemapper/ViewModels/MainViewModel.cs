@@ -93,6 +93,21 @@ namespace WolverineRemapper.ViewModels
                 AddLog("[+] Loaded default Throne & Liberty mapping.");
             }
 
+            // A confirmed V2 (and no V3) means keyboard-key triggers can never work —
+            // Razer's own Controller Setup software can only bind V2 paddles to Xbox
+            // inputs, never keyboard keys — so reconcile before the engine can start
+            // and swallow real keyboard keys the loaded profile/defaults happen to use.
+            try
+            {
+                var startupScan = RazerDevices.Scan();
+                _lastScan = startupScan;
+                TryAutoSwitchToV2(startupScan);
+            }
+            catch (Exception ex)
+            {
+                AddLog($"[!] Device scan failed: {ex.Message}");
+            }
+
             _pollTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(16) }; // ~60 FPS
             _pollTimer.Tick += PollGamepad;
             _pollTimer.Start();
@@ -435,6 +450,7 @@ namespace WolverineRemapper.ViewModels
                     _dismissedNotices.Clear();
                     AddLog($"[Pad] Razer controller detected: {(scan.HasV3 ? "Wolverine V3 Pro 8K " : "")}{(scan.HasV2 ? "Wolverine V2 family " : "")}(PID {string.Join(", ", scan.Pids)}).");
                 }
+                TryAutoSwitchToV2(scan);
                 EvaluateDeviceNotice();
             }
             catch (Exception ex)
@@ -443,14 +459,34 @@ namespace WolverineRemapper.ViewModels
             }
         }
 
+        /// <summary>
+        /// V2 hardware can never be driven by keyboard-key triggers — Razer's own
+        /// Controller Setup software only lets V2 paddles duplicate Xbox inputs — so
+        /// staying in keyboard mode while a V2 (and no V3) is connected is always
+        /// wrong and ends up suppressing real keyboard keys that share a VkCode with
+        /// a trigger. Auto-correct instead of just suggesting it, unlike the V3
+        /// direction below which is a preference, not a correctness issue.
+        /// </summary>
+        private bool TryAutoSwitchToV2(RazerDeviceScan scan)
+        {
+            if (scan.SingleFamily != ControllerModel.WolverineV2) return false;
+            if (SelectedControllerModel.Model == ControllerModel.WolverineV2) return false;
+
+            AddLog("[Pad] Wolverine V2 detected — switching M-buttons to controller-button triggers (Razer's software can't bind V2 paddles to keyboard keys).");
+            SelectedControllerModel = ControllerModels.First(c => c.Model == ControllerModel.WolverineV2);
+            return true;
+        }
+
         private void EvaluateDeviceNotice()
         {
             // Candidates in priority order; a dismissed one lets the next through.
             var scan = _lastScan;
             var model = SelectedControllerModel.Model;
             var candidates = new List<DeviceNoticeKind>();
-            if (scan?.SingleFamily is { } family && family != model)
-                candidates.Add(family == ControllerModel.WolverineV2 ? DeviceNoticeKind.SwitchToV2 : DeviceNoticeKind.SwitchToV3);
+            // The V2 direction is handled automatically by TryAutoSwitchToV2 (it's a
+            // correctness fix, not a preference), so only V3 is ever offered here.
+            if (scan?.SingleFamily == ControllerModel.WolverineV3Pro8K && model == ControllerModel.WolverineV2)
+                candidates.Add(DeviceNoticeKind.SwitchToV3);
             if (model == ControllerModel.WolverineV2 && !DriverCheck.HidHideInstalled)
                 candidates.Add(DeviceNoticeKind.InstallHidHide);
 

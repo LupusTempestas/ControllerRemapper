@@ -7,7 +7,7 @@
 
 #define AppName "Wolverine Remapper"
 #ifndef AppVersion
-  #define AppVersion "1.2.0"
+  #define AppVersion "1.2.1"
 #endif
 #define AppPublisher "LupusTempestas"
 #define AppURL "https://github.com/LupusTempestas/ControllerRemapper"
@@ -213,10 +213,16 @@ begin
   Result := ControllerPage.SelectedValueIndex <> 0;
 end;
 
-{ Passed to the app so new profiles start in the right controller mode. }
+{ Passed to the app so new profiles start in the right controller mode.
+  Only an explicit V3 answer (index 0) may start in keyboard mode: V3's
+  paddles are bound to keyboard keys via Synapse. V2 (index 1) and "not
+  sure, or both" (index 2) both need pad-button mode, matching NeedsHidHide
+  above — Razer's own software can't bind a V2 paddle to a keyboard key at
+  all, so guessing V3 for an unsure user risks silently swallowing real
+  keyboard keys that collide with the default trigger VkCodes. }
 function ControllerCode(Param: String): String;
 begin
-  if ControllerPage.SelectedValueIndex = 1 then Result := 'v2' else Result := 'v3';
+  if ControllerPage.SelectedValueIndex = 0 then Result := 'v3' else Result := 'v2';
 end;
 
 procedure CurPageChanged(CurPageID: Integer);
