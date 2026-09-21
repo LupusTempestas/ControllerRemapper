@@ -48,6 +48,7 @@ namespace WolverineRemapper.ViewModels
             OpenViGEmPageCommand = new RelayCommand(_ => OpenUrl(DriverCheck.ViGEmBusUrl));
             OpenHidHidePageCommand = new RelayCommand(_ => OpenUrl(DriverCheck.HidHideUrl));
             RefreshDriversCommand = new RelayCommand(_ => RefreshDriverStatus());
+            UninstallCommand = new RelayCommand(_ => RequestUninstall());
             DeviceNoticeCommand = new RelayCommand(_ => _ = RunDeviceNoticeActionAsync());
             DismissDeviceNoticeCommand = new RelayCommand(_ => DismissDeviceNotice());
             HidePadCommand = new RelayCommand(_ => _ = ConfigureHidHideAsync(hide: true));
@@ -397,6 +398,29 @@ namespace WolverineRemapper.ViewModels
                 _updateBusy = false;
                 NotifyUpdateBanner();
             }
+        }
+
+        #endregion
+
+        #region Uninstall
+
+        /// <summary>The Inno Setup uninstaller next to the running exe (absent for a portable build).</summary>
+        public string UninstallerExePath { get; } =
+            System.IO.Path.Combine(AppContext.BaseDirectory, "unins000.exe");
+
+        public bool CanUninstall => System.IO.File.Exists(UninstallerExePath);
+
+        /// <summary>Asked before the uninstaller starts; return false to abort.</summary>
+        public Func<bool>? ConfirmUninstall { get; set; }
+        /// <summary>The uninstaller is about to run: close the app so it can remove the files.</summary>
+        public event Action? ExitForUninstallRequested;
+
+        private void RequestUninstall()
+        {
+            if (!CanUninstall || ConfirmUninstall == null) return;
+            if (!ConfirmUninstall()) return;
+            AddLog("[!] Starting the uninstaller...");
+            ExitForUninstallRequested?.Invoke();
         }
 
         #endregion
@@ -1938,6 +1962,7 @@ namespace WolverineRemapper.ViewModels
         public ICommand OpenViGEmPageCommand { get; }
         public ICommand OpenHidHidePageCommand { get; }
         public ICommand RefreshDriversCommand { get; }
+        public ICommand UninstallCommand { get; }
         public ICommand HidePadCommand { get; }
         public ICommand DeviceNoticeCommand { get; }
         public ICommand DismissDeviceNoticeCommand { get; }

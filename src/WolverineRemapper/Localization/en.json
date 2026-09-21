@@ -276,5 +276,10 @@
   "update_bad_hash": "The download does not match the published checksum, so it was not installed. Try again later or download from GitHub.",
   "update_no_checksum": "This release has no checksum file, so it cannot be installed automatically. Opening the download page.",
   "tray_update_title": "Update available",
-  "tray_update_text": "Wolverine Remapper {0} is ready. Click to open the app and update."
+  "tray_update_text": "Wolverine Remapper {0} is ready. Click to open the app and update.",
+  "settings_uninstall": "UNINSTALL",
+  "uninstall_desc": "Remove Wolverine Remapper from this computer. Your saved profiles in %AppData% are kept.",
+  "btn_uninstall": "UNINSTALL WOLVERINE REMAPPER",
+  "prompt_uninstall_title": "Uninstall Wolverine Remapper?",
+  "prompt_uninstall_body": "This closes the app and starts the uninstaller, which removes the program (your saved profiles are kept). Continue?"
 }

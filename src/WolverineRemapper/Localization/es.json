@@ -276,5 +276,10 @@
   "update_bad_hash": "La descarga no coincide con la suma de verificación publicada, así que no se instaló. Inténtalo más tarde o descárgala desde GitHub.",
   "update_no_checksum": "Esta versión no tiene archivo de verificación, así que no puede instalarse automáticamente. Abriendo la página de descarga.",
   "tray_update_title": "Actualización disponible",
-  "tray_update_text": "Wolverine Remapper {0} está listo. Haz clic para abrir la aplicación y actualizar."
+  "tray_update_text": "Wolverine Remapper {0} está listo. Haz clic para abrir la aplicación y actualizar.",
+  "settings_uninstall": "DESINSTALAR",
+  "uninstall_desc": "Quita Wolverine Remapper de este equipo. Tus perfiles guardados en %AppData% se conservan.",
+  "btn_uninstall": "DESINSTALAR WOLVERINE REMAPPER",
+  "prompt_uninstall_title": "¿Desinstalar Wolverine Remapper?",
+  "prompt_uninstall_body": "Esto cierra la aplicación e inicia el desinstalador, que elimina el programa (tus perfiles guardados se conservan). ¿Continuar?"
 }

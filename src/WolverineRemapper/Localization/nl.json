@@ -276,5 +276,10 @@
   "update_bad_hash": "De download komt niet overeen met de gepubliceerde controlesom en is niet geïnstalleerd. Probeer het later opnieuw of download via GitHub.",
   "update_no_checksum": "Deze versie heeft geen controlebestand en kan dus niet automatisch worden geïnstalleerd. De downloadpagina wordt geopend.",
   "tray_update_title": "Update beschikbaar",
-  "tray_update_text": "Wolverine Remapper {0} staat klaar. Klik om de app te openen en bij te werken."
+  "tray_update_text": "Wolverine Remapper {0} staat klaar. Klik om de app te openen en bij te werken.",
+  "settings_uninstall": "VERWIJDEREN",
+  "uninstall_desc": "Verwijdert Wolverine Remapper van deze computer. Je opgeslagen profielen in %AppData% blijven bewaard.",
+  "btn_uninstall": "WOLVERINE REMAPPER VERWIJDEREN",
+  "prompt_uninstall_title": "Wolverine Remapper verwijderen?",
+  "prompt_uninstall_body": "Hiermee sluit de app af en start het verwijderprogramma, dat het programma verwijdert (je opgeslagen profielen blijven bewaard). Doorgaan?"
 }

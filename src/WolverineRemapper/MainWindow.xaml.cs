@@ -69,6 +69,9 @@ namespace WolverineRemapper
             vm.UpdateNoticeRequested += latest => _tray?.ShowUpdateBalloon(latest);
             vm.ConfirmExitForUpdate = ConfirmExitForUpdate;
             vm.ExitForUpdateRequested += () => { _skipUnsavedPrompt = true; RequestExit(); };
+
+            vm.ConfirmUninstall = ConfirmUninstall;
+            vm.ExitForUninstallRequested += () => { _skipUnsavedPrompt = true; _uninstallRequested = true; RequestExit(); };
             if (Environment.GetCommandLineArgs().Any(a => a.Equals("--updated", StringComparison.OrdinalIgnoreCase)))
                 vm.NoteUpdated();
 
@@ -124,6 +127,7 @@ namespace WolverineRemapper
         }
 
         private bool _skipUnsavedPrompt;
+        private bool _uninstallRequested;
 
         /// <summary>
         /// Before an update installs: resolve unsaved changes now (save / discard /
@@ -139,6 +143,20 @@ namespace WolverineRemapper
             if (choice == MessageBoxResult.Cancel) return false;
             if (choice == MessageBoxResult.Yes) vm.SaveProfileCommand.Execute(null);
             return true;
+        }
+
+        /// <summary>
+        /// Uninstall is destructive and irreversible, so this asks once here (unlike
+        /// the update flow, unsaved changes are not offered a save — the app is about
+        /// to be removed) on top of the uninstaller's own confirmation dialog.
+        /// </summary>
+        private bool ConfirmUninstall()
+        {
+            ShowFromTray();
+            var choice = MessageBox.Show(
+                L10n.I.T("prompt_uninstall_body"),
+                L10n.I.T("prompt_uninstall_title"), MessageBoxButton.YesNo, MessageBoxImage.Warning, MessageBoxResult.No);
+            return choice == MessageBoxResult.Yes;
         }
 
         /// <summary>Really exit (tray Quit): runs the unsaved-changes prompt, then shuts down.</summary>
@@ -197,6 +215,8 @@ namespace WolverineRemapper
             }
 
             bool relaunch = _restartRequested;
+            bool uninstall = _uninstallRequested;
+            string? uninstallerExe = uninstall ? vm.UninstallerExePath : null;
             bool engineWasRunning = vm.IsRemapperActive;
 
             // Release the keyboard hook and disconnect the virtual pad —
@@ -207,7 +227,18 @@ namespace WolverineRemapper
             _tray?.Dispose();
             _tray = null;
 
-            if (relaunch)
+            if (uninstall && uninstallerExe != null)
+            {
+                try
+                {
+                    // No silent flags: the uninstaller shows its own "really remove
+                    // this?" confirmation and, for a Program Files install, its own
+                    // elevation prompt.
+                    Process.Start(new ProcessStartInfo(uninstallerExe) { UseShellExecute = true });
+                }
+                catch { /* nothing sensible to do — the user can uninstall from Windows Settings */ }
+            }
+            else if (relaunch)
             {
                 string? exe = Environment.ProcessPath;
                 if (!string.IsNullOrEmpty(exe))

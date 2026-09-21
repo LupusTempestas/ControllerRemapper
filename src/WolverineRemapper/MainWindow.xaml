@@ -1366,6 +1366,17 @@
                                 </StackPanel>
                             </Border>
 
+                            <!-- Uninstall -->
+                            <Border Style="{StaticResource Card}" Padding="16" Margin="0,0,0,12" BorderBrush="#7F1D1D"
+                                    Visibility="{Binding CanUninstall, Converter={StaticResource BoolToVis}}">
+                                <StackPanel>
+                                    <TextBlock Text="{Binding [settings_uninstall], Source={x:Static svc:L10n.I}}" Style="{StaticResource SectionLabel}" Foreground="#F87171"/>
+                                    <TextBlock Text="{Binding [uninstall_desc], Source={x:Static svc:L10n.I}}" FontSize="11" Foreground="#94A3B8" TextWrapping="Wrap" Margin="0,2,0,10"/>
+                                    <Button Content="{Binding [btn_uninstall], Source={x:Static svc:L10n.I}}" Command="{Binding UninstallCommand}" Style="{StaticResource GhostButtonStyle}"
+                                            Foreground="#F87171" BorderBrush="#7F1D1D" HorizontalAlignment="Left"/>
+                                </StackPanel>
+                            </Border>
+
                         </StackPanel>
                     </ScrollViewer>
                 </TabItem>
